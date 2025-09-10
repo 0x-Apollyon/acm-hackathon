@@ -189,7 +189,6 @@ const getRelativeDate = (dateString: string) => {
   yesterday.setDate(yesterday.getDate() - 1);
   const transactionDate = new Date(dateString);
 
-  // Reset time component for accurate date comparison
   today.setHours(0, 0, 0, 0);
   yesterday.setHours(0, 0, 0, 0);
   transactionDate.setHours(0, 0, 0, 0);
@@ -340,160 +339,178 @@ export default function TransactionsPage() {
             </CardContent>
           </Card>
 
-          <div className="mb-6 flex flex-wrap items-center gap-4">
-            <div className="flex gap-2 p-1 bg-gray-200 dark:bg-[#1B253A] rounded-full">
-              <Button
-                size="sm"
-                variant={filterType === "all" ? "default" : "ghost"}
-                onClick={() => setFilterType("all")}
-                className="rounded-full"
-              >
-                All
-              </Button>
-              <Button
-                size="sm"
-                variant={filterType === "inflow" ? "default" : "ghost"}
-                onClick={() => setFilterType("inflow")}
-                className="rounded-full"
-              >
-                Inflow
-              </Button>
-              <Button
-                size="sm"
-                variant={filterType === "outflow" ? "default" : "ghost"}
-                onClick={() => setFilterType("outflow")}
-                className="rounded-full"
-              >
-                Outflow
-              </Button>
-            </div>
-            <Select value={filterCategory} onValueChange={setFilterCategory}>
-              <SelectTrigger className="w-[180px] bg-white dark:bg-[#101827] border-gray-200 dark:border-[#2A3B5A] shadow-sm">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="bg-white dark:bg-[#101827] border-gray-200 dark:border-[#2A3B5A] shadow-sm ml-auto"
-                >
-                  <ArrowUpDown className="mr-2 h-4 w-4" />
-                  Sort By
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onSelect={() => setSortOption("date-desc")}>
-                  Date: Newest First
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setSortOption("date-asc")}>
-                  Date: Oldest First
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setSortOption("amount-desc")}>
-                  Amount: High to Low
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setSortOption("amount-asc")}>
-                  Amount: Low to High
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          <div className="space-y-8">
-            <AnimatePresence>
-              {dateKeys.length > 0 ? (
-                dateKeys.map((dateKey) => (
-                  <motion.div
-                    key={dateKey}
-                    layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.4 }}
+          {/* --- CHANGE: Transactions list and filters are now in their own card --- */}
+          <div className="bg-white dark:bg-[#1B253A] rounded-xl shadow-sm">
+            <div className="p-4 border-b border-gray-200 dark:border-[#2A3B5A]">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex gap-2 p-1 bg-gray-200 dark:bg-[#101827] rounded-full">
+                  <Button
+                    size="sm"
+                    variant={filterType === "all" ? "default" : "ghost"}
+                    onClick={() => setFilterType("all")}
+                    className="rounded-full"
                   >
-                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 sticky top-4 z-10 bg-gray-50/80 dark:bg-[#101827]/80 backdrop-blur-sm py-2 px-2 rounded-md">
-                      {getRelativeDate(dateKey)}
-                    </h2>
-                    <div className="space-y-3">
-                      {groupedTransactions[dateKey].map((tx) => {
-                        const Icon = tx.icon;
-                        return (
-                          <motion.div
-                            key={tx.id}
-                            layout
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 10 }}
-                            transition={{ duration: 0.3 }}
-                            className="bg-white dark:bg-[#1B253A] rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-300"
-                          >
-                            <div className="flex items-center gap-4">
-                              <div
-                                className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                                  tx.type === "inflow"
-                                    ? "bg-green-500/10 text-green-500"
-                                    : "bg-red-500/10 text-red-500"
-                                }`}
-                              >
-                                <Icon className="h-5 w-5" />
-                              </div>
-                              <div>
-                                <p className="font-semibold text-foreground">
-                                  {tx.description}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {new Date(tx.date).toLocaleDateString(
-                                    "en-US",
-                                    {
-                                      weekday: "long",
-                                      month: "short",
-                                      day: "numeric",
-                                    }
-                                  )}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <p
-                                className={`text-lg font-bold ${
-                                  tx.type === "inflow"
-                                    ? "text-green-500"
-                                    : "text-red-500"
-                                }`}
-                              >
-                                {tx.amount > 0
-                                  ? `+ ₹${tx.amount.toLocaleString()}`
-                                  : `- ₹${Math.abs(
-                                      tx.amount
-                                    ).toLocaleString()}`}
-                              </p>
-                              <span className="text-xs bg-gray-100 dark:bg-[#101827] text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full mt-1 inline-block">
-                                {tx.category}
-                              </span>
-                            </div>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                ))
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="h-40 flex items-center justify-center text-muted-foreground bg-white dark:bg-[#1B253A] rounded-xl shadow-sm"
+                    All
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={filterType === "inflow" ? "default" : "ghost"}
+                    onClick={() => setFilterType("inflow")}
+                    className="rounded-full"
+                  >
+                    Inflow
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={filterType === "outflow" ? "default" : "ghost"}
+                    onClick={() => setFilterType("outflow")}
+                    className="rounded-full"
+                  >
+                    Outflow
+                  </Button>
+                </div>
+                <Select
+                  value={filterCategory}
+                  onValueChange={setFilterCategory}
                 >
-                  No transactions found for the selected filters.
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <SelectTrigger className="w-[180px] bg-white dark:bg-[#1B253A] border-gray-200 dark:border-[#2A3B5A] shadow-sm">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="bg-white dark:bg-[#1B253A] border-gray-200 dark:border-[#2A3B5A] shadow-sm ml-auto"
+                    >
+                      <ArrowUpDown className="mr-2 h-4 w-4" />
+                      Sort By
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      onSelect={() => setSortOption("date-desc")}
+                    >
+                      Date: Newest First
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={() => setSortOption("date-asc")}
+                    >
+                      Date: Oldest First
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={() => setSortOption("amount-desc")}
+                    >
+                      Amount: High to Low
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={() => setSortOption("amount-asc")}
+                    >
+                      Amount: Low to High
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+
+            <div className="h-[520px] overflow-y-auto p-4">
+              <div className="space-y-8">
+                <AnimatePresence>
+                  {dateKeys.length > 0 ? (
+                    dateKeys.map((dateKey) => (
+                      <motion.div
+                        key={dateKey}
+                        layout
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4 }}
+                      >
+                        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 sticky top-0 z-10 bg-gray-50/80 dark:bg-[#1B253A]/80 backdrop-blur-sm py-2 px-2 rounded-md">
+                          {getRelativeDate(dateKey)}
+                        </h2>
+                        <div className="space-y-3">
+                          {groupedTransactions[dateKey].map((tx) => {
+                            const Icon = tx.icon;
+                            return (
+                              <motion.div
+                                key={tx.id}
+                                layout
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 10 }}
+                                transition={{ duration: 0.3 }}
+                                className="bg-white dark:bg-[#101827] rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-300"
+                              >
+                                <div className="flex items-center gap-4">
+                                  <div
+                                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                      tx.type === "inflow"
+                                        ? "bg-green-500/10 text-green-500"
+                                        : "bg-red-500/10 text-red-500"
+                                    }`}
+                                  >
+                                    <Icon className="h-5 w-5" />
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-foreground">
+                                      {tx.description}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {new Date(tx.date).toLocaleDateString(
+                                        "en-US",
+                                        {
+                                          weekday: "long",
+                                          month: "short",
+                                          day: "numeric",
+                                        }
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p
+                                    className={`text-lg font-bold ${
+                                      tx.type === "inflow"
+                                        ? "text-green-500"
+                                        : "text-red-500"
+                                    }`}
+                                  >
+                                    {tx.amount > 0
+                                      ? `+ ₹${tx.amount.toLocaleString()}`
+                                      : `- ₹${Math.abs(
+                                          tx.amount
+                                        ).toLocaleString()}`}
+                                  </p>
+                                  <span className="text-xs bg-gray-100 dark:bg-[#2A3B5A] text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full mt-1 inline-block">
+                                    {tx.category}
+                                  </span>
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="h-40 flex items-center justify-center text-muted-foreground bg-white dark:bg-[#1B253A] rounded-xl shadow-sm"
+                    >
+                      No transactions found for the selected filters.
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
