@@ -6,6 +6,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { Suspense } from "react";
 import "./globals.css";
 import Header from "@/components/Header";
+import PageTransitionWrapper from "@/components/PageTransitionWrapper";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "FinZ - Financial Dashboard",
@@ -23,8 +25,11 @@ export default function RootLayout({
         className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}
       >
         <Header />
-        <Suspense fallback={null}>{children}</Suspense>
+        <Suspense fallback={null}>
+          <PageTransitionWrapper>{children}</PageTransitionWrapper>
+        </Suspense>
         <Analytics />
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );
