@@ -20,6 +20,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { Copy, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { allTransactions } from "@/lib/data"; // Import from our new data file
 
 // --- CUSTOM BRAND ICON COMPONENTS ---
 const SbiIcon = () => (
@@ -148,26 +150,22 @@ const bankAccounts = [
   { name: "AXIS", balance: "₹65,310", icon: AxisIcon },
 ];
 
-const inflows = [
-  { from: "Mom", amount: "+ ₹1,000", date: "Sep 09", category: "Family" },
-  { from: "Salary", amount: "+ ₹50,000", date: "Sep 01", category: "Work" },
-];
+// Derive inflows and outflows from the central data source
+const inflows = allTransactions
+  .filter((tx) => tx.type === "inflow")
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .slice(0, 3);
 
-const outflows = [
-  { to: "Zomato Order", amount: "- ₹450", date: "Sep 08", category: "Food" },
-  { to: "Uber Ride", amount: "- ₹280", date: "Sep 07", category: "Travel" },
-  {
-    to: "Claude Subscription",
-    amount: "- ₹1,500",
-    date: "Sep 05",
-    category: "Work",
-  },
-];
+const outflows = allTransactions
+  .filter((tx) => tx.type === "outflow")
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .slice(0, 3);
 
 // --- END OF FABRICATED DATA ---
 
 export default function FinZDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date());
+
   const [timeRange, setTimeRange] = useState<"1m" | "3m" | "6m">("1m");
   const [theme, setTheme] = useState("dark");
 
@@ -204,13 +202,6 @@ export default function FinZDashboard() {
     day: "numeric",
   });
 
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast("Copied to clipboard!", {
-      description: `Copied: ${text}`,
-    });
-  };
-
   const paidTotal = paidPayments.reduce(
     (sum, payment) =>
       sum + Number.parseInt(payment.amount.replace("₹", "").replace(",", "")),
@@ -229,23 +220,21 @@ export default function FinZDashboard() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-100 dark:bg-[#101827] text-gray-900 dark:text-white transition-colors duration-300">
+    <>
       <div className="container mx-auto flex pt-8">
-        {/* Main Content Area (Now on the left) */}
+        {/* Main Content Area */}
         <main className="flex-1 pr-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-foreground">
               Good Morning, Nishant
             </h1>
-            <p className="text-md text-blue-500 dark:text-blue-300">
-              {dateString}
-            </p>
+            <p className="text-md text-primary">{dateString}</p>
           </div>
 
-          <Card className="mb-8 bg-white dark:bg-[#1B253A] border border-gray-200 dark:border-[#2A3B5A]">
+          <Card className="mb-8 bg-card border-border">
             <CardContent className="flex flex-row items-start gap-8 p-6">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-300 mb-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-4">
                   BANKS
                 </p>
                 <div className="space-y-2">
@@ -254,16 +243,16 @@ export default function FinZDashboard() {
                     return (
                       <div
                         key={index}
-                        className="flex items-center gap-3 p-2 rounded-md bg-gray-100 dark:bg-blue-500/10"
+                        className="flex items-center gap-3 p-2 rounded-md bg-muted/50"
                       >
                         <div className="w-6 h-6 rounded-full flex items-center justify-center">
                           <Icon />
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                          <p className="text-xs font-medium text-muted-foreground">
                             {bank.name}
                           </p>
-                          <p className="text-md font-semibold text-gray-900 dark:text-white">
+                          <p className="text-md font-semibold text-foreground">
                             {bank.balance}
                           </p>
                         </div>
@@ -276,14 +265,14 @@ export default function FinZDashboard() {
               <div className="flex-1">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-300 mb-2">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">
                       TOTAL BALANCE
                     </p>
                     <div className="mb-4">
-                      <p className="text-4xl font-bold text-gray-900 dark:text-white">
+                      <p className="text-4xl font-bold text-foreground">
                         ₹3,49,904
                       </p>
-                      <p className="text-sm text-green-600 dark:text-green-500">
+                      <p className="text-sm text-green-500">
                         ↑ 20% compared to previous month
                       </p>
                     </div>
@@ -292,14 +281,10 @@ export default function FinZDashboard() {
                     {(["1m", "3m", "6m"] as const).map((range) => (
                       <Button
                         key={range}
-                        variant={timeRange === range ? "default" : "ghost"}
+                        variant={timeRange === range ? "default" : "secondary"}
                         size="sm"
                         onClick={() => setTimeRange(range)}
-                        className={`rounded-full ${
-                          timeRange === range
-                            ? "bg-black text-white dark:bg-white dark:text-black"
-                            : "text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-blue-900/50 hover:text-gray-900 dark:hover:text-white"
-                        }`}
+                        className="rounded-full"
                       >
                         {range.toUpperCase()}
                       </Button>
@@ -345,7 +330,10 @@ export default function FinZDashboard() {
                           dataKey="date"
                           axisLine={false}
                           tickLine={false}
-                          tick={{ fontSize: 12, fill: "hsl(215 20.2% 65.1%)" }}
+                          tick={{
+                            fontSize: 12,
+                            fill: "hsl(var(--muted-foreground))",
+                          }}
                           interval={0}
                         />
                         <YAxis hide />
@@ -370,31 +358,36 @@ export default function FinZDashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Latest Inflow */}
-            <Card className="bg-white dark:bg-[#1B253A] border border-gray-200 dark:border-[#2A3B5A]">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+            <Card className="bg-card border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-lg font-semibold text-card-foreground">
                   Latest Inflow
                 </CardTitle>
+                <Link href="/transactions?filter=inflow" passHref>
+                  <Button variant="ghost" size="sm">
+                    View More
+                  </Button>
+                </Link>
               </CardHeader>
               <CardContent className="space-y-4">
                 {inflows.map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-100 dark:bg-[#101827] p-4 rounded-lg"
-                  >
+                  <div key={index} className="bg-muted/50 p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-md font-medium text-gray-900 dark:text-white">
-                        {item.from}
+                      <span className="text-md font-medium text-card-foreground">
+                        {item.description}
                       </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {item.date}
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(item.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
                       </span>
                     </div>
                     <div className="flex justify-between items-end">
-                      <p className="text-2xl font-bold text-green-600 dark:text-green-500">
-                        {item.amount}
+                      <p className="text-2xl font-bold text-green-500">
+                        + ₹{item.amount.toLocaleString()}
                       </p>
-                      <span className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 px-2 py-1 rounded-full">
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
                         {item.category}
                       </span>
                     </div>
@@ -403,31 +396,36 @@ export default function FinZDashboard() {
               </CardContent>
             </Card>
             {/* Latest Outflow */}
-            <Card className="bg-white dark:bg-[#1B253A] border border-gray-200 dark:border-[#2A3B5A]">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+            <Card className="bg-card border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-lg font-semibold text-card-foreground">
                   Latest Outflow
                 </CardTitle>
+                <Link href="/transactions?filter=outflow" passHref>
+                  <Button variant="ghost" size="sm">
+                    View More
+                  </Button>
+                </Link>
               </CardHeader>
               <CardContent className="space-y-4">
                 {outflows.map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-100 dark:bg-[#101827] p-4 rounded-lg"
-                  >
+                  <div key={index} className="bg-muted/50 p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-md font-medium text-gray-900 dark:text-white">
-                        {item.to}
+                      <span className="text-md font-medium text-card-foreground">
+                        {item.description}
                       </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {item.date}
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(item.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
                       </span>
                     </div>
                     <div className="flex justify-between items-end">
-                      <p className="text-2xl font-bold text-red-600 dark:text-red-500">
-                        {item.amount}
+                      <p className="text-2xl font-bold text-red-500">
+                        - ₹{Math.abs(item.amount).toLocaleString()}
                       </p>
-                      <span className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 px-2 py-1 rounded-full">
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
                         {item.category}
                       </span>
                     </div>
@@ -439,10 +437,10 @@ export default function FinZDashboard() {
         </main>
 
         {/* Sidebar */}
-        <aside className="w-96 flex-shrink-0 border-l border-gray-200 dark:border-[#2A3B5A] pl-8">
-          <Card className="bg-white dark:bg-[#1B253A] border border-gray-200 dark:border-[#2A3B5A]">
+        <aside className="w-96 flex-shrink-0 border-l border-border pl-8">
+          <Card className="bg-card border-border">
             <CardHeader className="pb-4">
-              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-300">
+              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-primary">
                 RECURRING PAYMENTS
               </CardTitle>
             </CardHeader>
@@ -452,7 +450,7 @@ export default function FinZDashboard() {
                   mode="single"
                   selected={date}
                   onSelect={setDate}
-                  className="rounded-md border-0"
+                  className="rounded-md"
                   components={{
                     Day: (props) => {
                       const dayDate = props.day.date;
@@ -474,7 +472,7 @@ export default function FinZDashboard() {
                         >
                           {icon ? (
                             <>
-                              <span className="absolute top-0.5 left-1.5 text-[10px] text-gray-500 dark:text-gray-400">
+                              <span className="absolute top-0.5 left-1.5 text-[10px] text-muted-foreground">
                                 {dayDate.getDate()}
                               </span>
                               <span className="text-lg">{icon}</span>
@@ -487,23 +485,12 @@ export default function FinZDashboard() {
                     },
                   }}
                   classNames={{
-                    months: "flex flex-col space-y-4",
-                    month: "space-y-4",
-                    caption:
-                      "flex justify-center pt-1 relative items-center text-sm",
-                    caption_label:
-                      "text-sm font-medium text-gray-900 dark:text-white",
-                    nav: "space-x-1 flex items-center",
-                    nav_button:
-                      "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
-                    nav_button_previous: "absolute left-1",
-                    nav_button_next: "absolute right-1",
-                    table: "border-collapse space-y-1",
-                    head_row: "flex justify-between",
                     head_cell:
-                      "text-blue-600 dark:text-blue-300 rounded-md w-9 font-normal text-[0.8rem] text-center",
-                    row: "flex mt-2 justify-between",
+                      "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
                     cell: "text-center text-sm p-0 relative w-9",
+                    caption_label: "text-sm font-medium",
+                    row: "flex w-full mt-2 justify-between",
+                    head_row: "flex justify-between",
                   }}
                 />
               </div>
@@ -514,14 +501,11 @@ export default function FinZDashboard() {
                 onValueChange={setAccordionValue}
                 className="w-full"
               >
-                <AccordionItem
-                  value="paid"
-                  className="border-gray-200 dark:border-[#2A3B5A]"
-                >
+                <AccordionItem value="paid">
                   <AccordionTrigger className="text-sm font-medium hover:no-underline py-3">
                     <div className="flex items-center justify-between w-full">
                       <span>Paid</span>
-                      <span className="text-gray-500 dark:text-gray-400">
+                      <span className="text-muted-foreground">
                         ₹{paidTotal.toLocaleString()}
                       </span>
                     </div>
@@ -537,11 +521,11 @@ export default function FinZDashboard() {
                             <span className="text-2xl h-8 w-8 flex items-center justify-center">
                               {payment.icon}
                             </span>
-                            <span className="text-sm text-gray-900 dark:text-white">
+                            <span className="text-sm text-foreground">
                               {payment.name}
                             </span>
                           </div>
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                          <span className="text-sm text-muted-foreground">
                             {payment.amount}
                           </span>
                         </div>
@@ -549,14 +533,11 @@ export default function FinZDashboard() {
                     </div>
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem
-                  value="upcoming"
-                  className="border-gray-200 dark:border-[#2A3B5A]"
-                >
+                <AccordionItem value="upcoming">
                   <AccordionTrigger className="text-sm font-medium hover:no-underline py-3">
                     <div className="flex items-center justify-between w-full">
                       <span>Upcoming</span>
-                      <span className="text-gray-500 dark:text-gray-400">
+                      <span className="text-muted-foreground">
                         ₹{upcomingTotal.toLocaleString()}
                       </span>
                     </div>
@@ -566,21 +547,21 @@ export default function FinZDashboard() {
                       {upcomingPayments.map((payment, index) => (
                         <div
                           key={index}
-                          className="bg-gray-100 dark:bg-[#101827] p-4 rounded-lg flex items-center justify-between"
+                          className="bg-muted/50 p-4 rounded-lg flex items-center justify-between"
                         >
                           <div className="flex items-center gap-4">
-                            <div className="text-2xl bg-blue-200 dark:bg-blue-900/50 p-3 rounded-md">
+                            <div className="text-2xl bg-accent p-3 rounded-md">
                               {payment.icon}
                             </div>
                             <div>
-                              <p className="font-semibold text-gray-900 dark:text-white">
+                              <p className="font-semibold text-foreground">
                                 {payment.name}
                               </p>
                               <div
                                 className={`text-xs p-1 px-2 rounded-full inline-block mt-1 ${
                                   payment.daysDue < 10
-                                    ? "bg-red-200 dark:bg-red-500/20 text-red-800 dark:text-red-300"
-                                    : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300"
+                                    ? "bg-destructive/20 text-destructive-foreground"
+                                    : "bg-secondary text-secondary-foreground"
                                 }`}
                               >
                                 Due in {payment.daysDue} days
@@ -588,10 +569,10 @@ export default function FinZDashboard() {
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-lg font-bold text-gray-900 dark:text-white">
+                            <p className="text-lg font-bold text-foreground">
                               {payment.amount}
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <p className="text-xs text-muted-foreground">
                               {payment.isMonthly ? "monthly" : "yearly"}
                             </p>
                           </div>
@@ -609,6 +590,6 @@ export default function FinZDashboard() {
         theme={theme === "dark" ? "dark" : "light"}
         position="bottom-right"
       />
-    </div>
+    </>
   );
 }
