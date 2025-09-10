@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { Suspense } from "react"; // Import Suspense
 import { useState, useMemo } from "react";
@@ -125,8 +125,8 @@ const getRelativeDate = (dateString: string) => {
   });
 };
 
-// Main component that uses the URL parameter
-function TransactionsComponent() {
+// The actual component that contains all the logic and uses the client-side hook
+function TransactionsContent() {
   const searchParams = useSearchParams();
   const initialFilter = searchParams.get("filter");
 
@@ -440,5 +440,14 @@ function TransactionsComponent() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+// The main page component that is the default export
+export default function TransactionsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TransactionsContent />
+    </Suspense>
   );
 }
