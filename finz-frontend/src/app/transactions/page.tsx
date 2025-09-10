@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { Suspense } from "react"; // Import Suspense
-import { useState, useMemo } from "react";
+import React, { Suspense, useRef } from "react"; // Import useRef
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +38,7 @@ import {
   HeartHandshake,
   ShoppingBag,
 } from "lucide-react";
-import { allTransactions, categories } from "@/lib/data"; // Import from our new data file
+import { allTransactions, categories } from "@/lib/data";
 import { useSearchParams } from "next/navigation";
 
 // --- RE-PROCESSED DATA FOR TWO-BAR CHART (SALARY FILTERED OUT) ---
@@ -129,6 +129,7 @@ const getRelativeDate = (dateString: string) => {
 function TransactionsContent() {
   const searchParams = useSearchParams();
   const initialFilter = searchParams.get("filter");
+  const transactionsSectionRef = useRef<HTMLDivElement>(null);
 
   const [filterType, setFilterType] = useState<"all" | "inflow" | "outflow">(
     () => {
@@ -138,6 +139,16 @@ function TransactionsContent() {
       return "all";
     }
   );
+
+  useEffect(() => {
+    // This effect runs when the component mounts or the filter from the URL changes.
+    if (initialFilter) {
+      // We use a short timeout to ensure the page has rendered before we scroll.
+      setTimeout(() => {
+        transactionsSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [initialFilter]);
 
   const [filterCategory, setFilterCategory] = useState("All");
   const [sortOption, setSortOption] = useState<SortOption>("date-desc");
@@ -265,7 +276,10 @@ function TransactionsContent() {
             </CardContent>
           </Card>
 
-          <div className="bg-white dark:bg-[#1B253A] rounded-xl shadow-sm">
+          <div
+            ref={transactionsSectionRef}
+            className="bg-white dark:bg-[#1B253A] rounded-xl shadow-sm"
+          >
             <div className="p-4 border-b border-gray-200 dark:border-[#2A3B5A]">
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex gap-2 p-1 bg-gray-200 dark:bg-[#101827] rounded-full">
