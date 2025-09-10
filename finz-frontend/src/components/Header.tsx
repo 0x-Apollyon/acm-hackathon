@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
@@ -36,29 +37,29 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 export default function Header() {
-  const [open, setOpen] = useState(false);
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("finz-theme") || "dark";
-    }
-    return "dark";
-  });
+  const [open, setOpen] = React.useState(false);
+
+  // Default theme logic is handled in page.tsx
+  const [theme, setTheme] = React.useState("light");
 
   useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
-    localStorage.setItem("finz-theme", theme);
-  }, [theme]);
+    const savedTheme = localStorage.getItem("finz-theme") || "light";
+    setTheme(savedTheme);
+  }, []);
 
   const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    const root = window.document.documentElement;
+    root.classList.remove("light", "dark");
+    root.classList.add(newTheme);
+    localStorage.setItem("finz-theme", newTheme);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
@@ -73,44 +74,38 @@ export default function Header() {
   const session = { user: { name: "Nishant", image: "/placeholder.svg" } };
 
   return (
-    //  Overriding dark mode colors for a custom, cohesive theme
-    <header className="sticky top-0 z-50 w-full border-b border-border dark:border-[#2A3B5A] bg-card/95 dark:bg-[#182235]/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 dark:supports-[backdrop-filter]:bg-[#182235]/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-sm dark:bg-[#1B253A]/95 dark:border-[#2A3B5A]">
       <div className="container mx-auto flex h-16 items-center px-4">
-        {/* Left Section (Logo) - Takes up 1/3 of the space */}
+        {/* Left Section (Logo) */}
         <div className="flex-1 flex justify-start">
           <Link href="/" className="text-2xl font-bold text-foreground">
             FinZ
           </Link>
         </div>
 
-        {/* Center Section (Navigation) - Takes up 1/3 of the space */}
+        {/* Center Section (Navigation) */}
         <nav className="hidden flex-1 items-center justify-center gap-6 text-sm font-medium md:flex">
           <Link
             href="/"
-            className="text-foreground transition-colors hover:text-foreground/70"
+            className="text-foreground transition-colors hover:text-primary"
           >
             Home
           </Link>
           <Link
             href="/transactions"
-            className="text-muted-foreground transition-colors hover:text-foreground/80"
+            className="text-foreground transition-colors hover:text-primary"
           >
             Transactions
           </Link>
-          <Link
-            href="#"
-            className="text-muted-foreground transition-colors hover:text-foreground/80"
-          >
-            Cash Flow
-          </Link>
+
           {/* Learn Hover Card */}
           <HoverCard openDelay={100} closeDelay={100}>
             <HoverCardTrigger asChild>
-              <span className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground/80">
+              <span className="cursor-pointer text-foreground transition-colors hover:text-primary">
                 Learn
               </span>
             </HoverCardTrigger>
-            <HoverCardContent className="w-48 bg-card border-border dark:border-[#2A3B5A] text-card-foreground p-2">
+            <HoverCardContent className="w-48 bg-card border-border text-card-foreground p-2">
               <Link
                 href="#"
                 className="flex items-center p-2 rounded-md hover:bg-accent"
@@ -118,37 +113,26 @@ export default function Header() {
                 <TrendingUp className="mr-2 h-4 w-4" />
                 <span>Simulator</span>
               </Link>
-              <div className="flex items-center p-2 rounded-md text-muted-foreground/70 cursor-not-allowed">
+              <div className="flex items-center p-2 rounded-md text-muted-foreground cursor-not-allowed">
                 <BookOpen className="mr-2 h-4 w-4" />
                 <span>Lessons</span>
               </div>
             </HoverCardContent>
           </HoverCard>
-          {/* Manage Hover Card */}
-          <HoverCard openDelay={100} closeDelay={100}>
-            <HoverCardTrigger asChild>
-              <span className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground/80">
-                Manage
-              </span>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-48 bg-card border-border dark:border-[#2A3B5A] text-card-foreground p-2">
-              <div className="flex items-center p-2 rounded-md text-muted-foreground/70 cursor-not-allowed">
-                <Landmark className="mr-2 h-4 w-4" />
-                <span>Banks</span>
-              </div>
-              <div className="flex items-center p-2 rounded-md text-muted-foreground/70 cursor-not-allowed">
-                <PiggyBank className="mr-2 h-4 w-4" />
-                <span>Savings</span>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
+
+          <Link href="#" className="text-muted-foreground cursor-not-allowed">
+            Banks
+          </Link>
+          <Link href="#" className="text-muted-foreground cursor-not-allowed">
+            Savings
+          </Link>
         </nav>
 
-        {/* Right Section (Search, Theme, Profile) - Takes up 1/3 of the space */}
+        {/* Right Section (Search, Theme, Profile) */}
         <div className="flex flex-1 items-center justify-end gap-2">
           <Button
             variant="outline"
-            className="hidden h-9 w-48 justify-between bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground sm:flex"
+            className="hidden h-9 w-48 justify-between border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground sm:flex"
             onClick={() => setOpen(true)}
           >
             <div className="flex items-center gap-2">
@@ -165,9 +149,11 @@ export default function Header() {
             className="hidden h-9 w-9 text-muted-foreground hover:bg-accent hover:text-accent-foreground sm:flex"
             onClick={toggleTheme}
           >
-            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -183,13 +169,13 @@ export default function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className="w-56 bg-card border-border dark:border-[#2A3B5A] text-card-foreground"
+              className="w-56 bg-card border-border text-card-foreground"
               align="end"
               forceMount
             >
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none text-card-foreground">
+                  <p className="text-sm font-medium leading-none">
                     {session.user.name}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
@@ -198,7 +184,7 @@ export default function Header() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem className="hover:bg-accent">
+              <DropdownMenuItem>
                 <LayoutDashboard className="mr-2 h-4 w-4" />
                 <span>Dashboard</span>
               </DropdownMenuItem>
@@ -207,7 +193,7 @@ export default function Header() {
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem className="hover:bg-accent">
+              <DropdownMenuItem>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>

@@ -166,12 +166,13 @@ const outflows = allTransactions
 export default function FinZDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [timeRange, setTimeRange] = useState<"1m" | "3m" | "6m">("1m");
-  const [theme, setTheme] = useState("dark");
+
+  // Default theme logic is handled in Header.tsx
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("finz-theme") || "dark";
+    const savedTheme = localStorage.getItem("finz-theme") || "light";
     setTheme(savedTheme);
-    document.documentElement.classList.add(savedTheme);
   }, []);
 
   useEffect(() => {
@@ -219,7 +220,9 @@ export default function FinZDashboard() {
   };
 
   return (
-    <>
+    // The background is now set by the theme classes in globals.css
+    // The custom navy blue is handled by the --background variable in the .dark class
+    <div className="min-h-screen w-full bg-background text-foreground transition-colors duration-300">
       <div className="container mx-auto flex pt-8">
         {/* Main Content Area */}
         <main className="flex-1 pr-8">
@@ -230,10 +233,10 @@ export default function FinZDashboard() {
             <p className="text-md text-primary">{dateString}</p>
           </div>
 
-          <Card className="mb-8 bg-card border-border">
+          <Card className="mb-8 bg-card border-border dark:bg-[#1B253A] dark:border-[#2A3B5A]">
             <CardContent className="flex flex-row items-start gap-8 p-6">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary dark:text-blue-300 mb-4">
                   BANKS
                 </p>
                 <div className="space-y-2">
@@ -242,7 +245,7 @@ export default function FinZDashboard() {
                     return (
                       <div
                         key={index}
-                        className="flex items-center gap-3 p-2 rounded-md bg-muted/50"
+                        className="flex items-center gap-3 p-2 rounded-md bg-muted/50 dark:bg-blue-500/10"
                       >
                         <div className="w-6 h-6 rounded-full flex items-center justify-center">
                           <Icon />
@@ -264,14 +267,14 @@ export default function FinZDashboard() {
               <div className="flex-1">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-primary dark:text-blue-300 mb-2">
                       TOTAL BALANCE
                     </p>
                     <div className="mb-4">
                       <p className="text-4xl font-bold text-foreground">
                         ₹3,49,904
                       </p>
-                      <p className="text-sm text-green-500">
+                      <p className="text-sm text-green-600 dark:text-green-500">
                         ↑ 20% compared to previous month
                       </p>
                     </div>
@@ -357,7 +360,7 @@ export default function FinZDashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Latest Inflow */}
-            <Card className="bg-card border-border">
+            <Card className="bg-card border-border dark:bg-[#1B253A] dark:border-[#2A3B5A]">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-lg font-semibold text-card-foreground">
                   Latest Inflow
@@ -370,7 +373,10 @@ export default function FinZDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {inflows.map((item, index) => (
-                  <div key={index} className="bg-muted/50 p-4 rounded-lg">
+                  <div
+                    key={index}
+                    className="bg-muted/50 dark:bg-[#101827] p-4 rounded-lg"
+                  >
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-md font-medium text-card-foreground">
                         {item.description}
@@ -383,7 +389,7 @@ export default function FinZDashboard() {
                       </span>
                     </div>
                     <div className="flex justify-between items-end">
-                      <p className="text-2xl font-bold text-green-500">
+                      <p className="text-2xl font-bold text-green-600 dark:text-green-500">
                         + ₹{item.amount.toLocaleString()}
                       </p>
                       <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
@@ -395,7 +401,7 @@ export default function FinZDashboard() {
               </CardContent>
             </Card>
             {/* Latest Outflow */}
-            <Card className="bg-card border-border">
+            <Card className="bg-card border-border dark:bg-[#1B253A] dark:border-[#2A3B5A]">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-lg font-semibold text-card-foreground">
                   Latest Outflow
@@ -408,7 +414,10 @@ export default function FinZDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {outflows.map((item, index) => (
-                  <div key={index} className="bg-muted/50 p-4 rounded-lg">
+                  <div
+                    key={index}
+                    className="bg-muted/50 dark:bg-[#101827] p-4 rounded-lg"
+                  >
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-md font-medium text-card-foreground">
                         {item.description}
@@ -421,7 +430,7 @@ export default function FinZDashboard() {
                       </span>
                     </div>
                     <div className="flex justify-between items-end">
-                      <p className="text-2xl font-bold text-red-500">
+                      <p className="text-2xl font-bold text-red-600 dark:text-red-500">
                         - ₹{Math.abs(item.amount).toLocaleString()}
                       </p>
                       <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
@@ -436,10 +445,10 @@ export default function FinZDashboard() {
         </main>
 
         {/* Sidebar */}
-        <aside className="w-96 flex-shrink-0 border-l border-border pl-8">
-          <Card className="bg-card border-border">
+        <aside className="w-96 flex-shrink-0 border-l border-border dark:border-[#2A3B5A] pl-8">
+          <Card className="bg-card border-border dark:bg-[#1B253A] dark:border-[#2A3B5A]">
             <CardHeader className="pb-4">
-              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-primary">
+              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-primary dark:text-blue-300">
                 RECURRING PAYMENTS
               </CardTitle>
             </CardHeader>
@@ -546,7 +555,7 @@ export default function FinZDashboard() {
                       {upcomingPayments.map((payment, index) => (
                         <div
                           key={index}
-                          className="bg-muted/50 p-4 rounded-lg flex items-center justify-between"
+                          className="bg-muted/50 dark:bg-[#101827] p-4 rounded-lg flex items-center justify-between"
                         >
                           <div className="flex items-center gap-4">
                             <div className="text-2xl bg-accent p-3 rounded-md">
@@ -557,9 +566,9 @@ export default function FinZDashboard() {
                                 {payment.name}
                               </p>
                               <div
-                                className={`text-xs p-1 px-2 rounded-full inline-block mt-1 ${
+                                className={`text-xs p-1 px-2 rounded-full inline-block mt-1 font-semibold ${
                                   payment.daysDue < 10
-                                    ? "bg-destructive/20 text-destructive-foreground"
+                                    ? "text-red-600 bg-red-400/30 dark:text-red-400 dark:bg-red-500/30"
                                     : "bg-secondary text-secondary-foreground"
                                 }`}
                               >
@@ -589,6 +598,6 @@ export default function FinZDashboard() {
         theme={theme === "dark" ? "dark" : "light"}
         position="bottom-right"
       />
-    </>
+    </div>
   );
 }

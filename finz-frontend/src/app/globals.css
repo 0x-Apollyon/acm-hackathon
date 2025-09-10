@@ -42,7 +42,7 @@
 
 /* Dark Mode Palette (Unchanged) */
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.2433 0.0358 265.61);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.269 0 0);
   --card-foreground: oklch(0.97 0 0);
