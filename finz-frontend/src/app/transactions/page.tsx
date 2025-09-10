@@ -268,7 +268,7 @@ export default function TransactionsPage() {
               Transactions
             </h1>
             <p className="text-lg text-blue-500 dark:text-blue-300">
-              The story of your financial life.
+              The story of your financial life
             </p>
           </div>
 
