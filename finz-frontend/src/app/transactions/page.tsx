@@ -1,17 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -20,26 +12,33 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   BarChart,
   Bar,
   XAxis,
   YAxis,
   ResponsiveContainer,
   Tooltip,
-  ReferenceLine,
-  Cell,
 } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowUpRight,
-  ArrowDownLeft,
-  Bot,
   TrendingUp,
   TrendingDown,
+  ArrowUpDown,
+  Utensils,
+  Car,
+  Briefcase,
+  Film,
+  HeartHandshake,
+  ShoppingBag,
 } from "lucide-react";
-import { toast } from "sonner";
 
-// --- EXPANDED FABRICATED DATA FOR DEMO ---
+// --- FABRICATED DATA CONSISTENT WITH DASHBOARD ---
 const allTransactions = [
   {
     id: 1,
@@ -48,6 +47,7 @@ const allTransactions = [
     category: "Food",
     amount: -450,
     type: "outflow",
+    icon: Utensils,
   },
   {
     id: 2,
@@ -56,6 +56,7 @@ const allTransactions = [
     category: "Travel",
     amount: -280,
     type: "outflow",
+    icon: Car,
   },
   {
     id: 3,
@@ -64,6 +65,7 @@ const allTransactions = [
     category: "Income",
     amount: 15000,
     type: "inflow",
+    icon: Briefcase,
   },
   {
     id: 4,
@@ -72,6 +74,7 @@ const allTransactions = [
     category: "Entertainment",
     amount: -649,
     type: "outflow",
+    icon: Film,
   },
   {
     id: 5,
@@ -80,6 +83,7 @@ const allTransactions = [
     category: "Income",
     amount: 50000,
     type: "inflow",
+    icon: Briefcase,
   },
   {
     id: 6,
@@ -88,6 +92,7 @@ const allTransactions = [
     category: "Shopping",
     amount: -2500,
     type: "outflow",
+    icon: ShoppingBag,
   },
   {
     id: 7,
@@ -96,6 +101,7 @@ const allTransactions = [
     category: "Family",
     amount: 1000,
     type: "inflow",
+    icon: HeartHandshake,
   },
   {
     id: 8,
@@ -104,22 +110,9 @@ const allTransactions = [
     category: "Entertainment",
     amount: -119,
     type: "outflow",
+    icon: Film,
   },
 ];
-
-// Group transactions by date for the chart
-const dailyFlows = allTransactions.reduce((acc, tx) => {
-  const date = tx.date;
-  if (!acc[date]) {
-    acc[date] = { date, flow: 0 };
-  }
-  acc[date].flow += tx.amount;
-  return acc;
-}, {} as Record<string, { date: string; flow: number }>);
-
-const chartData = Object.values(dailyFlows).sort(
-  (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-);
 
 const categories = [
   "All",
@@ -131,264 +124,379 @@ const categories = [
   "Family",
 ];
 
+// --- RE-PROCESSED DATA FOR CHART ---
+const dailyFlows = allTransactions
+  .filter((tx) => tx.description !== "Salary Credit")
+  .reduce((acc, tx) => {
+    const date = new Date(tx.date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+    if (!acc[date]) acc[date] = { date, inflow: 0, outflow: 0 };
+    if (tx.type === "inflow") acc[date].inflow += tx.amount;
+    else acc[date].outflow += Math.abs(tx.amount);
+    return acc;
+  }, {} as Record<string, { date: string; inflow: number; outflow: number }>);
+
+const chartData = Object.values(dailyFlows).sort(
+  (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+);
+
+type SortOption = "date-desc" | "date-asc" | "amount-desc" | "amount-asc";
+
+// --- CUSTOM TOOLTIP FOR CHART ---
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    const inflowData = payload.find((p: any) => p.dataKey === "inflow");
+    const outflowData = payload.find((p: any) => p.dataKey === "outflow");
+    return (
+      <div className="rounded-lg border bg-background/80 dark:bg-[#1B253A]/80 backdrop-blur-sm p-2 shadow-sm">
+        <div className="flex flex-col gap-1">
+          <span className="font-bold text-foreground text-center mb-1">
+            {label}
+          </span>
+          {inflowData && inflowData.value > 0 && (
+            <div className="flex justify-between items-center gap-4">
+              <span className="text-[0.70rem] uppercase text-green-500">
+                Inflow
+              </span>
+              <span className="font-bold text-green-500">
+                ₹{inflowData.value.toLocaleString()}
+              </span>
+            </div>
+          )}
+          {outflowData && outflowData.value > 0 && (
+            <div className="flex justify-between items-center gap-4">
+              <span className="text-[0.70rem] uppercase text-red-500">
+                Outflow
+              </span>
+              <span className="font-bold text-red-500">
+                ₹{outflowData.value.toLocaleString()}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
+// --- HELPER TO GET RELATIVE DATE ---
+const getRelativeDate = (dateString: string) => {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const transactionDate = new Date(dateString);
+
+  // Reset time component for accurate date comparison
+  today.setHours(0, 0, 0, 0);
+  yesterday.setHours(0, 0, 0, 0);
+  transactionDate.setHours(0, 0, 0, 0);
+
+  if (transactionDate.getTime() === today.getTime()) return "Today";
+  if (transactionDate.getTime() === yesterday.getTime()) return "Yesterday";
+
+  return transactionDate.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 export default function TransactionsPage() {
   const [filterType, setFilterType] = useState<"all" | "inflow" | "outflow">(
     "all"
   );
   const [filterCategory, setFilterCategory] = useState("All");
+  const [sortOption, setSortOption] = useState<SortOption>("date-desc");
 
-  const filteredTransactions = useMemo(() => {
-    return allTransactions
-      .filter((tx) => {
-        const typeMatch = filterType === "all" || tx.type === filterType;
-        const categoryMatch =
-          filterCategory === "All" || tx.category === filterCategory;
-        return typeMatch && categoryMatch;
-      })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [filterType, filterCategory]);
-
-  const totalInflow = useMemo(
-    () =>
-      filteredTransactions
-        .filter((tx) => tx.type === "inflow")
-        .reduce((sum, tx) => sum + tx.amount, 0),
-    [filteredTransactions]
-  );
-  const totalOutflow = useMemo(
-    () =>
-      filteredTransactions
-        .filter((tx) => tx.type === "outflow")
-        .reduce((sum, tx) => sum + tx.amount, 0),
-    [filteredTransactions]
-  );
-  const netFlow = totalInflow + totalOutflow;
-
-  const handleAiAnalysis = () => {
-    toast.message("🤖 AI Analysis", {
-      description:
-        "Your spending this period was primarily on Shopping. Consider reducing discretionary purchases to boost your savings rate. Your net cash flow remains positive due to strong income this month.",
-      duration: 8000,
+  const filteredAndSortedTransactions = useMemo(() => {
+    const filtered = allTransactions.filter((tx) => {
+      const typeMatch = filterType === "all" || tx.type === filterType;
+      const categoryMatch =
+        filterCategory === "All" || tx.category === filterCategory;
+      return typeMatch && categoryMatch;
     });
-  };
+
+    return filtered.sort((a, b) => {
+      switch (sortOption) {
+        case "date-asc":
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        case "amount-desc":
+          return Math.abs(b.amount) - Math.abs(a.amount);
+        case "amount-asc":
+          return Math.abs(a.amount) - Math.abs(b.amount);
+        case "date-desc":
+        default:
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+      }
+    });
+  }, [filterType, filterCategory, sortOption]);
+
+  const { totalInflow, totalOutflow } = useMemo(() => {
+    return filteredAndSortedTransactions.reduce(
+      (acc, tx) => {
+        if (tx.type === "inflow") acc.totalInflow += tx.amount;
+        else acc.totalOutflow += tx.amount;
+        return acc;
+      },
+      { totalInflow: 0, totalOutflow: 0 }
+    );
+  }, [filteredAndSortedTransactions]);
+
+  const groupedTransactions = useMemo(() => {
+    return filteredAndSortedTransactions.reduce((acc, tx) => {
+      const dateKey = tx.date;
+      if (!acc[dateKey]) acc[dateKey] = [];
+      acc[dateKey].push(tx);
+      return acc;
+    }, {} as Record<string, typeof filteredAndSortedTransactions>);
+  }, [filteredAndSortedTransactions]);
+
+  const dateKeys = Object.keys(groupedTransactions);
 
   return (
-    <div className="container mx-auto py-8 text-foreground">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold">Transactions</h1>
-          <p className="text-lg text-muted-foreground">
-            Your complete financial history at a glance.
-          </p>
-        </div>
-
-        {/* Summary & Controls Header */}
-        <Card className="bg-card border-border mb-8 overflow-hidden">
-          <CardContent className="p-6 flex flex-col md:flex-row gap-8 items-center">
-            {/* Metrics */}
-            <div className="w-full md:w-1/3 space-y-4">
-              <div className="p-4 bg-muted/50 rounded-lg">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                  <TrendingUp className="h-4 w-4 text-green-500" />
-                  <span>Total Inflow</span>
-                </div>
-                <p className="text-3xl font-bold text-green-500">
-                  ₹{totalInflow.toLocaleString()}
-                </p>
-              </div>
-              <div className="p-4 bg-muted/50 rounded-lg">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                  <TrendingDown className="h-4 w-4 text-red-500" />
-                  <span>Total Outflow</span>
-                </div>
-                <p className="text-3xl font-bold text-red-500">
-                  ₹{Math.abs(totalOutflow).toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Net Cash Flow</p>
-                <p
-                  className={`text-3xl font-bold ${
-                    netFlow >= 0 ? "text-green-500" : "text-red-500"
-                  }`}
-                >
-                  {netFlow >= 0
-                    ? `+ ₹${netFlow.toLocaleString()}`
-                    : `- ₹${Math.abs(netFlow).toLocaleString()}`}
-                </p>
-              </div>
-            </div>
-            {/* Chart */}
-            <div className="w-full md:w-2/3 h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={chartData}
-                  margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
-                >
-                  <XAxis
-                    dataKey="date"
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      background: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "var(--radius)",
-                    }}
-                    cursor={{ fill: "hsl(var(--accent))", opacity: 0.1 }}
-                  />
-                  <ReferenceLine
-                    y={0}
-                    stroke="hsl(var(--border))"
-                    strokeDasharray="3 3"
-                  />
-                  <Bar dataKey="flow">
-                    {chartData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={
-                          entry.flow >= 0
-                            ? "hsl(142.1 76.2% 38.2%)"
-                            : "hsl(0 82.2% 50.6%)"
-                        }
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Filter Bar */}
-        <div className="flex flex-wrap items-center gap-4 mb-6">
-          <div className="flex gap-2 p-1 bg-muted rounded-full">
-            <Button
-              size="sm"
-              variant={filterType === "all" ? "default" : "ghost"}
-              onClick={() => setFilterType("all")}
-              className="rounded-full"
-            >
-              All
-            </Button>
-            <Button
-              size="sm"
-              variant={filterType === "inflow" ? "default" : "ghost"}
-              onClick={() => setFilterType("inflow")}
-              className="rounded-full"
-            >
-              Inflow
-            </Button>
-            <Button
-              size="sm"
-              variant={filterType === "outflow" ? "default" : "ghost"}
-              onClick={() => setFilterType("outflow")}
-              className="rounded-full"
-            >
-              Outflow
-            </Button>
+    <div className="min-h-screen w-full bg-gray-50 dark:bg-[#101827] text-gray-900 dark:text-white transition-colors duration-300">
+      <div className="container mx-auto py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+              Transactions
+            </h1>
+            <p className="text-lg text-gray-500 dark:text-blue-300">
+              The story of your financial life.
+            </p>
           </div>
-          <Select value={filterCategory} onValueChange={setFilterCategory}>
-            <SelectTrigger className="w-[180px] bg-card border-border">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {cat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button
-            variant="outline"
-            className="ml-auto bg-card border-border"
-            onClick={handleAiAnalysis}
-          >
-            <Bot className="mr-2 h-4 w-4" />
-            Analyze with AI
-          </Button>
-        </div>
 
-        {/* Interactive Transaction List */}
-        <Card className="bg-card border-border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[150px]">Date</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <AnimatePresence>
-                {filteredTransactions.map((tx) => (
-                  <motion.tr
-                    key={tx.id}
-                    layout
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                    className="hover:bg-muted/50"
+          <Card className="bg-white dark:bg-[#1B253A] border-none shadow-sm mb-8 overflow-hidden">
+            <CardContent className="p-6 flex flex-col md:flex-row gap-8 items-center">
+              <div className="w-full md:w-1/3 space-y-4">
+                <div className="p-4 bg-gray-100 dark:bg-[#101827] rounded-lg">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                    <span>Total Inflow</span>
+                  </div>
+                  <p className="text-3xl font-bold text-green-500">
+                    ₹{totalInflow.toLocaleString()}
+                  </p>
+                </div>
+                <div className="p-4 bg-gray-100 dark:bg-[#101827] rounded-lg">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                    <TrendingDown className="h-4 w-4 text-red-500" />
+                    <span>Total Outflow</span>
+                  </div>
+                  <p className="text-3xl font-bold text-red-500">
+                    ₹{Math.abs(totalOutflow).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+              <div className="w-full md:w-2/3 h-56">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={chartData}
+                    margin={{ top: 5, right: 0, left: -20, bottom: 5 }}
                   >
-                    <TableCell className="font-medium">
-                      {new Date(tx.date).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </TableCell>
-                    <TableCell className="flex items-center gap-3">
-                      <div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                          tx.type === "inflow"
-                            ? "bg-green-500/10"
-                            : "bg-red-500/10"
-                        }`}
-                      >
-                        {tx.type === "inflow" ? (
-                          <ArrowUpRight className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <ArrowDownLeft className="h-4 w-4 text-red-500" />
-                        )}
-                      </div>
-                      {tx.description}
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                        {tx.category}
-                      </span>
-                    </TableCell>
-                    <TableCell
-                      className={`text-right font-bold ${
-                        tx.type === "inflow" ? "text-green-500" : "text-red-500"
-                      }`}
-                    >
-                      {tx.amount > 0
-                        ? `+ ₹${tx.amount.toLocaleString()}`
-                        : `- ₹${Math.abs(tx.amount).toLocaleString()}`}
-                    </TableCell>
-                  </motion.tr>
+                    <XAxis
+                      dataKey="date"
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{
+                        fill: "hsl(var(--muted-foreground))",
+                        fontSize: 10,
+                      }}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => `₹${value / 1000}k`}
+                      domain={[0, 16000]}
+                      tick={{
+                        fill: "hsl(var(--muted-foreground))",
+                        fontSize: 10,
+                      }}
+                    />
+                    <Tooltip
+                      content={<CustomTooltip />}
+                      cursor={{ fill: "hsl(var(--accent))", opacity: 0.1 }}
+                    />
+                    <Bar
+                      dataKey="inflow"
+                      fill="#22c55e"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar
+                      dataKey="outflow"
+                      fill="#ef4444"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="mb-6 flex flex-wrap items-center gap-4">
+            <div className="flex gap-2 p-1 bg-gray-200 dark:bg-[#1B253A] rounded-full">
+              <Button
+                size="sm"
+                variant={filterType === "all" ? "default" : "ghost"}
+                onClick={() => setFilterType("all")}
+                className="rounded-full"
+              >
+                All
+              </Button>
+              <Button
+                size="sm"
+                variant={filterType === "inflow" ? "default" : "ghost"}
+                onClick={() => setFilterType("inflow")}
+                className="rounded-full"
+              >
+                Inflow
+              </Button>
+              <Button
+                size="sm"
+                variant={filterType === "outflow" ? "default" : "ghost"}
+                onClick={() => setFilterType("outflow")}
+                className="rounded-full"
+              >
+                Outflow
+              </Button>
+            </div>
+            <Select value={filterCategory} onValueChange={setFilterCategory}>
+              <SelectTrigger className="w-[180px] bg-white dark:bg-[#101827] border-gray-200 dark:border-[#2A3B5A] shadow-sm">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
                 ))}
-              </AnimatePresence>
-            </TableBody>
-          </Table>
-        </Card>
-      </motion.div>
+              </SelectContent>
+            </Select>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="bg-white dark:bg-[#101827] border-gray-200 dark:border-[#2A3B5A] shadow-sm ml-auto"
+                >
+                  <ArrowUpDown className="mr-2 h-4 w-4" />
+                  Sort By
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onSelect={() => setSortOption("date-desc")}>
+                  Date: Newest First
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setSortOption("date-asc")}>
+                  Date: Oldest First
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setSortOption("amount-desc")}>
+                  Amount: High to Low
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setSortOption("amount-asc")}>
+                  Amount: Low to High
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <div className="space-y-8">
+            <AnimatePresence>
+              {dateKeys.length > 0 ? (
+                dateKeys.map((dateKey) => (
+                  <motion.div
+                    key={dateKey}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 sticky top-4 z-10 bg-gray-50/80 dark:bg-[#101827]/80 backdrop-blur-sm py-2 px-2 rounded-md">
+                      {getRelativeDate(dateKey)}
+                    </h2>
+                    <div className="space-y-3">
+                      {groupedTransactions[dateKey].map((tx) => {
+                        const Icon = tx.icon;
+                        return (
+                          <motion.div
+                            key={tx.id}
+                            layout
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 10 }}
+                            transition={{ duration: 0.3 }}
+                            className="bg-white dark:bg-[#1B253A] rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-300"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div
+                                className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                  tx.type === "inflow"
+                                    ? "bg-green-500/10 text-green-500"
+                                    : "bg-red-500/10 text-red-500"
+                                }`}
+                              >
+                                <Icon className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <p className="font-semibold text-foreground">
+                                  {tx.description}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {new Date(tx.date).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      weekday: "long",
+                                      month: "short",
+                                      day: "numeric",
+                                    }
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p
+                                className={`text-lg font-bold ${
+                                  tx.type === "inflow"
+                                    ? "text-green-500"
+                                    : "text-red-500"
+                                }`}
+                              >
+                                {tx.amount > 0
+                                  ? `+ ₹${tx.amount.toLocaleString()}`
+                                  : `- ₹${Math.abs(
+                                      tx.amount
+                                    ).toLocaleString()}`}
+                              </p>
+                              <span className="text-xs bg-gray-100 dark:bg-[#101827] text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full mt-1 inline-block">
+                                {tx.category}
+                              </span>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="h-40 flex items-center justify-center text-muted-foreground bg-white dark:bg-[#1B253A] rounded-xl shadow-sm"
+                >
+                  No transactions found for the selected filters.
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
