@@ -267,7 +267,7 @@ export default function TransactionsPage() {
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
               Transactions
             </h1>
-            <p className="text-lg text-gray-500 dark:text-blue-300">
+            <p className="text-lg text-blue-500 dark:text-blue-300">
               The story of your financial life.
             </p>
           </div>
@@ -304,20 +304,14 @@ export default function TransactionsPage() {
                       dataKey="date"
                       tickLine={false}
                       axisLine={false}
-                      tick={{
-                        fill: "hsl(var(--muted-foreground))",
-                        fontSize: 10,
-                      }}
+                      tick={{ className: "text-xs fill-muted-foreground" }}
                     />
                     <YAxis
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(value) => `₹${value / 1000}k`}
                       domain={[0, 16000]}
-                      tick={{
-                        fill: "hsl(var(--muted-foreground))",
-                        fontSize: 10,
-                      }}
+                      tick={{ className: "text-xs fill-muted-foreground" }}
                     />
                     <Tooltip
                       content={<CustomTooltip />}
@@ -339,7 +333,6 @@ export default function TransactionsPage() {
             </CardContent>
           </Card>
 
-          {/* --- CHANGE: Transactions list and filters are now in their own card --- */}
           <div className="bg-white dark:bg-[#1B253A] rounded-xl shadow-sm">
             <div className="p-4 border-b border-gray-200 dark:border-[#2A3B5A]">
               <div className="flex flex-wrap items-center gap-4">
