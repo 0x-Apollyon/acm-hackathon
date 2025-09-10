@@ -165,7 +165,6 @@ const outflows = allTransactions
 
 export default function FinZDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date());
-
   const [timeRange, setTimeRange] = useState<"1m" | "3m" | "6m">("1m");
   const [theme, setTheme] = useState("dark");
 
@@ -359,12 +358,12 @@ export default function FinZDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Latest Inflow */}
             <Card className="bg-card border-border">
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-lg font-semibold text-card-foreground">
                   Latest Inflow
                 </CardTitle>
                 <Link href="/transactions?filter=inflow" passHref>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="text-primary">
                     View More
                   </Button>
                 </Link>
@@ -397,12 +396,12 @@ export default function FinZDashboard() {
             </Card>
             {/* Latest Outflow */}
             <Card className="bg-card border-border">
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-lg font-semibold text-card-foreground">
                   Latest Outflow
                 </CardTitle>
                 <Link href="/transactions?filter=outflow" passHref>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="text-primary">
                     View More
                   </Button>
                 </Link>
