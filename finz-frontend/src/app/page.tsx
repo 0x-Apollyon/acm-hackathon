@@ -165,22 +165,20 @@ const outflows = allTransactions
 
 export default function FinZDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [timeRange, setTimeRange] = useState<"1m" | "3m" | "6m">("1m");
 
-  // Persistence for chart time range
-  const [timeRange, setTimeRange] = useState<"1m" | "3m" | "6m">(() => {
-    if (typeof window !== "undefined") {
-      return (
-        (localStorage.getItem("finz-chart-range") as "1m" | "3m" | "6m") || "1m"
-      );
-    }
-    return "1m";
-  });
+  // Default theme logic is handled in Header.tsx
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("finz-theme") || "light";
+    setTheme(savedTheme);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("finz-chart-range", timeRange);
   }, [timeRange]);
 
-  // Persistence for accordion state
   const [accordionValue, setAccordionValue] = useState<string[]>(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("finz-accordion-state");
@@ -223,7 +221,7 @@ export default function FinZDashboard() {
 
   return (
     // The background is now set by the theme classes in globals.css
-    // The Header component is responsible for toggling the 'dark' class on the <html> element
+    // The custom navy blue is handled by the --background variable in the .dark class
     <div className="min-h-screen w-full bg-background text-foreground transition-colors duration-300">
       <div className="container mx-auto flex pt-8">
         {/* Main Content Area */}
@@ -570,7 +568,7 @@ export default function FinZDashboard() {
                               <div
                                 className={`text-xs p-1 px-2 rounded-full inline-block mt-1 font-semibold ${
                                   payment.daysDue < 10
-                                    ? "bg-destructive/20 text-destructive-foreground dark:text-red-400 dark:bg-red-500/30"
+                                    ? "text-red-600 bg-red-400/30 dark:text-red-400 dark:bg-red-500/30"
                                     : "bg-secondary text-secondary-foreground"
                                 }`}
                               >
@@ -596,8 +594,10 @@ export default function FinZDashboard() {
           </Card>
         </aside>
       </div>
-      {/* The Toaster will now automatically adapt to the theme set on the <html> tag */}
-      <Toaster position="bottom-right" />
+      <Toaster
+        theme={theme === "dark" ? "dark" : "light"}
+        position="bottom-right"
+      />
     </div>
   );
 }

@@ -42,12 +42,16 @@ import React, { useEffect } from "react";
 export default function Header() {
   const [open, setOpen] = React.useState(false);
 
-  // Default theme logic is handled in page.tsx
+  // This state will now correctly sync with the DOM and localStorage
   const [theme, setTheme] = React.useState("light");
 
+  // This useEffect is the critical fix. It runs once on mount to set the initial theme.
   useEffect(() => {
-    const savedTheme = localStorage.getItem("finz-theme") || "light";
+    const savedTheme = localStorage.getItem("finz-theme") || "light"; // Default to light
     setTheme(savedTheme);
+    const root = window.document.documentElement;
+    root.classList.remove("light", "dark");
+    root.classList.add(savedTheme);
   }, []);
 
   const toggleTheme = () => {
