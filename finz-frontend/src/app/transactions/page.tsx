@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-
+import React, { Suspense } from "react"; // Import Suspense
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,104 +38,25 @@ import {
   HeartHandshake,
   ShoppingBag,
 } from "lucide-react";
+import { allTransactions, categories } from "@/lib/data"; // Import from our new data file
+import { useSearchParams } from "next/navigation";
 
-// --- FABRICATED DATA CONSISTENT WITH DASHBOARD ---
-const allTransactions = [
-  {
-    id: 1,
-    date: "2025-09-10",
-    description: "Zomato Order",
-    category: "Food",
-    amount: -450,
-    type: "outflow",
-    icon: Utensils,
-  },
-  {
-    id: 2,
-    date: "2025-09-10",
-    description: "Uber Ride",
-    category: "Travel",
-    amount: -280,
-    type: "outflow",
-    icon: Car,
-  },
-  {
-    id: 3,
-    date: "2025-09-09",
-    description: "Freelance Payment",
-    category: "Income",
-    amount: 15000,
-    type: "inflow",
-    icon: Briefcase,
-  },
-  {
-    id: 4,
-    date: "2025-09-08",
-    description: "Netflix Subscription",
-    category: "Entertainment",
-    amount: -649,
-    type: "outflow",
-    icon: Film,
-  },
-  {
-    id: 5,
-    date: "2025-09-07",
-    description: "Salary Credit",
-    category: "Income",
-    amount: 50000,
-    type: "inflow",
-    icon: Briefcase,
-  },
-  {
-    id: 6,
-    date: "2025-09-06",
-    description: "Amazon Purchase",
-    category: "Shopping",
-    amount: -2500,
-    type: "outflow",
-    icon: ShoppingBag,
-  },
-  {
-    id: 7,
-    date: "2025-09-05",
-    description: "Mom",
-    category: "Family",
-    amount: 1000,
-    type: "inflow",
-    icon: HeartHandshake,
-  },
-  {
-    id: 8,
-    date: "2025-09-04",
-    description: "Spotify",
-    category: "Entertainment",
-    amount: -119,
-    type: "outflow",
-    icon: Film,
-  },
-];
-
-const categories = [
-  "All",
-  "Food",
-  "Travel",
-  "Income",
-  "Entertainment",
-  "Shopping",
-  "Family",
-];
-
-// --- RE-PROCESSED DATA FOR CHART ---
+// --- RE-PROCESSED DATA FOR TWO-BAR CHART (SALARY FILTERED OUT) ---
 const dailyFlows = allTransactions
-  .filter((tx) => tx.description !== "Salary Credit")
+  .filter((tx) => tx.description !== "Salary Credit") // Exclude the salary outlier
   .reduce((acc, tx) => {
     const date = new Date(tx.date).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
     });
-    if (!acc[date]) acc[date] = { date, inflow: 0, outflow: 0 };
-    if (tx.type === "inflow") acc[date].inflow += tx.amount;
-    else acc[date].outflow += Math.abs(tx.amount);
+    if (!acc[date]) {
+      acc[date] = { date, inflow: 0, outflow: 0 };
+    }
+    if (tx.type === "inflow") {
+      acc[date].inflow += tx.amount;
+    } else {
+      acc[date].outflow += Math.abs(tx.amount);
+    }
     return acc;
   }, {} as Record<string, { date: string; inflow: number; outflow: number }>);
 
@@ -203,10 +125,20 @@ const getRelativeDate = (dateString: string) => {
   });
 };
 
-export default function TransactionsPage() {
+// Main component that uses the URL parameter
+function TransactionsComponent() {
+  const searchParams = useSearchParams();
+  const initialFilter = searchParams.get("filter");
+
   const [filterType, setFilterType] = useState<"all" | "inflow" | "outflow">(
-    "all"
+    () => {
+      if (initialFilter === "inflow" || initialFilter === "outflow") {
+        return initialFilter;
+      }
+      return "all";
+    }
   );
+
   const [filterCategory, setFilterCategory] = useState("All");
   const [sortOption, setSortOption] = useState<SortOption>("date-desc");
 
