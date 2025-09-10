@@ -1,0 +1,237 @@
+/* eslint-disable @next/next/no-img-element */
+"use client";
+
+import Link from "next/link";
+import {
+  Search,
+  Sun,
+  Moon,
+  LogOut,
+  LayoutDashboard,
+  Settings,
+  BookOpen,
+  Landmark,
+  PiggyBank,
+  TrendingUp,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import React, { useState, useEffect } from "react";
+
+export default function Header() {
+  const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("finz-theme") || "dark";
+    }
+    return "dark";
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove("light", "dark");
+    root.classList.add(theme);
+    localStorage.setItem("finz-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((open) => !open);
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
+
+  // Placeholder for user session data
+  const session = { user: { name: "Nishant", image: "/placeholder.svg" } };
+
+  return (
+    //  Overriding dark mode colors for a custom, cohesive theme
+    <header className="sticky top-0 z-50 w-full border-b border-border dark:border-[#2A3B5A] bg-card/95 dark:bg-[#182235]/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 dark:supports-[backdrop-filter]:bg-[#182235]/60">
+      <div className="container mx-auto flex h-16 items-center px-4">
+        {/* Left Section (Logo) - Takes up 1/3 of the space */}
+        <div className="flex-1 flex justify-start">
+          <Link href="/" className="text-2xl font-bold text-foreground">
+            FinZ
+          </Link>
+        </div>
+
+        {/* Center Section (Navigation) - Takes up 1/3 of the space */}
+        <nav className="hidden flex-1 items-center justify-center gap-6 text-sm font-medium md:flex">
+          <Link
+            href="/"
+            className="text-foreground transition-colors hover:text-foreground/70"
+          >
+            Home
+          </Link>
+          <Link
+            href="/transactions"
+            className="text-muted-foreground transition-colors hover:text-foreground/80"
+          >
+            Transactions
+          </Link>
+          <Link
+            href="#"
+            className="text-muted-foreground transition-colors hover:text-foreground/80"
+          >
+            Cash Flow
+          </Link>
+          {/* Learn Hover Card */}
+          <HoverCard openDelay={100} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <span className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground/80">
+                Learn
+              </span>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-48 bg-card border-border dark:border-[#2A3B5A] text-card-foreground p-2">
+              <Link
+                href="#"
+                className="flex items-center p-2 rounded-md hover:bg-accent"
+              >
+                <TrendingUp className="mr-2 h-4 w-4" />
+                <span>Simulator</span>
+              </Link>
+              <div className="flex items-center p-2 rounded-md text-muted-foreground/70 cursor-not-allowed">
+                <BookOpen className="mr-2 h-4 w-4" />
+                <span>Lessons</span>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+          {/* Manage Hover Card */}
+          <HoverCard openDelay={100} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <span className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground/80">
+                Manage
+              </span>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-48 bg-card border-border dark:border-[#2A3B5A] text-card-foreground p-2">
+              <div className="flex items-center p-2 rounded-md text-muted-foreground/70 cursor-not-allowed">
+                <Landmark className="mr-2 h-4 w-4" />
+                <span>Banks</span>
+              </div>
+              <div className="flex items-center p-2 rounded-md text-muted-foreground/70 cursor-not-allowed">
+                <PiggyBank className="mr-2 h-4 w-4" />
+                <span>Savings</span>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </nav>
+
+        {/* Right Section (Search, Theme, Profile) - Takes up 1/3 of the space */}
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <Button
+            variant="outline"
+            className="hidden h-9 w-48 justify-between bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground sm:flex"
+            onClick={() => setOpen(true)}
+          >
+            <div className="flex items-center gap-2">
+              <Search className="h-4 w-4" />
+              Search...
+            </div>
+            <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden h-9 w-9 text-muted-foreground hover:bg-accent hover:text-accent-foreground sm:flex"
+            onClick={toggleTheme}
+          >
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="relative h-8 w-8 rounded-full hover:bg-accent"
+              >
+                <img
+                  className="h-8 w-8 rounded-full"
+                  src={`https://avatar.vercel.sh/${session.user.name}.png`}
+                  alt="User avatar"
+                />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-56 bg-card border-border dark:border-[#2A3B5A] text-card-foreground"
+              align="end"
+              forceMount
+            >
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none text-card-foreground">
+                    {session.user.name}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    nishant@example.com
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuItem className="hover:bg-accent">
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                <span>Dashboard</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuItem className="hover:bg-accent">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Type a command or search..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Suggestions">
+            <CommandItem>
+              <Search className="mr-2 h-4 w-4" />
+              <span>Search Transactions</span>
+            </CommandItem>
+            <CommandItem>
+              <TrendingUp className="mr-2 h-4 w-4" />
+              <span>Open Simulator</span>
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
+    </header>
+  );
+}
