@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Link from "next/link";
@@ -115,28 +117,12 @@ export default function Navbar() {
           >
             Savings
           </Link>
-
-          {/* Learn Hover Card */}
-          <HoverCard openDelay={100} closeDelay={100}>
-            <HoverCardTrigger asChild>
-              <span className="cursor-pointer text-white/90 transition-all hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg backdrop-blur-sm">
-                Learn
-              </span>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-48 glass-strong border-slate-500/40 text-white/90 p-2">
-              <Link
-                href="#"
-                className="flex items-center p-2 rounded-md hover:bg-white/10 transition-all"
-              >
-                <TrendingUp className="mr-2 h-4 w-4" />
-                <span>Simulator</span>
-              </Link>
-              <div className="flex items-center p-2 rounded-md text-white/50 cursor-not-allowed">
-                <BookOpen className="mr-2 h-4 w-4" />
-                <span>Lessons</span>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
+          <Link
+            href="/stonks"
+            className="text-white/90 transition-all hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg backdrop-blur-sm"
+          >
+            Learn
+          </Link>
         </nav>
 
         {/* Right Section (Search, Theme, Profile) */}
