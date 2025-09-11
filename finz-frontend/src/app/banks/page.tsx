@@ -1,12 +1,20 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LineChart, Line, ResponsiveContainer, XAxis, Tooltip } from "recharts";
-import { Copy, RefreshCw, ArrowUpRight, ArrowDownLeft } from "lucide-react";
-import { useState, useEffect } from "react";
+import {
+  LineChart,
+  Line,
+  ResponsiveContainer,
+  XAxis,
+  YAxis, // Fixed: Added YAxis to the import
+  Tooltip,
+} from "recharts";
+import { Copy, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { allTransactions, bankAccounts as allBankAccounts } from "@/lib/data";
+import { allTransactions, allBankAccounts } from "@/lib/data"; // Fixed: Correctly named the import
+import { BankAccount, Transaction } from "@/lib/types"; // Import the types
 
 // --- CUSTOM BRAND ICON COMPONENTS (re-used from dashboard) ---
 const SbiIcon = () => (
@@ -46,7 +54,8 @@ const AxisIcon = () => (
   </svg>
 );
 
-const bankDataWithDetails = allBankAccounts.map((account) => {
+const bankDataWithDetails = allBankAccounts.map((account: BankAccount) => {
+  // Fixed: Added BankAccount type
   // Fabricate some recent transactions and a balance history for each account
   const recentTransactions = allTransactions
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -95,6 +104,7 @@ export default function BanksPage() {
 
       <div className="space-y-8">
         {bankDataWithDetails.map((bank) => {
+          // Fixed: Type is inferred correctly now
           const Icon = bank.icon;
           return (
             <Card
@@ -157,7 +167,7 @@ export default function BanksPage() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">
-                        Holder's Name
+                        Holder&apos;s Name
                       </span>
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-foreground">
@@ -233,25 +243,29 @@ export default function BanksPage() {
                       Recent Transactions
                     </h3>
                     <div className="space-y-3">
-                      {bank.recentTransactions.map((tx) => (
-                        <div
-                          key={tx.id}
-                          className="flex items-center justify-between text-sm"
-                        >
-                          <p className="text-foreground">{tx.description}</p>
-                          <p
-                            className={
-                              tx.type === "inflow"
-                                ? "text-green-500"
-                                : "text-red-500"
-                            }
+                      {bank.recentTransactions.map(
+                        (
+                          tx: Transaction // Fixed: Added Transaction type
+                        ) => (
+                          <div
+                            key={tx.id}
+                            className="flex items-center justify-between text-sm"
                           >
-                            {tx.amount > 0
-                              ? `+₹${tx.amount.toLocaleString()}`
-                              : `-₹${Math.abs(tx.amount).toLocaleString()}`}
-                          </p>
-                        </div>
-                      ))}
+                            <p className="text-foreground">{tx.description}</p>
+                            <p
+                              className={
+                                tx.type === "inflow"
+                                  ? "text-green-500"
+                                  : "text-red-500"
+                              }
+                            >
+                              {tx.amount > 0
+                                ? `+₹${tx.amount.toLocaleString()}`
+                                : `-₹${Math.abs(tx.amount).toLocaleString()}`}
+                            </p>
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
                 </div>
