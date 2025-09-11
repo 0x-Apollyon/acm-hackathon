@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinZ | Stonks</title>
+    <style>
+        :root {
+            /* Light Theme Palette */
+            --bg-gradient-start: #f8f9fa;
+            --bg-gradient-end: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --logo-primary: #495057;
+            --chart-bg: #f8f9fa;
+            --grid-line: rgba(0,0,0,0.05);
+            --card-bg-start: #ffffff;
+            --card-bg-end: #f8f9fa;
+            --card-border: #e9ecef;
+            --feature-title: #343a40;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --cta-bg-start: #495057;
+            --cta-bg-end: #343a40;
+            --cta-text: #ffffff;
+            --bullish: #28a745;
+            --bearish: #dc3545;
+        }
+
+        html[data-theme="dark"] {
+            /* Dark Theme Palette */
+            --bg-gradient-start: #1f2023;
+            --bg-gradient-end: #121212;
+            --text-primary: #e0e0e0;
+            --text-secondary: #888888;
+            --logo-primary: #ced4da;
+            --chart-bg: #1e1e1e;
+            --grid-line: rgba(255,255,255,0.07);
+            --card-bg-start: #282a2e;
+            --card-bg-end: #1e1e1e;
+            --card-border: #333333;
+            --feature-title: #f1f3f5;
+            --shadow-color: rgba(0, 0, 0, 0.25);
+            --cta-bg-start: #5a626b;
+            --cta-bg-end: #495057;
+            --cta-text: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 10px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+
+        .header {
+            text-align: left;
+            padding: 20px 0 10px;
+            background: transparent;
+            position: relative;
+        }
+        
+        #theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 5px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+        #theme-toggle:hover {
+            color: var(--text-primary);
+            background-color: var(--grid-line);
+        }
+        .theme-icon {
+            width: 24px;
+            height: 24px;
+        }
+        #moon-icon { display: none; }
+
+
+        .logo {
+            font-size: clamp(24px, 5vw, 28px);
+            font-weight: 700;
+            color: var(--logo-primary);
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+            padding-left: 20px;
+        }
+
+        .logo .divider {
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .tagline {
+            font-size: clamp(14px, 3vw, 16px);
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-weight: 400;
+            padding-left: 20px;
+        }
+
+        .candles-container {
+            height: clamp(250px, 40vh, 300px);
+            margin: 0 0 20px;
+            position: relative;
+            background: var(--chart-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        .chart-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--grid-line) 0.5px, transparent 0.5px);
+            background-size: 100% 40px;
+        }
+
+        .candle {
+            position: absolute;
+            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .candle-wick {
+            width: 2px;
+            background: var(--text-secondary);
+            margin: 0 auto;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1), top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .candle-body {
+            width: clamp(12px, 2vw, 16px);
+            border-radius: 2px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1), top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .volume-bar {
+            width: clamp(12px, 2vw, 16px);
+            background: rgba(108, 117, 125, 0.3);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .candle.bullish .candle-body {
+            background: var(--bullish);
+        }
+
+        .candle.bearish .candle-body {
+            background: var(--bearish);
+        }
+
+        .features-section {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, var(--card-bg-start) 0%, var(--card-bg-end) 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, var(--text-secondary) 0%, var(--logo-primary) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-title {
+            font-size: clamp(18px, 4vw, 20px);
+            font-weight: 600;
+            color: var(--feature-title);
+            margin-bottom: 10px;
+        }
+
+        .feature-description {
+            font-size: clamp(14px, 2.5vw, 15px);
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--cta-bg-start) 0%, var(--cta-bg-end) 100%);
+            color: var(--cta-text);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: clamp(12px, 2.5vw, 14px);
+            font-weight: 600;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        html[data-theme="dark"] .cta-button:hover {
+             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            .dashboard-container {
+                border-radius: 4px;
+            }
+            .header {
+                padding: 15px 0 10px;
+            }
+            .logo, .tagline {
+                padding-left: 15px;
+            }
+            #theme-toggle {
+                top: 15px; right: 15px;
+            }
+            .candles-container {
+                margin: 0 0 15px;
+            }
+            .features-section {
+                padding: 15px;
+                gap: 15px;
+            }
+            .feature-card {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 20px;
+            }
+            .tagline {
+                font-size: 12px;
+                margin-bottom: 15px;
+            }
+            .candles-container {
+                height: 200px;
+            }
+            .candle-body, .volume-bar {
+                width: 10px;
+            }
+            .feature-card {
+                padding: 10px;
+            }
+            .feature-icon {
+                width: 40px;
+                height: 40px;
+            }
+            .cta-button {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="logo">
+                FinZ <span class="divider">|</span> Stonks
+            </div>
+            <div class="tagline">Smart Investing Starts at Home</div>
+            
+            <button id="theme-toggle" title="Toggle theme">
+                <svg id="sun-icon" class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="moon-icon" class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+            
+            <div class="candles-container" id="candlesContainer">
+                <div class="chart-grid"></div>
+                <!-- Candles will be generated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="features-section">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Learn About Investing</div>
+                <div class="feature-description">
+                    Master the fundamentals through our interactive learning modules. From understanding market basics to advanced strategies, we make investing education engaging and accessible. Earn badges, track progress, and build confidence one lesson at a time.
+                </div>
+                <button class="cta-button" onclick="window.location.href='./learn'">Start Learning</button>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                        <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Get Into Investment</div>
+                <div class="feature-description">
+                    Ready to start your investment journey? Discover curated opportunities, access real-time market data, and make informed decisions with our intelligent recommendations. Start small, think big, and grow your wealth systematically.
+                </div>
+                <button class="cta-button" onclick="window.location.href='./invest'">Start Investing</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- THEME SWITCHER LOGIC ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        function updateThemeUI(theme) {
+            sunIcon.style.display = theme === 'dark' ? 'none' : 'block';
+            moonIcon.style.display = theme === 'dark' ? 'block' : 'none';
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            updateThemeUI(newTheme);
+        });
+
+        // --- ORIGINAL PAGE LOGIC ---
+        class CandleAnimation {
+            constructor() {
+                this.container = document.getElementById('candlesContainer');
+                this.candles = [];
+                this.priceHistory = [100];
+                this.candleWidth = 20;
+                this.staggerDelay = 5;
+                this.transitionTime = 500;
+                this.resizeObserver = null;
+                this.init();
+            }
+
+            init() {
+                this.updateContainerWidth();
+                this.createCandles();
+                this.startAnimation();
+                this.handleResize();
+            }
+
+            updateContainerWidth() {
+                this.containerWidth = this.container.offsetWidth;
+                this.maxCandles = Math.floor(this.containerWidth / this.candleWidth);
+            }
+
+            createCandles() {
+                this.container.querySelectorAll('.candle').forEach(el => el.remove());
+                this.candles = [];
+                for (let i = 0; i < this.maxCandles; i++) {
+                    this.priceHistory.push(this.generateNextPrice());
+                    const candle = this.createSingleCandle(i);
+                    this.updateCandle(candle, i);
+                    this.candles.push(candle);
+                    this.container.appendChild(candle.element);
+                }
+            }
+
+            createSingleCandle(index) {
+                const candleEl = document.createElement('div');
+                candleEl.className = 'candle';
+                candleEl.style.left = `${index * this.candleWidth}px`;
+                
+                const wickTop = document.createElement('div');
+                wickTop.className = 'candle-wick';
+                
+                const body = document.createElement('div');
+                body.className = 'candle-body';
+                
+                const wickBottom = document.createElement('div');
+                wickBottom.className = 'candle-wick';
+                
+                const volumeBar = document.createElement('div');
+                volumeBar.className = 'volume-bar';
+                
+                candleEl.appendChild(wickTop);
+                candleEl.appendChild(body);
+                candleEl.appendChild(wickBottom);
+                candleEl.appendChild(volumeBar);
+                
+                return {
+                    element: candleEl,
+                    wickTop,
+                    body,
+                    wickBottom,
+                    volumeBar
+                };
+            }
+
+            generateNextPrice() {
+                const lastPrice = this.priceHistory[this.priceHistory.length - 1];
+                const volatility = 0.20;
+                const trend = Math.random() > 0.5 ? 1 : -1;
+                const randomChange = lastPrice * volatility * (Math.random() - 0.5) * 2;
+                return Math.max(50, Math.min(150, lastPrice + randomChange + trend));
+            }
+
+            updateCandle(candle, index) {
+                const price = this.priceHistory[index];
+                const prevPrice = index > 0 ? this.priceHistory[index - 1] : price;
+                const isBullish = price > prevPrice;
+                
+                candle.element.className = `candle ${isBullish ? 'bullish' : 'bearish'}`;
+                
+                const minPrice = 40;
+                const maxPrice = 140;
+                const priceRange = 100;
+                const containerHeight = this.container.offsetHeight;
+                
+                const open = index > 0 ? this.priceHistory[index - 1] : price;
+                const close = price;
+                const high = Math.max(open, close) + Math.random() * 2;
+                const low = Math.min(open, close) - Math.random() * 2;
+                
+                const normalize = (val) => ((val - minPrice) / priceRange) * containerHeight * 0.8;
+                
+                const normalizedHigh = normalize(high);
+                const normalizedLow = normalize(low);
+                const normalizedOpen = normalize(open);
+                const normalizedClose = normalize(close);
+                
+                const bodyHeight = Math.abs(normalizedClose - normalizedOpen) || 1;
+                const bodyTop = containerHeight - Math.max(normalizedOpen, normalizedClose);
+                
+                candle.body.style.height = `${bodyHeight}px`;
+                candle.body.style.top = `${bodyTop}px`;
+                
+                const wickTopHeight = normalizedHigh - Math.max(normalizedOpen, normalizedClose);
+                candle.wickTop.style.height = `${wickTopHeight}px`;
+                candle.wickTop.style.top = `${bodyTop - wickTopHeight}px`;
+                
+                const wickBottomHeight = Math.min(normalizedOpen, normalizedClose) - normalizedLow;
+                candle.wickBottom.style.height = `${wickBottomHeight}px`;
+                candle.wickBottom.style.top = `${bodyTop + bodyHeight}px`;
+                
+                const volume = 15 + Math.random() * 35;
+                candle.volumeBar.style.height = `${volume}px`;
+                
+                candle.element.style.opacity = 1;
+            }
+
+            animateCandles() {
+                const newPrice = this.generateNextPrice();
+                this.priceHistory.push(newPrice);
+                
+                const newIndex = this.maxCandles;
+                const newCandle = this.createSingleCandle(newIndex);
+                this.updateCandle(newCandle, newIndex);
+                newCandle.element.style.left = `${this.containerWidth}px`;
+                this.container.appendChild(newCandle.element);
+                this.candles.push(newCandle);
+                
+                const maxDelay = this.staggerDelay * this.maxCandles;
+                const totalTime = maxDelay + this.transitionTime;
+                
+                this.candles.forEach((candle, index) => {
+                    const delay = (this.maxCandles - (index + 1)) * this.staggerDelay;
+                    setTimeout(() => {
+                        candle.element.style.left = `${(index - 1) * this.candleWidth}px`;
+                    }, delay);
+                });
+                
+                setTimeout(() => {
+                    if (this.container.contains(this.candles[0]?.element)) {
+                         const oldCandle = this.candles.shift();
+                         this.container.removeChild(oldCandle.element);
+                         this.priceHistory.shift();
+                    }
+                }, totalTime);
+            }
+
+            handleResize() {
+                this.resizeObserver = new ResizeObserver(() => {
+                    this.updateContainerWidth();
+                    this.createCandles();
+                });
+                this.resizeObserver.observe(this.container);
+            }
+
+            startAnimation() {
+                setInterval(() => {
+                    this.animateCandles();
+                }, 1000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            updateThemeUI(initialTheme);
+            
+            // Initialize animations
+            new CandleAnimation();
+        });
+
+        document.querySelectorAll('.cta-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-2px)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>

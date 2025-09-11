@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinZ | Lesson 1: Investment Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Reusing the exact same style block for consistency */
+        :root {
+            --page-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #e9ecef;
+            --current-color: #28a745;
+            --hover-color: #000000;
+            --correct-bg: #e9f7ec;
+            --correct-border: #28a745;
+            --incorrect-bg: #fbe9eb;
+            --incorrect-border: #dc3545;
+            --disabled-text: #adb5bd;
+        }
+        html[data-theme="dark"] {
+            --page-bg: #121212;
+            --card-bg: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #888888;
+            --border-color: #333333;
+            --hover-color: #ffffff;
+            --correct-bg: #1c3d26;
+            --correct-border: #28a745;
+            --incorrect-bg: #4a2125;
+            --incorrect-border: #dc3545;
+            --disabled-text: #777777;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--page-bg);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .container-main { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
+        .logo { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); }
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-links a { color: var(--text-primary); font-weight: 600; text-decoration: none; transition: color 0.3s ease; }
+        .nav-links a:hover { color: var(--hover-color); }
+        #theme-toggle { background: none; border: none; cursor: pointer; color: var(--text-secondary); }
+        #theme-toggle:hover { color: var(--text-primary); }
+        #theme-toggle .icon { width: 24px; height: 24px; }
+
+        /* Styles for the lesson page, designed to match the original */
+        .lesson-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
+        }
+
+        /* Playcard Styles */
+        .playcard-container { flex-grow: 1; }
+        .playcard { display: none; }
+        .playcard.active { display: block; animation: fadeIn 0.5s ease; }
+        .playcard-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+        .playcard-content {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        .playcard-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .progress-dots { display: flex; gap: 0.75rem; }
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+            transition: all 0.3s ease;
+        }
+        .progress-dot.active {
+            background-color: var(--current-color);
+            transform: scale(1.2);
+        }
+        .nav-button {
+            background-color: var(--current-color);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .nav-button:hover { background-color: #218838; }
+        .nav-button.secondary { background-color: transparent; color: var(--text-secondary); border: 2px solid var(--border-color); }
+        .nav-button.secondary:hover { background-color: var(--page-bg); color: var(--text-primary); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* MCQ Styles */
+        .mcq-section { animation: fadeIn 0.5s ease; }
+        .mcq-section h2 { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.75rem; }
+        .mcq-item { margin-bottom: 2rem; }
+        .question-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary); }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
+        .option { display: flex; align-items: center; padding: 0.8rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; background-color: transparent; text-align: left; width: 100%; }
+        .option:hover:not(.disabled) { border-color: var(--current-color); background-color: var(--page-bg); }
+        .option.disabled { cursor: not-allowed; color: var(--disabled-text); }
+        .option.correct { border-color: var(--correct-border); background-color: var(--correct-bg); color: var(--correct-border); font-weight: 600; }
+        .option.incorrect { border-color: var(--incorrect-border); background-color: var(--incorrect-bg); color: var(--incorrect-border); font-weight: 600; }
+        .option .icon { width: 20px; height: 20px; margin-left: auto; }
+        
+        /* Completion Section */
+        .completion-section { text-align: center; margin-top: 3rem; }
+        #complete-lesson-btn { background-color: var(--current-color); color: white; padding: 0.75rem 2rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2); }
+        #complete-lesson-btn:hover:not(:disabled) { background-color: #218838; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3); }
+        #complete-lesson-btn:disabled { background-color: var(--text-secondary); cursor: not-allowed; box-shadow: none; transform: none; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container-main">
+        <div class="navbar">
+            <div class="logo">FinZ | Stonks</div>
+            <div class="nav-links">
+                <a href="./">Home</a>
+                <a href="./learn">Learn</a>
+                <a href="./invest">Invest</a>
+                <button id="theme-toggle" title="Toggle theme">
+                    <svg id="sun-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moon-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <main class="lesson-container">
+            <div id="theory-section">
+                <div class="playcard-container" id="playcard-container">
+                    <!-- Playcards will be injected here -->
+                </div>
+                <div class="playcard-navigation">
+                    <button class="nav-button secondary" id="prev-btn">Previous</button>
+                    <div class="progress-dots" id="progress-dots-container">
+                        <!-- Progress dots will be injected here -->
+                    </div>
+                    <button class="nav-button" id="next-btn">Next</button>
+                </div>
+            </div>
+
+            <div class="mcq-section hidden" id="mcq-section">
+                <!-- MCQs will be dynamically inserted here -->
+            </div>
+
+            <div class="completion-section hidden" id="completion-section">
+                <p id="completion-message" class="mb-4 text-lg font-semibold"></p>
+                <button id="complete-lesson-btn">Complete Lesson</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- Lesson Data ---
+        const lessonData = {
+            lessonId: 1, // This is part 3 of Lesson 1, so the chapter number for progress update remains 1
+            playcards: [
+                {
+                    title: "Technical Analysis: Reading the Charts",
+                    content: "Technical analysis is like being a market detective who studies clues from the past. Analysts look at stock price charts and trading volumes to identify patterns and trends. The core idea is that historical price movements can indicate how the market might behave in the future. This method is often used by traders to time their entries and exits for short-term gains, rather than to determine a company's long-term value."
+                },
+                {
+                    title: "Fundamental Analysis: Valuing a Business",
+                    content: "Fundamental analysis involves digging deep into a company's financial health to determine its 'intrinsic value'. This means acting like a business owner and assessing factors like revenue, earnings, expenses, assets, and liabilities. By understanding the true worth of a company, investors can decide if its stock is currently overpriced or underpriced, making it a cornerstone for long-term investment decisions."
+                },
+                {
+                    title: "Understanding Yield and Risk",
+                    content: "These are two sides of the same coin. 'Yield' is the return you earn on an investment, usually expressed as a percentage. 'Risk' is the uncertainty about that return, including the possibility of losing your initial investment. Generally, higher potential yields come with higher risks. A smart investor understands this relationship and chooses investments that match their personal tolerance for risk."
+                },
+                {
+                    title: "Building Your Investment Strategy",
+                    content: "An investment strategy is your personal roadmap for investing. It's a clear plan based on your financial goals, your time horizon (how long you have to invest), and your risk tolerance. It guides your decisions on what to invest in and helps you stay disciplined, preventing emotional reactions to market ups and downs. A well-defined strategy is essential for achieving long-term financial success."
+                }
+            ],
+            questions: [
+                {
+                    question: "Q1: Technical analysis is mainly used to:",
+                    options: ["A) Check a company’s true value", "B) Guess short-term changes based on past prices and patterns", "C) Measure risk and yield", "D) Make long-term retirement plans"],
+                    correctAnswer: 1
+                },
+                {
+                    question: "Q2: Fundamental analysis focuses on:",
+                    options: ["A) Past stock prices only", "B) A company’s financial health like earnings, sales, and debts", "C) Market trends and technical charts", "D) Short-term market predictions"],
+                    correctAnswer: 1
+                },
+                {
+                    question: "Q3: Yield shows:",
+                    options: ["A) How safe an investment is", "B) How much money you can earn from an investment", "C) The company’s total debt", "D) Market trends"],
+                    correctAnswer: 1
+                },
+                {
+                    question: "Q4: Risk represents:",
+                    options: ["A) The amount of profit guaranteed", "B) How likely you are to lose money or not earn as expected", "C) The stock’s current price", "D) Past performance of the company"],
+                    correctAnswer: 1
+                },
+                {
+                    question: "Q5: An investment strategy is:",
+                    options: ["A) A plan for using your money to achieve goals", "B) A chart of past prices", "C) A list of company debts", "D) A type of short-term investment"],
+                    correctAnswer: 0
+                },
+                {
+                    question: "Q6: Combining technical and fundamental analysis helps investors:",
+                    options: ["A) Predict lottery numbers", "B) Make smarter investment decisions", "C) Avoid paying taxes", "D) Guarantee profits"],
+                    correctAnswer: 1
+                }
+            ]
+        };
+
+        const checkIcon = `<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+        const crossIcon = `<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+        
+        // --- State Variables ---
+        let currentPlaycardIndex = 0;
+        let answeredCount = 0;
+
+        // --- Element Selectors ---
+        const theorySection = document.getElementById('theory-section');
+        const playcardContainer = document.getElementById('playcard-container');
+        const dotsContainer = document.getElementById('progress-dots-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const mcqSection = document.getElementById('mcq-section');
+
+        // --- Render Functions ---
+        function renderTheory() {
+            lessonData.playcards.forEach((card, index) => {
+                const playcard = document.createElement('div');
+                playcard.className = 'playcard';
+                playcard.id = `playcard-${index}`;
+                playcard.innerHTML = `<h2 class="playcard-title">${card.title}</h2><p class="playcard-content">${card.content}</p>`;
+                playcardContainer.appendChild(playcard);
+                
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
+                dot.id = `dot-${index}`;
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function renderMCQs() {
+            mcqSection.innerHTML = `<h2>Check Your Understanding</h2>`;
+            lessonData.questions.forEach((q, qIndex) => {
+                const mcqItem = document.createElement('div');
+                mcqItem.className = 'mcq-item';
+                mcqItem.id = `q-${qIndex}`;
+                
+                const questionText = document.createElement('p');
+                questionText.className = 'question-text';
+                questionText.textContent = q.question;
+                
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+                
+                q.options.forEach((opt, oIndex) => {
+                    const optionButton = document.createElement('button');
+                    optionButton.className = 'option';
+                    optionButton.textContent = opt;
+                    optionButton.dataset.qIndex = qIndex;
+                    optionButton.dataset.oIndex = oIndex;
+                    optionsGrid.appendChild(optionButton);
+                });
+                
+                mcqItem.appendChild(questionText);
+                mcqItem.appendChild(optionsGrid);
+                mcqSection.appendChild(mcqItem);
+            });
+        }
+
+        // --- UI Update Functions ---
+        function updatePlaycardView() {
+            document.querySelectorAll('.playcard').forEach((card, index) => {
+                card.classList.toggle('active', index === currentPlaycardIndex);
+            });
+            document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentPlaycardIndex);
+            });
+            prevBtn.style.visibility = currentPlaycardIndex === 0 ? 'hidden' : 'visible';
+            nextBtn.textContent = currentPlaycardIndex === lessonData.playcards.length - 1 ? 'Start Quiz' : 'Next';
+        }
+
+        // --- Event Handlers ---
+        nextBtn.addEventListener('click', () => {
+            if (currentPlaycardIndex < lessonData.playcards.length - 1) {
+                currentPlaycardIndex++;
+                updatePlaycardView();
+            } else {
+                theorySection.classList.add('hidden');
+                mcqSection.classList.remove('hidden');
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentPlaycardIndex > 0) {
+                currentPlaycardIndex--;
+                updatePlaycardView();
+            }
+        });
+
+        mcqSection.addEventListener('click', (e) => {
+            const selectedOption = e.target.closest('.option');
+            if (!selectedOption || selectedOption.classList.contains('disabled')) return;
+
+            const qIndex = parseInt(selectedOption.dataset.qIndex);
+            const oIndex = parseInt(selectedOption.dataset.oIndex);
+            const questionData = lessonData.questions[qIndex];
+            const questionElement = document.getElementById(`q-${qIndex}`);
+            const allOptions = questionElement.querySelectorAll('.option');
+
+            allOptions.forEach(opt => opt.classList.add('disabled'));
+
+            if (oIndex === questionData.correctAnswer) {
+                selectedOption.classList.add('correct');
+                selectedOption.insertAdjacentHTML('beforeend', checkIcon);
+            } else {
+                selectedOption.classList.add('incorrect');
+                selectedOption.insertAdjacentHTML('beforeend', crossIcon);
+                const correctOption = questionElement.querySelector(`[data-o-index="${questionData.correctAnswer}"]`);
+                correctOption.classList.add('correct');
+                correctOption.insertAdjacentHTML('beforeend', checkIcon);
+            }
+
+            answeredCount++;
+            if (answeredCount === lessonData.questions.length) {
+                const completionSection = document.getElementById('completion-section');
+                const completionMessage = document.getElementById('completion-message');
+                completionMessage.textContent = 'Great job! You have completed the quiz.';
+                completionSection.classList.remove('hidden');
+            }
+        });
+        
+        document.getElementById('complete-lesson-btn').addEventListener('click', async (e) => {
+            const button = e.target;
+            button.disabled = true;
+            button.textContent = 'Saving...';
+            try {
+                // Construct the URL with query parameters for a GET request
+                const url = `/lesson-progress-update?chapter=${lessonData.lessonId}`;
+                
+                // Send a GET request.
+                const response = await fetch(url);
+
+                if (response.ok) {
+                    button.textContent = 'Progress Saved!';
+                    button.style.backgroundColor = '#f7c948';
+                    button.style.color = '#343a40';
+                    document.getElementById('completion-message').textContent = 'Your progress has been updated. You can now return to the learning path.';
+                } else {
+                    throw new Error('Failed to update progress on the server.');
+                }
+            } catch (error) {
+                console.error('Error updating lesson progress:', error);
+                button.textContent = 'Error Saving';
+                button.style.backgroundColor = '#dc3545';
+                document.getElementById('completion-message').textContent = 'Could not save progress. Please try again later.';
+            }
+        });
+
+        // --- Theme Switcher Logic (copied from original) ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        
+        function updateThemeUI(theme) {
+            sunIcon.style.display = theme === 'dark' ? 'none' : 'block';
+            moonIcon.style.display = theme === 'dark' ? 'block' : 'none';
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+        
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            updateThemeUI(newTheme);
+        });
+
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        updateThemeUI(initialTheme);
+        
+        // --- Initialize the Page ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTheory();
+            renderMCQs();
+            updatePlaycardView();
+        });
+    </script>
+</body>
+</html>

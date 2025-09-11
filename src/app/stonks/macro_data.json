@@ -1,0 +1,261 @@
+{
+    "USA": {
+      "2023": { "gdp": 25000000, "gdp_per_capita": 75000, "inflation": 2.1, "unemployment": 3.5 },
+      "2022": { "gdp": 24000000, "gdp_per_capita": 72000, "inflation": 2.3, "unemployment": 3.7 },
+      "2021": { "gdp": 23000000, "gdp_per_capita": 69000, "inflation": 1.9, "unemployment": 4.0 },
+      "2020": { "gdp": 21000000, "gdp_per_capita": 63000, "inflation": 1.4, "unemployment": 6.1 },
+      "2019": { "gdp": 22000000, "gdp_per_capita": 66000, "inflation": 1.8, "unemployment": 3.6 }
+    },
+    "China": {
+      "2023": { "gdp": 18000000, "gdp_per_capita": 12000, "inflation": 2.5, "unemployment": 5.0 },
+      "2022": { "gdp": 17000000, "gdp_per_capita": 11000, "inflation": 2.7, "unemployment": 5.2 },
+      "2021": { "gdp": 16000000, "gdp_per_capita": 10000, "inflation": 2.3, "unemployment": 5.5 },
+      "2020": { "gdp": 15000000, "gdp_per_capita": 9000, "inflation": 2.0, "unemployment": 5.6 },
+      "2019": { "gdp": 14000000, "gdp_per_capita": 8000, "inflation": 2.1, "unemployment": 5.2 }
+    },
+    "India": {
+      "2023": { "gdp": 3500000, "gdp_per_capita": 2500, "inflation": 5.0, "unemployment": 7.0 },
+      "2022": { "gdp": 3300000, "gdp_per_capita": 2400, "inflation": 5.2, "unemployment": 7.2 },
+      "2021": { "gdp": 3100000, "gdp_per_capita": 2300, "inflation": 4.8, "unemployment": 7.5 },
+      "2020": { "gdp": 2900000, "gdp_per_capita": 2100, "inflation": 4.5, "unemployment": 8.0 },
+      "2019": { "gdp": 3000000, "gdp_per_capita": 2200, "inflation": 4.7, "unemployment": 7.1 }
+    },
+    "South Korea": {
+      "2023": { "gdp": 1800000, "gdp_per_capita": 35000, "inflation": 1.8, "unemployment": 3.2 },
+      "2022": { "gdp": 1700000, "gdp_per_capita": 33000, "inflation": 2.0, "unemployment": 3.4 },
+      "2021": { "gdp": 1600000, "gdp_per_capita": 31000, "inflation": 1.7, "unemployment": 3.6 },
+      "2020": { "gdp": 1500000, "gdp_per_capita": 29000, "inflation": 1.5, "unemployment": 4.0 },
+      "2019": { "gdp": 1550000, "gdp_per_capita": 30000, "inflation": 1.6, "unemployment": 3.3 }
+    },
+    "Japan": {
+      "2023": { "gdp": 5000000, "gdp_per_capita": 40000, "inflation": 0.5, "unemployment": 2.5 },
+      "2022": { "gdp": 4900000, "gdp_per_capita": 39000, "inflation": 0.7, "unemployment": 2.7 },
+      "2021": { "gdp": 4800000, "gdp_per_capita": 38000, "inflation": 0.4, "unemployment": 2.9 },
+      "2020": { "gdp": 4700000, "gdp_per_capita": 37000, "inflation": 0.3, "unemployment": 3.1 },
+      "2019": { "gdp": 4750000, "gdp_per_capita": 37500, "inflation": 0.6, "unemployment": 2.4 }
+    },
+    "Germany": {
+      "2023": { "gdp": 4500000, "gdp_per_capita": 54000, "inflation": 1.9, "unemployment": 3.0 },
+      "2022": { "gdp": 4400000, "gdp_per_capita": 53000, "inflation": 2.1, "unemployment": 3.2 },
+      "2021": { "gdp": 4300000, "gdp_per_capita": 52000, "inflation": 1.8, "unemployment": 3.4 },
+      "2020": { "gdp": 4200000, "gdp_per_capita": 51000, "inflation": 1.6, "unemployment": 3.8 },
+      "2019": { "gdp": 4250000, "gdp_per_capita": 51500, "inflation": 1.7, "unemployment": 3.1 }
+    },
+    "Mongolia": {
+      "2023": { "gdp": 15000, "gdp_per_capita": 4500, "inflation": 6.0, "unemployment": 8.0 },
+      "2022": { "gdp": 14000, "gdp_per_capita": 4200, "inflation": 6.2, "unemployment": 8.2 },
+      "2021": { "gdp": 13000, "gdp_per_capita": 3900, "inflation": 5.8, "unemployment": 8.5 },
+      "2020": { "gdp": 12000, "gdp_per_capita": 3600, "inflation": 5.5, "unemployment": 9.0 },
+      "2019": { "gdp": 12500, "gdp_per_capita": 3750, "inflation": 5.7, "unemployment": 8.1 }
+    },
+    "Brazil": {
+      "2023": { "gdp": 2000000, "gdp_per_capita": 9500, "inflation": 4.5, "unemployment": 10.0 },
+      "2022": { "gdp": 1900000, "gdp_per_capita": 9000, "inflation": 4.7, "unemployment": 10.2 },
+      "2021": { "gdp": 1800000, "gdp_per_capita": 8500, "inflation": 4.3, "unemployment": 10.5 },
+      "2020": { "gdp": 1700000, "gdp_per_capita": 8000, "inflation": 4.0, "unemployment": 11.0 },
+      "2019": { "gdp": 1750000, "gdp_per_capita": 8250, "inflation": 4.2, "unemployment": 10.1 }
+    },
+    "Argentina": {
+      "2023": { "gdp": 500000, "gdp_per_capita": 11000, "inflation": 50.0, "unemployment": 9.0 },
+      "2022": { "gdp": 480000, "gdp_per_capita": 10500, "inflation": 48.0, "unemployment": 9.2 },
+      "2021": { "gdp": 460000, "gdp_per_capita": 10000, "inflation": 45.0, "unemployment": 9.5 },
+      "2020": { "gdp": 440000, "gdp_per_capita": 9500, "inflation": 42.0, "unemployment": 10.0 },
+      "2019": { "gdp": 450000, "gdp_per_capita": 9750, "inflation": 44.0, "unemployment": 9.1 }
+    },
+    "France": {
+      "2023": { "gdp": 3000000, "gdp_per_capita": 45000, "inflation": 1.7, "unemployment": 7.0 },
+      "2022": { "gdp": 2900000, "gdp_per_capita": 44000, "inflation": 1.9, "unemployment": 7.2 },
+      "2021": { "gdp": 2800000, "gdp_per_capita": 43000, "inflation": 1.6, "unemployment": 7.5 },
+      "2020": { "gdp": 2700000, "gdp_per_capita": 42000, "inflation": 1.4, "unemployment": 8.0 },
+      "2019": { "gdp": 2750000, "gdp_per_capita": 42500, "inflation": 1.5, "unemployment": 7.1 }
+    },
+    "Turkey": {
+      "2023": { "gdp": 800000, "gdp_per_capita": 9500, "inflation": 60.0, "unemployment": 12.0 },
+      "2022": { "gdp": 750000, "gdp_per_capita": 9000, "inflation": 58.0, "unemployment": 12.2 },
+      "2021": { "gdp": 700000, "gdp_per_capita": 8500, "inflation": 55.0, "unemployment": 12.5 },
+      "2020": { "gdp": 650000, "gdp_per_capita": 8000, "inflation": 52.0, "unemployment": 13.0 },
+      "2019": { "gdp": 675000, "gdp_per_capita": 8250, "inflation": 54.0, "unemployment": 12.1 }
+    },
+    "Russia": {
+      "2023": { "gdp": 1800000, "gdp_per_capita": 12000, "inflation": 6.0, "unemployment": 5.0 },
+      "2022": { "gdp": 1700000, "gdp_per_capita": 11000, "inflation": 6.2, "unemployment": 5.2 },
+      "2021": { "gdp": 1600000, "gdp_per_capita": 10000, "inflation": 5.8, "unemployment": 5.5 },
+      "2020": { "gdp": 1500000, "gdp_per_capita": 9000, "inflation": 5.5, "unemployment": 5.6 },
+      "2019": { "gdp": 1550000, "gdp_per_capita": 9500, "inflation": 5.7, "unemployment": 5.1 }
+    },
+    "Spain": {
+      "2023": { "gdp": 1500000, "gdp_per_capita": 32000, "inflation": 2.0, "unemployment": 12.0 },
+      "2022": { "gdp": 1400000, "gdp_per_capita": 30000, "inflation": 2.2, "unemployment": 12.2 },
+      "2021": { "gdp": 1300000, "gdp_per_capita": 28000, "inflation": 1.9, "unemployment": 12.5 },
+      "2020": { "gdp": 1200000, "gdp_per_capita": 26000, "inflation": 1.7, "unemployment": 13.0 },
+      "2019": { "gdp": 1250000, "gdp_per_capita": 27000, "inflation": 1.8, "unemployment": 12.1 }
+    },
+    "Pakistan": {
+      "2023": { "gdp": 300000, "gdp_per_capita": 1500, "inflation": 10.0, "unemployment": 6.0 },
+      "2022": { "gdp": 280000, "gdp_per_capita": 1400, "inflation": 10.2, "unemployment": 6.2 },
+      "2021": { "gdp": 260000, "gdp_per_capita": 1300, "inflation": 9.8, "unemployment": 6.5 },
+      "2020": { "gdp": 240000, "gdp_per_capita": 1200, "inflation": 9.5, "unemployment": 7.0 },
+      "2019": { "gdp": 250000, "gdp_per_capita": 1250, "inflation": 9.7, "unemployment": 6.1 }
+    },
+    "Myanmar": {
+      "2023": { "gdp": 70000, "gdp_per_capita": 1300, "inflation": 8.0, "unemployment": 4.0 },
+      "2022": { "gdp": 65000, "gdp_per_capita": 1200, "inflation": 8.2, "unemployment": 4.2 },
+      "2021": { "gdp": 60000, "gdp_per_capita": 1100, "inflation": 7.8, "unemployment": 4.5 },
+      "2020": { "gdp": 55000, "gdp_per_capita": 1000, "inflation": 7.5, "unemployment": 5.0 },
+      "2019": { "gdp": 57500, "gdp_per_capita": 1050, "inflation": 7.7, "unemployment": 4.1 }
+    },
+    "Thailand": {
+      "2023": { "gdp": 500000, "gdp_per_capita": 7000, "inflation": 1.5, "unemployment": 1.0 },
+      "2022": { "gdp": 480000, "gdp_per_capita": 6800, "inflation": 1.7, "unemployment": 1.2 },
+      "2021": { "gdp": 460000, "gdp_per_capita": 6600, "inflation": 1.4, "unemployment": 1.5 },
+      "2020": { "gdp": 440000, "gdp_per_capita": 6400, "inflation": 1.2, "unemployment": 2.0 },
+      "2019": { "gdp": 450000, "gdp_per_capita": 6500, "inflation": 1.3, "unemployment": 1.1 }
+    },
+    "Indonesia": {
+      "2023": { "gdp": 1200000, "gdp_per_capita": 4500, "inflation": 3.0, "unemployment": 5.0 },
+      "2022": { "gdp": 1100000, "gdp_per_capita": 4200, "inflation": 3.2, "unemployment": 5.2 },
+      "2021": { "gdp": 1000000, "gdp_per_capita": 3900, "inflation": 2.8, "unemployment": 5.5 },
+      "2020": { "gdp": 900000, "gdp_per_capita": 3600, "inflation": 2.5, "unemployment": 6.0 },
+      "2019": { "gdp": 950000, "gdp_per_capita": 3750, "inflation": 2.7, "unemployment": 5.1 }
+    },
+    "Philippines": {
+      "2023": { "gdp": 400000, "gdp_per_capita": 3700, "inflation": 4.0, "unemployment": 6.0 },
+      "2022": { "gdp": 380000, "gdp_per_capita": 3500, "inflation": 4.2, "unemployment": 6.2 },
+      "2021": { "gdp": 360000, "gdp_per_capita": 3300, "inflation": 3.8, "unemployment": 6.5 },
+      "2020": { "gdp": 340000, "gdp_per_capita": 3100, "inflation": 3.5, "unemployment": 7.0 },
+      "2019": { "gdp": 350000, "gdp_per_capita": 3200, "inflation": 3.7, "unemployment": 6.1 }
+    },
+    "New Zealand": {
+      "2023": { "gdp": 250000, "gdp_per_capita": 50000, "inflation": 2.0, "unemployment": 4.0 },
+      "2022": { "gdp": 240000, "gdp_per_capita": 48000, "inflation": 2.2, "unemployment": 4.2 },
+      "2021": { "gdp": 230000, "gdp_per_capita": 46000, "inflation": 1.9, "unemployment": 4.5 },
+      "2020": { "gdp": 220000, "gdp_per_capita": 44000, "inflation": 1.7, "unemployment": 5.0 },
+      "2019": { "gdp": 225000, "gdp_per_capita": 45000, "inflation": 1.8, "unemployment": 4.1 }
+    },
+    "Saudi Arabia": {
+      "2023": { "gdp": 800000, "gdp_per_capita": 23000, "inflation": 2.5, "unemployment": 6.0 },
+      "2022": { "gdp": 750000, "gdp_per_capita": 22000, "inflation": 2.7, "unemployment": 6.2 },
+      "2021": { "gdp": 700000, "gdp_per_capita": 21000, "inflation": 2.3, "unemployment": 6.5 },
+      "2020": { "gdp": 650000, "gdp_per_capita": 20000, "inflation": 2.0, "unemployment": 7.0 },
+      "2019": { "gdp": 675000, "gdp_per_capita": 20500, "inflation": 2.2, "unemployment": 6.1 }
+    },
+    "Egypt": {
+      "2023": { "gdp": 300000, "gdp_per_capita": 3000, "inflation": 10.0, "unemployment": 9.0 },
+      "2022": { "gdp": 280000, "gdp_per_capita": 2800, "inflation": 9.8, "unemployment": 9.2 },
+      "2021": { "gdp": 260000, "gdp_per_capita": 2600, "inflation": 9.5, "unemployment": 9.5 },
+      "2020": { "gdp": 240000, "gdp_per_capita": 2400, "inflation": 9.2, "unemployment": 10.0 },
+      "2019": { "gdp": 250000, "gdp_per_capita": 2500, "inflation": 9.4, "unemployment": 9.1 }
+    },
+    "South Africa": {
+      "2023": { "gdp": 400000, "gdp_per_capita": 7000, "inflation": 5.0, "unemployment": 25.0 },
+      "2022": { "gdp": 380000, "gdp_per_capita": 6800, "inflation": 5.2, "unemployment": 25.2 },
+      "2021": { "gdp": 360000, "gdp_per_capita": 6600, "inflation": 4.8, "unemployment": 25.5 },
+      "2020": { "gdp": 340000, "gdp_per_capita": 6400, "inflation": 4.5, "unemployment": 26.0 },
+      "2019": { "gdp": 350000, "gdp_per_capita": 6500, "inflation": 4.7, "unemployment": 25.1 }
+    },
+    "Kenya": {
+      "2023": { "gdp": 100000, "gdp_per_capita": 2000, "inflation": 6.0, "unemployment": 7.0 },
+      "2022": { "gdp": 95000, "gdp_per_capita": 1900, "inflation": 6.2, "unemployment": 7.2 },
+      "2021": { "gdp": 90000, "gdp_per_capita": 1800, "inflation": 5.8, "unemployment": 7.5 },
+      "2020": { "gdp": 85000, "gdp_per_capita": 1700, "inflation": 5.5, "unemployment": 8.0 },
+      "2019": { "gdp": 87500, "gdp_per_capita": 1750, "inflation": 5.7, "unemployment": 7.1 }
+    },
+    "Canada": {
+      "2023": { "gdp": 2000000, "gdp_per_capita": 53000, "inflation": 2.0, "unemployment": 5.0 },
+      "2022": { "gdp": 1900000, "gdp_per_capita": 51000, "inflation": 2.2, "unemployment": 5.2 },
+      "2021": { "gdp": 1800000, "gdp_per_capita": 49000, "inflation": 1.9, "unemployment": 5.5 },
+      "2020": { "gdp": 1700000, "gdp_per_capita": 47000, "inflation": 1.7, "unemployment": 6.0 },
+      "2019": { "gdp": 1750000, "gdp_per_capita": 48000, "inflation": 1.8, "unemployment": 5.1 }
+    },
+    "Mexico": {
+      "2023": { "gdp": 1300000, "gdp_per_capita": 10000, "inflation": 4.0, "unemployment": 4.0 },
+      "2022": { "gdp": 1200000, "gdp_per_capita": 9500, "inflation": 4.2, "unemployment": 4.2 },
+      "2021": { "gdp": 1100000, "gdp_per_capita": 9000, "inflation": 3.8, "unemployment": 4.5 },
+      "2020": { "gdp": 1000000, "gdp_per_capita": 8500, "inflation": 3.5, "unemployment": 5.0 },
+      "2019": { "gdp": 1050000, "gdp_per_capita": 8750, "inflation": 3.7, "unemployment": 4.1 }
+    },
+    "Finland": {
+      "2023": { "gdp": 300000, "gdp_per_capita": 54000, "inflation": 1.5, "unemployment": 6.0 },
+      "2022": { "gdp": 290000, "gdp_per_capita": 52000, "inflation": 1.7, "unemployment": 6.2 },
+      "2021": { "gdp": 280000, "gdp_per_capita": 50000, "inflation": 1.4, "unemployment": 6.5 },
+      "2020": { "gdp": 270000, "gdp_per_capita": 48000, "inflation": 1.2, "unemployment": 7.0 },
+      "2019": { "gdp": 275000, "gdp_per_capita": 49000, "inflation": 1.3, "unemployment": 6.1 }
+    },
+    "Sweden": {
+      "2023": { "gdp": 600000, "gdp_per_capita": 58000, "inflation": 1.8, "unemployment": 6.5 },
+      "2022": { "gdp": 590000, "gdp_per_capita": 57000, "inflation": 2.0, "unemployment": 6.7 },
+      "2021": { "gdp": 580000, "gdp_per_capita": 56000, "inflation": 1.7, "unemployment": 7.0 },
+      "2020": { "gdp": 570000, "gdp_per_capita": 55000, "inflation": 1.5, "unemployment": 7.5 },
+      "2019": { "gdp": 575000, "gdp_per_capita": 55500, "inflation": 1.6, "unemployment": 6.6 }
+    },
+    "Norway": {
+      "2023": { "gdp": 500000, "gdp_per_capita": 95000, "inflation": 1.9, "unemployment": 3.5 },
+      "2022": { "gdp": 490000, "gdp_per_capita": 93000, "inflation": 2.1, "unemployment": 3.7 },
+      "2021": { "gdp": 480000, "gdp_per_capita": 91000, "inflation": 1.8, "unemployment": 4.0 },
+      "2020": { "gdp": 470000, "gdp_per_capita": 89000, "inflation": 1.6, "unemployment": 4.5 },
+      "2019": { "gdp": 475000, "gdp_per_capita": 90000, "inflation": 1.7, "unemployment": 3.6 }
+    },
+    "Poland": {
+      "2023": { "gdp": 700000, "gdp_per_capita": 18000, "inflation": 3.0, "unemployment": 5.0 },
+      "2022": { "gdp": 680000, "gdp_per_capita": 17000, "inflation": 3.2, "unemployment": 5.2 },
+      "2021": { "gdp": 660000, "gdp_per_capita": 16000, "inflation": 2.8, "unemployment": 5.5 },
+      "2020": { "gdp": 640000, "gdp_per_capita": 15000, "inflation": 2.5, "unemployment": 6.0 },
+      "2019": { "gdp": 650000, "gdp_per_capita": 15500, "inflation": 2.7, "unemployment": 5.1 }
+    },
+    "Italy": {
+      "2023": { "gdp": 2000000, "gdp_per_capita": 33000, "inflation": 1.7, "unemployment": 9.0 },
+      "2022": { "gdp": 1900000, "gdp_per_capita": 32000, "inflation": 1.9, "unemployment": 9.2 },
+      "2021": { "gdp": 1800000, "gdp_per_capita": 31000, "inflation": 1.6, "unemployment": 9.5 },
+      "2020": { "gdp": 1700000, "gdp_per_capita": 30000, "inflation": 1.4, "unemployment": 10.0 },
+      "2019": { "gdp": 1750000, "gdp_per_capita": 30500, "inflation": 1.5, "unemployment": 9.1 }
+    },
+    "Iran": {
+      "2023": { "gdp": 500000, "gdp_per_capita": 6000, "inflation": 40.0, "unemployment": 12.0 },
+      "2022": { "gdp": 480000, "gdp_per_capita": 5800, "inflation": 38.0, "unemployment": 12.2 },
+      "2021": { "gdp": 460000, "gdp_per_capita": 5600, "inflation": 35.0, "unemployment": 12.5 },
+      "2020": { "gdp": 440000, "gdp_per_capita": 5400, "inflation": 32.0, "unemployment": 13.0 },
+      "2019": { "gdp": 450000, "gdp_per_capita": 5500, "inflation": 34.0, "unemployment": 12.1 }
+    },
+    "Algeria": {
+      "2023": { "gdp": 200000, "gdp_per_capita": 4500, "inflation": 6.0, "unemployment": 11.0 },
+      "2022": { "gdp": 190000, "gdp_per_capita": 4300, "inflation": 6.2, "unemployment": 11.2 },
+      "2021": { "gdp": 180000, "gdp_per_capita": 4100, "inflation": 5.8, "unemployment": 11.5 },
+      "2020": { "gdp": 170000, "gdp_per_capita": 3900, "inflation": 5.5, "unemployment": 12.0 },
+      "2019": { "gdp": 175000, "gdp_per_capita": 4000, "inflation": 5.7, "unemployment": 11.1 }
+    },
+    "Australia": {
+      "2023": { "gdp": 1600000, "gdp_per_capita": 62000, "inflation": 2.5, "unemployment": 4.5 },
+      "2022": { "gdp": 1500000, "gdp_per_capita": 60000, "inflation": 2.7, "unemployment": 4.7 },
+      "2021": { "gdp": 1400000, "gdp_per_capita": 58000, "inflation": 2.3, "unemployment": 5.0 },
+      "2020": { "gdp": 1300000, "gdp_per_capita": 56000, "inflation": 2.0, "unemployment": 5.5 },
+      "2019": { "gdp": 1350000, "gdp_per_capita": 57000, "inflation": 2.2, "unemployment": 4.6 }
+    },
+    "Ukraine": {
+      "2023": { "gdp": 150000, "gdp_per_capita": 3500, "inflation": 10.0, "unemployment": 9.0 },
+      "2022": { "gdp": 140000, "gdp_per_capita": 3300, "inflation": 9.8, "unemployment": 9.2 },
+      "2021": { "gdp": 130000, "gdp_per_capita": 3100, "inflation": 9.5, "unemployment": 9.5 },
+      "2020": { "gdp": 120000, "gdp_per_capita": 2900, "inflation": 9.2, "unemployment": 10.0 },
+      "2019": { "gdp": 125000, "gdp_per_capita": 3000, "inflation": 9.4, "unemployment": 9.1 }
+    },
+    "Angola": {
+      "2023": { "gdp": 100000, "gdp_per_capita": 3000, "inflation": 20.0, "unemployment": 30.0 },
+      "2022": { "gdp": 95000, "gdp_per_capita": 2800, "inflation": 19.0, "unemployment": 30.2 },
+      "2021": { "gdp": 90000, "gdp_per_capita": 2600, "inflation": 18.0, "unemployment": 30.5 },
+      "2020": { "gdp": 85000, "gdp_per_capita": 2400, "inflation": 17.0, "unemployment": 31.0 },
+      "2019": { "gdp": 87500, "gdp_per_capita": 2500, "inflation": 18.5, "unemployment": 30.1 }
+    },
+    "Congo": {
+      "2023": { "gdp": 50000, "gdp_per_capita": 1000, "inflation": 15.0, "unemployment": 20.0 },
+      "2022": { "gdp": 48000, "gdp_per_capita": 950, "inflation": 14.5, "unemployment": 20.2 },
+      "2021": { "gdp": 46000, "gdp_per_capita": 900, "inflation": 14.0, "unemployment": 20.5 },
+      "2020": { "gdp": 44000, "gdp_per_capita": 850, "inflation": 13.5, "unemployment": 21.0 },
+      "2019": { "gdp": 45000, "gdp_per_capita": 875, "inflation": 14.2, "unemployment": 20.1 }
+    },
+    "Namibia": {
+      "2023": { "gdp": 15000, "gdp_per_capita": 6000, "inflation": 5.0, "unemployment": 20.0 },
+      "2022": { "gdp": 14000, "gdp_per_capita": 5800, "inflation": 5.2, "unemployment": 20.2 },
+      "2021": { "gdp": 13000, "gdp_per_capita": 5600, "inflation": 4.8, "unemployment": 20.5 },
+      "2020": { "gdp": 12000, "gdp_per_capita": 5400, "inflation": 4.5, "unemployment": 21.0 },
+      "2019": { "gdp": 12500, "gdp_per_capita": 5500, "inflation": 4.7, "unemployment": 20.1 }
+    }
+  }
