@@ -2,7 +2,13 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LineChart, Line, ResponsiveContainer, XAxis, Tooltip } from "recharts";
 import { Copy, RefreshCw, PlusCircle, X } from "lucide-react";
@@ -77,13 +83,28 @@ const bankDataWithDetails = allBankAccounts.map((account: BankAccount) => {
   return { ...account, recentTransactions, balanceHistory };
 });
 
-export default function BanksPage() {
-  const [selectedBank, setSelectedBank] = useState<BankAccount | null>(null);
-
+const DetailRow = ({ label, value }: { label: string; value: string }) => {
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast("Copied to clipboard!", { description: `Copied: ${text}` });
   };
+
+  return (
+    <div className="flex justify-between items-center text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      <div className="flex items-center gap-2">
+        <span className="font-mono text-foreground">{value}</span>
+        <Copy
+          className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground"
+          onClick={() => handleCopy(value)}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default function BanksPage() {
+  const [selectedBank, setSelectedBank] = useState<BankAccount | null>(null);
 
   const handleActionClick = (action: string) => {
     toast(`${action} clicked!`, {
@@ -97,14 +118,22 @@ export default function BanksPage() {
         <h1 className="text-4xl font-bold text-foreground">
           Linked Bank Accounts
         </h1>
-        <p className="text-lg text-blue-500 dark:text-blue-300">
+        <p className="text-lg text-muted-foreground">
           A detailed overview of your connected accounts.
         </p>
       </div>
 
       <AnimatePresence>
         {selectedBank ? (
-          <motion.div layoutId={`bank-card-${selectedBank.accountNumber}`}>
+          <motion.div
+            key="detail-view"
+            layoutId={`bank-card-${selectedBank.accountNumber}`}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+            className="col-span-full"
+          >
             <Card className="bg-card border-border dark:bg-[#1B253A] dark:border-[#2A3B5A] overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between p-6 bg-muted/30 dark:bg-[#101827]/50 border-b border-border dark:border-[#2A3B5A]">
                 <div className="flex items-center gap-4">
@@ -134,45 +163,19 @@ export default function BanksPage() {
                   <h3 className="font-semibold text-foreground">
                     Account Details
                   </h3>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">IFSC Code</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-foreground">
-                          {selectedBank.ifscCode}
-                        </span>
-                        <Copy
-                          className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground"
-                          onClick={() => handleCopy(selectedBank.ifscCode)}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">SWIFT BIC</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-foreground">
-                          {selectedBank.swiftBic}
-                        </span>
-                        <Copy
-                          className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground"
-                          onClick={() => handleCopy(selectedBank.swiftBic)}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">
-                        Holder&apos;s Name
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-foreground">
-                          {selectedBank.holderName}
-                        </span>
-                        <Copy
-                          className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground"
-                          onClick={() => handleCopy(selectedBank.holderName)}
-                        />
-                      </div>
-                    </div>
+                  <div className="space-y-3">
+                    <DetailRow
+                      label="IFSC Code"
+                      value={selectedBank.ifscCode}
+                    />
+                    <DetailRow
+                      label="SWIFT BIC"
+                      value={selectedBank.swiftBic}
+                    />
+                    <DetailRow
+                      label="Holder's Name"
+                      value={selectedBank.holderName}
+                    />
                   </div>
                   <div className="flex gap-2 pt-4">
                     <Button
@@ -279,32 +282,36 @@ export default function BanksPage() {
                   layoutId={`bank-card-${bank.accountNumber}`}
                 >
                   <Card className="bg-card border-border dark:bg-[#1B253A] dark:border-[#2A3B5A] overflow-hidden flex flex-col h-full">
-                    <CardHeader className="flex flex-row items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center border bg-background dark:bg-[#101827] border-border dark:border-[#2A3B5A]">
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg font-bold text-foreground">
-                          {bank.name}
-                        </CardTitle>
+                    <CardHeader>
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-lg flex items-center justify-center border bg-background dark:bg-[#101827] border-border dark:border-[#2A3B5A]">
+                          <Icon className="h-6 w-6" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-lg font-bold text-foreground">
+                            {bank.name}
+                          </CardTitle>
+                          <p className="text-xs text-muted-foreground">
+                            {bank.balance}
+                          </p>
+                        </div>
                       </div>
                     </CardHeader>
-                    <CardContent className="flex-1 flex flex-col justify-between">
-                      <div className="mb-4">
-                        <p className="text-xs text-muted-foreground">
-                          CURRENT BALANCE
-                        </p>
-                        <p className="text-3xl font-bold text-foreground">
-                          {bank.balance}
-                        </p>
-                      </div>
+                    <CardContent className="flex-1 flex flex-col justify-start space-y-3 pt-0">
+                      <DetailRow
+                        label="Account No."
+                        value={bank.accountNumber}
+                      />
+                      <DetailRow label="IFSC Code" value={bank.ifscCode} />
+                    </CardContent>
+                    <CardFooter>
                       <Button
                         className="w-full"
                         onClick={() => setSelectedBank(bank)}
                       >
                         View Details
                       </Button>
-                    </CardContent>
+                    </CardFooter>
                   </Card>
                 </motion.div>
               );
