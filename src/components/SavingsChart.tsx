@@ -15,7 +15,8 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  ReferenceDot,
+  ComposedChart,
+  Scatter,
 } from "recharts";
 import { SavingsGoal } from "@/lib/types";
 import { monthlyTransactionsData } from "@/lib/data";
@@ -126,18 +127,26 @@ const formatMonth = (monthStr: string) => {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
-    const isHistorical = data.isHistorical;
+
+    // Determine what type of data point this is
+    const isHistorical = data.historical !== null;
+    const isPredicted = data.predicted !== null;
+    const isGoal = data.goal !== null;
+
+    let value = data.historical || data.predicted || data.goal;
+    let type = isGoal ? "Goal" : isHistorical ? "Historical" : "Predicted";
 
     return (
       <div className="bg-gray-800/95 backdrop-blur-sm p-3 rounded-lg border border-gray-600">
         <p className="text-white font-medium">{formatMonth(label)}</p>
         <p className="text-blue-400">
-          {isHistorical ? "Historical" : "Predicted"} Savings: ₹
-          {data.cumulativeSavings?.toLocaleString()}
+          {type} Savings: ₹{value?.toLocaleString()}
         </p>
-        <p className="text-purple-400">
-          Monthly: ₹{data.monthlySavings?.toLocaleString()}
-        </p>
+        {data.monthlySavings && (
+          <p className="text-purple-400">
+            Monthly: ₹{data.monthlySavings?.toLocaleString()}
+          </p>
+        )}
       </div>
     );
   }
@@ -151,9 +160,8 @@ export default function SavingsChart({
 }: SavingsChartProps) {
   const historicalData = calculateHistoricalSavings();
   const predictionData = calculateSimplePrediction(historicalData);
-  const allDataPoints = [...historicalData, ...predictionData];
 
-  // Get active goal details
+  // Get active goal details first
   const activeGoal = goals.find((goal) => goal.id === activeGoalId);
 
   // Calculate goal marker position
@@ -174,12 +182,74 @@ export default function SavingsChart({
 
   const goalMarker = getGoalMarkerData();
 
+  // Create a unified dataset with all points for proper continuous rendering
+  const createUnifiedData = () => {
+    const unified: any[] = [];
+
+    // Add all historical points
+    historicalData.forEach((point) => {
+      unified.push({
+        ...point,
+        historical: point.cumulativeSavings,
+        predicted: null,
+        goal: null,
+      });
+    });
+
+    // Add all prediction points
+    predictionData.forEach((point) => {
+      const existingIndex = unified.findIndex((p) => p.month === point.month);
+      if (existingIndex >= 0) {
+        // This is the connection point
+        unified[existingIndex].predicted = point.cumulativeSavings;
+      } else {
+        unified.push({
+          ...point,
+          historical: null,
+          predicted: point.cumulativeSavings,
+          goal: null,
+        });
+      }
+    });
+
+    // Add goal marker if exists
+    if (goalMarker) {
+      const existingIndex = unified.findIndex(
+        (p) => p.month === goalMarker.month
+      );
+      if (existingIndex >= 0) {
+        unified[existingIndex].goal = goalMarker.cumulativeSavings;
+      } else {
+        unified.push({
+          month: goalMarker.month,
+          monthlySavings: 0,
+          cumulativeSavings: goalMarker.cumulativeSavings,
+          type: "goal",
+          isHistorical: false,
+          historical: null,
+          predicted: null,
+          goal: goalMarker.cumulativeSavings,
+        });
+      }
+    }
+
+    // Sort by month
+    unified.sort(
+      (a, b) =>
+        new Date(a.month + "-01").getTime() -
+        new Date(b.month + "-01").getTime()
+    );
+
+    return unified;
+  };
+
+  const unifiedData = createUnifiedData();
+
   // Calculate chart Y-axis domain
   const getYAxisDomain = () => {
-    const savingsValues = allDataPoints.map((d) => d.cumulativeSavings);
-    if (goalMarker) {
-      savingsValues.push(goalMarker.cumulativeSavings);
-    }
+    const savingsValues = unifiedData
+      .map((d: any) => d.cumulativeSavings)
+      .filter(Boolean);
 
     const minValue = Math.min(...savingsValues);
     const maxValue = Math.max(...savingsValues);
@@ -232,8 +302,8 @@ export default function SavingsChart({
       <CardContent>
         <div className="h-96 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={allDataPoints}
+            <ComposedChart
+              data={unifiedData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
               <XAxis
@@ -255,38 +325,27 @@ export default function SavingsChart({
               {/* Historical savings line */}
               <Line
                 type="monotone"
-                dataKey="cumulativeSavings"
+                dataKey="historical"
                 stroke="#3B82F6"
                 strokeWidth={3}
                 dot={false}
-                connectNulls={false}
-                data={historicalData}
+                connectNulls={true}
               />
 
-              {/* Predicted savings line (connects seamlessly) */}
+              {/* Predicted savings line */}
               <Line
                 type="monotone"
-                dataKey="cumulativeSavings"
+                dataKey="predicted"
                 stroke="#8B5CF6"
                 strokeWidth={3}
                 strokeDasharray="8 4"
                 dot={false}
-                connectNulls={false}
-                data={predictionData}
+                connectNulls={true}
               />
 
               {/* Goal marker */}
-              {goalMarker && (
-                <ReferenceDot
-                  x={goalMarker.month}
-                  y={goalMarker.cumulativeSavings}
-                  r={8}
-                  fill="#F59E0B"
-                  stroke="#FBBF24"
-                  strokeWidth={2}
-                />
-              )}
-            </LineChart>
+              <Scatter dataKey="goal" fill="#F59E0B" shape="circle" />
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
 
@@ -331,10 +390,17 @@ export default function SavingsChart({
             </p>
             {activeGoal && (
               <p>
-                • Projected savings by {formatMonth(activeGoal.targetDate)}: ₹
-                {predictionData
-                  .find((p) => p.month === activeGoal.targetDate.slice(0, 7))
-                  ?.cumulativeSavings.toLocaleString() || "N/A"}
+                • Projected savings by{" "}
+                {formatMonth(activeGoal.targetDate.slice(0, 7))}: ₹
+                {(() => {
+                  const goalMonth = activeGoal.targetDate.slice(0, 7);
+                  const prediction = predictionData.find(
+                    (p) => p.month === goalMonth
+                  );
+                  return (
+                    prediction?.cumulativeSavings.toLocaleString() || "N/A"
+                  );
+                })()}
               </p>
             )}
           </div>

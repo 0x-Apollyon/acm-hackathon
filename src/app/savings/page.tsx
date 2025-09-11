@@ -30,10 +30,8 @@ export default function SavingsPage() {
     },
   ]);
 
-  // Active goal selection state
-  const [activeGoalId, setActiveGoalId] = useState<string>(
-    goals.length > 0 ? goals[0].id : ""
-  );
+  // Active goal selection state - set first goal as default
+  const [activeGoalId, setActiveGoalId] = useState<string>("macbook-pro");
 
   // Modal state - only open if no goals exist
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
