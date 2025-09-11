@@ -1,3 +1,4 @@
+import { BankAccount, Transaction } from "@/lib/types";
 import {
   Utensils,
   Car,
@@ -5,9 +6,40 @@ import {
   Film,
   HeartHandshake,
   ShoppingBag,
+  Building2,
+  CreditCard,
+  Landmark,
+  Smartphone,
 } from "lucide-react";
 
-export const allTransactions = [
+export const allTransactions: Transaction[] = [
+  {
+    id: 5,
+    date: "2025-09-07",
+    description: "Salary Credit",
+    category: "Income",
+    amount: 50000,
+    type: "inflow",
+    icon: Briefcase,
+  },
+  {
+    id: 3,
+    date: "2025-09-09",
+    description: "Freelance Payment",
+    category: "Income",
+    amount: 15000,
+    type: "inflow",
+    icon: Briefcase,
+  },
+  {
+    id: 7,
+    date: "2025-09-05",
+    description: "Mom",
+    category: "Family",
+    amount: 1000,
+    type: "inflow",
+    icon: HeartHandshake,
+  },
   {
     id: 1,
     date: "2025-09-10",
@@ -27,15 +59,6 @@ export const allTransactions = [
     icon: Car,
   },
   {
-    id: 3,
-    date: "2025-09-09",
-    description: "Freelance Payment",
-    category: "Income",
-    amount: 15000,
-    type: "inflow",
-    icon: Briefcase,
-  },
-  {
     id: 4,
     date: "2025-09-08",
     description: "Netflix Subscription",
@@ -43,15 +66,6 @@ export const allTransactions = [
     amount: -649,
     type: "outflow",
     icon: Film,
-  },
-  {
-    id: 5,
-    date: "2025-09-07",
-    description: "Salary Credit",
-    category: "Income",
-    amount: 50000,
-    type: "inflow",
-    icon: Briefcase,
   },
   {
     id: 6,
@@ -63,15 +77,6 @@ export const allTransactions = [
     icon: ShoppingBag,
   },
   {
-    id: 7,
-    date: "2025-09-05",
-    description: "Mom",
-    category: "Family",
-    amount: 1000,
-    type: "inflow",
-    icon: HeartHandshake,
-  },
-  {
     id: 8,
     date: "2025-09-04",
     description: "Spotify",
@@ -79,6 +84,45 @@ export const allTransactions = [
     amount: -119,
     type: "outflow",
     icon: Film,
+  },
+];
+
+export const allBankAccounts: BankAccount[] = [
+  {
+    name: "STATE BANK OF INDIA",
+    balance: "₹27,932",
+    accountNumber: "34536896452",
+    ifscCode: "SBIN0006586",
+    swiftBic: "SBININBBXXX",
+    holderName: "NISHANT VERMA",
+    icon: Building2,
+  },
+  {
+    name: "HDFC BANK",
+    balance: "₹2,58,630",
+    accountNumber: "92536896452",
+    ifscCode: "HDFCINBBXXX",
+    swiftBic: "HDFCINBB",
+    holderName: "NISHANT VERMA",
+    icon: CreditCard,
+  },
+  {
+    name: "ICICI BANK",
+    balance: "₹74,932",
+    accountNumber: "12345678901",
+    ifscCode: "ICICINBBXXX",
+    swiftBic: "ICICINBB",
+    holderName: "NISHANT VERMA",
+    icon: Landmark,
+  },
+  {
+    name: "AXIS BANK",
+    balance: "₹65,310",
+    accountNumber: "98765432109",
+    ifscCode: "UTIBINBBXXX",
+    swiftBic: "AXISINBB",
+    holderName: "NISHANT VERMA",
+    icon: Smartphone,
   },
 ];
 
