@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { Suspense, useRef } from "react"; // Import useRef
@@ -31,15 +30,10 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowUpDown,
-  Utensils,
-  Car,
-  Briefcase,
-  Film,
-  HeartHandshake,
-  ShoppingBag,
 } from "lucide-react";
 import { allTransactions, categories } from "@/lib/data";
 import { useSearchParams } from "next/navigation";
+import TransactionCard from "@/components/TransactionCard";
 
 // --- RE-PROCESSED DATA FOR TWO-BAR CHART (SALARY FILTERED OUT) ---
 const dailyFlows = allTransactions
@@ -72,27 +66,27 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     const inflowData = payload.find((p: any) => p.dataKey === "inflow");
     const outflowData = payload.find((p: any) => p.dataKey === "outflow");
     return (
-      <div className="rounded-lg border bg-background/80 dark:bg-[#1B253A]/80 backdrop-blur-sm p-2 shadow-sm">
+      <div className="rounded-lg glass-strong border-white/30 backdrop-blur-sm p-2 shadow-sm">
         <div className="flex flex-col gap-1">
-          <span className="font-bold text-foreground text-center mb-1">
+          <span className="font-bold text-white text-center mb-1">
             {label}
           </span>
           {inflowData && inflowData.value > 0 && (
             <div className="flex justify-between items-center gap-4">
-              <span className="text-[0.70rem] uppercase text-green-500">
+              <span className="text-[0.70rem] uppercase text-green-400">
                 Inflow
               </span>
-              <span className="font-bold text-green-500">
+              <span className="font-bold text-green-400">
                 ₹{inflowData.value.toLocaleString()}
               </span>
             </div>
           )}
           {outflowData && outflowData.value > 0 && (
             <div className="flex justify-between items-center gap-4">
-              <span className="text-[0.70rem] uppercase text-red-500">
+              <span className="text-[0.70rem] uppercase text-red-400">
                 Outflow
               </span>
-              <span className="font-bold text-red-500">
+              <span className="font-bold text-red-400">
                 ₹{outflowData.value.toLocaleString()}
               </span>
             </div>
@@ -199,40 +193,40 @@ function TransactionsContent() {
   const dateKeys = Object.keys(groupedTransactions);
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 dark:bg-[#101827] text-gray-900 dark:text-white transition-colors duration-300">
-      <div className="container mx-auto py-8">
+    <div className="min-h-screen w-full text-white/95 transition-colors duration-300">
+      <div className="container mx-auto py-8 px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-4xl font-bold text-white">
               Transactions
             </h1>
-            <p className="text-lg text-blue-500 dark:text-blue-300">
+            <p className="text-lg text-purple-300">
               The story of your financial life
             </p>
           </div>
 
-          <Card className="bg-white dark:bg-[#1B253A] border-none shadow-sm mb-8 overflow-hidden">
+          <Card className="glass border-white/20 mb-8 overflow-hidden">
             <CardContent className="p-6 flex flex-col md:flex-row gap-8 items-center">
               <div className="w-full md:w-1/3 space-y-4">
-                <div className="p-4 bg-gray-100 dark:bg-[#101827] rounded-lg">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                    <TrendingUp className="h-4 w-4 text-green-500" />
+                <div className="p-4 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm text-white/60 mb-1">
+                    <TrendingUp className="h-4 w-4 text-green-400" />
                     <span>Total Inflow</span>
                   </div>
-                  <p className="text-3xl font-bold text-green-500">
+                  <p className="text-3xl font-bold text-green-400">
                     ₹{totalInflow.toLocaleString()}
                   </p>
                 </div>
-                <div className="p-4 bg-gray-100 dark:bg-[#101827] rounded-lg">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                    <TrendingDown className="h-4 w-4 text-red-500" />
+                <div className="p-4 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm text-white/60 mb-1">
+                    <TrendingDown className="h-4 w-4 text-red-400" />
                     <span>Total Outflow</span>
                   </div>
-                  <p className="text-3xl font-bold text-red-500">
+                  <p className="text-3xl font-bold text-red-400">
                     ₹{Math.abs(totalOutflow).toLocaleString()}
                   </p>
                 </div>
@@ -247,27 +241,27 @@ function TransactionsContent() {
                       dataKey="date"
                       tickLine={false}
                       axisLine={false}
-                      tick={{ className: "text-xs fill-muted-foreground" }}
+                      tick={{ className: "text-xs fill-white/60" }}
                     />
                     <YAxis
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(value) => `₹${value / 1000}k`}
                       domain={[0, 16000]}
-                      tick={{ className: "text-xs fill-muted-foreground" }}
+                      tick={{ className: "text-xs fill-white/60" }}
                     />
                     <Tooltip
                       content={<CustomTooltip />}
-                      cursor={{ fill: "hsl(var(--accent))", opacity: 0.1 }}
+                      cursor={{ fill: "rgba(255, 255, 255, 0.1)", opacity: 0.3 }}
                     />
                     <Bar
                       dataKey="inflow"
-                      fill="#22c55e"
+                      fill="#4ade80"
                       radius={[4, 4, 0, 0]}
                     />
                     <Bar
                       dataKey="outflow"
-                      fill="#ef4444"
+                      fill="#f87171"
                       radius={[4, 4, 0, 0]}
                     />
                   </BarChart>
@@ -278,16 +272,20 @@ function TransactionsContent() {
 
           <div
             ref={transactionsSectionRef}
-            className="bg-white dark:bg-[#1B253A] rounded-xl shadow-sm"
+            className="glass border-white/20 rounded-xl"
           >
-            <div className="p-4 border-b border-gray-200 dark:border-[#2A3B5A]">
+            <div className="p-4 border-b border-white/20">
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex gap-2 p-1 bg-gray-200 dark:bg-[#101827] rounded-full">
+                <div className="flex gap-2 p-1 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full">
                   <Button
                     size="sm"
                     variant={filterType === "all" ? "default" : "ghost"}
                     onClick={() => setFilterType("all")}
-                    className="rounded-full"
+                    className={`rounded-full transition-all ${
+                      filterType === "all"
+                        ? "bg-white/20 text-white border-white/30 hover:bg-white/30"
+                        : "text-white/70 hover:bg-white/10 hover:text-white"
+                    }`}
                   >
                     All
                   </Button>
@@ -295,7 +293,11 @@ function TransactionsContent() {
                     size="sm"
                     variant={filterType === "inflow" ? "default" : "ghost"}
                     onClick={() => setFilterType("inflow")}
-                    className="rounded-full"
+                    className={`rounded-full transition-all ${
+                      filterType === "inflow"
+                        ? "bg-white/20 text-white border-white/30 hover:bg-white/30"
+                        : "text-white/70 hover:bg-white/10 hover:text-white"
+                    }`}
                   >
                     Inflow
                   </Button>
@@ -303,7 +305,11 @@ function TransactionsContent() {
                     size="sm"
                     variant={filterType === "outflow" ? "default" : "ghost"}
                     onClick={() => setFilterType("outflow")}
-                    className="rounded-full"
+                    className={`rounded-full transition-all ${
+                      filterType === "outflow"
+                        ? "bg-white/20 text-white border-white/30 hover:bg-white/30"
+                        : "text-white/70 hover:bg-white/10 hover:text-white"
+                    }`}
                   >
                     Outflow
                   </Button>
@@ -312,12 +318,12 @@ function TransactionsContent() {
                   value={filterCategory}
                   onValueChange={setFilterCategory}
                 >
-                  <SelectTrigger className="w-[180px] bg-white dark:bg-[#1B253A] border-gray-200 dark:border-[#2A3B5A] shadow-sm">
+                  <SelectTrigger className="w-[180px] glass border-white/30 text-white">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="glass-strong border-white/30 text-white">
                     {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
+                      <SelectItem key={cat} value={cat} className="hover:bg-white/10 focus:bg-white/10">
                         {cat}
                       </SelectItem>
                     ))}
@@ -327,30 +333,34 @@ function TransactionsContent() {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="outline"
-                      className="bg-white dark:bg-[#1B253A] border-gray-200 dark:border-[#2A3B5A] shadow-sm ml-auto"
+                      className="glass border-white/30 text-white hover:bg-white/10 ml-auto"
                     >
                       <ArrowUpDown className="mr-2 h-4 w-4" />
                       Sort By
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent className="glass-strong border-white/30 text-white">
                     <DropdownMenuItem
                       onSelect={() => setSortOption("date-desc")}
+                      className="hover:bg-white/10 focus:bg-white/10"
                     >
                       Date: Newest First
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onSelect={() => setSortOption("date-asc")}
+                      className="hover:bg-white/10 focus:bg-white/10"
                     >
                       Date: Oldest First
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onSelect={() => setSortOption("amount-desc")}
+                      className="hover:bg-white/10 focus:bg-white/10"
                     >
                       Amount: High to Low
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onSelect={() => setSortOption("amount-asc")}
+                      className="hover:bg-white/10 focus:bg-white/10"
                     >
                       Amount: Low to High
                     </DropdownMenuItem>
@@ -372,69 +382,24 @@ function TransactionsContent() {
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.4 }}
                       >
-                        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 sticky top-0 z-10 bg-gray-50/80 dark:bg-[#1B253A]/80 backdrop-blur-sm py-2 px-2 rounded-md">
+                        <h2 className="text-lg font-semibold text-white mb-4 sticky top-0 z-10 glass backdrop-blur-lg py-2 px-2 rounded-md">
                           {getRelativeDate(dateKey)}
                         </h2>
                         <div className="space-y-3">
-                          {groupedTransactions[dateKey].map((tx) => {
-                            const Icon = tx.icon;
-                            return (
-                              <motion.div
-                                key={tx.id}
-                                layout
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 10 }}
-                                transition={{ duration: 0.3 }}
-                                className="bg-white dark:bg-[#101827] rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-300"
-                              >
-                                <div className="flex items-center gap-4">
-                                  <div
-                                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                                      tx.type === "inflow"
-                                        ? "bg-green-500/10 text-green-500"
-                                        : "bg-red-500/10 text-red-500"
-                                    }`}
-                                  >
-                                    <Icon className="h-5 w-5" />
-                                  </div>
-                                  <div>
-                                    <p className="font-semibold text-foreground">
-                                      {tx.description}
-                                    </p>
-                                    <p className="text-sm text-muted-foreground">
-                                      {new Date(tx.date).toLocaleDateString(
-                                        "en-US",
-                                        {
-                                          weekday: "long",
-                                          month: "short",
-                                          day: "numeric",
-                                        }
-                                      )}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="text-right">
-                                  <p
-                                    className={`text-lg font-bold ${
-                                      tx.type === "inflow"
-                                        ? "text-green-500"
-                                        : "text-red-500"
-                                    }`}
-                                  >
-                                    {tx.amount > 0
-                                      ? `+ ₹${tx.amount.toLocaleString()}`
-                                      : `- ₹${Math.abs(
-                                          tx.amount
-                                        ).toLocaleString()}`}
-                                  </p>
-                                  <span className="text-xs bg-gray-100 dark:bg-[#2A3B5A] text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full mt-1 inline-block">
-                                    {tx.category}
-                                  </span>
-                                </div>
-                              </motion.div>
-                            );
-                          })}
+                          {groupedTransactions[dateKey].map((tx) => (
+                            <motion.div
+                              key={tx.id}
+                              layout
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 10 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <TransactionCard
+                                transaction={tx}
+                              />
+                            </motion.div>
+                          ))}
                         </div>
                       </motion.div>
                     ))
