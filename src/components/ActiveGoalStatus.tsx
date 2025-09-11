@@ -13,16 +13,21 @@ interface ActiveGoalStatusProps {
 export default function ActiveGoalStatus({ goal }: ActiveGoalStatusProps) {
   // Calculate progress percentage
   const progressPercentage = (goal.currentAmount / goal.targetAmount) * 100;
-  
+
   // Calculate days until target date
   const today = new Date();
   const targetDate = new Date(goal.targetDate);
-  const daysUntilTarget = Math.ceil((targetDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  
+  const daysUntilTarget = Math.ceil(
+    (targetDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
   // Simple logic to determine if on track (can be made more sophisticated)
-  const monthlyNeeded = daysUntilTarget > 0 ? (goal.targetAmount - goal.currentAmount) / (daysUntilTarget / 30) : 0;
+  const monthlyNeeded =
+    daysUntilTarget > 0
+      ? (goal.targetAmount - goal.currentAmount) / (daysUntilTarget / 30)
+      : 0;
   const isOnTrack = monthlyNeeded <= 25000; // Assuming reasonable monthly savings capacity
-  
+
   // Generate AI insight based on goal status
   const getActionableInsight = () => {
     if (isOnTrack) {
@@ -43,10 +48,11 @@ export default function ActiveGoalStatus({ goal }: ActiveGoalStatusProps) {
             <div>
               <CardTitle className="text-xl text-white">{goal.name}</CardTitle>
               <p className="text-sm text-white/60 mt-1">
-                Target: {new Date(goal.targetDate).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
+                Target:{" "}
+                {new Date(goal.targetDate).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
                 })}
               </p>
             </div>
@@ -68,48 +74,54 @@ export default function ActiveGoalStatus({ goal }: ActiveGoalStatusProps) {
           </Badge>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         {/* Progress Section */}
         <div>
           <div className="flex justify-between items-center mb-3">
             <span className="text-sm font-medium text-white/80">Progress</span>
             <span className="text-sm font-bold text-white">
-              ₹{goal.currentAmount.toLocaleString()} / ₹{goal.targetAmount.toLocaleString()}
+              ₹{goal.currentAmount.toLocaleString()} / ₹
+              {goal.targetAmount.toLocaleString()}
             </span>
           </div>
-          
-          <Progress 
-            value={progressPercentage} 
+
+          <Progress
+            value={progressPercentage}
             className="h-3 bg-slate-700/50"
           />
-          
+
           <div className="flex justify-between items-center mt-2">
             <span className="text-xs text-white/50">
               {progressPercentage.toFixed(1)}% Complete
             </span>
             <span className="text-xs text-white/50">
-              ₹{(goal.targetAmount - goal.currentAmount).toLocaleString()} remaining
+              ₹{(goal.targetAmount - goal.currentAmount).toLocaleString()}{" "}
+              remaining
             </span>
           </div>
         </div>
-        
+
         {/* Time and Amount Metrics */}
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-slate-800/40 rounded-lg p-3 border border-slate-600/30">
-            <p className="text-xs font-medium text-white/60 mb-1">Days Remaining</p>
+            <p className="text-xs font-medium text-white/60 mb-1">
+              Days Remaining
+            </p>
             <p className="text-lg font-bold text-white">
-              {daysUntilTarget > 0 ? daysUntilTarget : 'Past Due'}
+              {daysUntilTarget > 0 ? daysUntilTarget : "Past Due"}
             </p>
           </div>
           <div className="bg-slate-800/40 rounded-lg p-3 border border-slate-600/30">
-            <p className="text-xs font-medium text-white/60 mb-1">Monthly Need</p>
+            <p className="text-xs font-medium text-white/60 mb-1">
+              Monthly Need
+            </p>
             <p className="text-lg font-bold text-white">
-              ₹{monthlyNeeded > 0 ? monthlyNeeded.toLocaleString() : '0'}
+              ₹{monthlyNeeded > 0 ? monthlyNeeded.toLocaleString() : "0"}
             </p>
           </div>
         </div>
-        
+
         {/* AI Actionable Insight */}
         <div className="bg-slate-800/40 rounded-lg p-4 border border-slate-600/30">
           <div className="flex items-start gap-3">

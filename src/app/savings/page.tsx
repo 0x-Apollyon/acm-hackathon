@@ -96,11 +96,11 @@ export default function SavingsPage() {
               activeGoalId={activeGoalId}
               onActiveGoalChange={setActiveGoalId}
             />
-            
+
             {/* Active Goal Status Card */}
             {activeGoalId && (
-              <ActiveGoalStatus 
-                goal={goals.find(goal => goal.id === activeGoalId)!}
+              <ActiveGoalStatus
+                goal={goals.find((goal) => goal.id === activeGoalId)!}
               />
             )}
           </div>
