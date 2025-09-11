@@ -8,18 +8,30 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { balanceData } from "@/lib/data";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 interface BalanceChartProps {
   className?: string;
+  totalBalanceLabel?: string;
+  subtitle?: string;
+  historicalSeries?: Array<{ date: string; balance: number }>; // optional series from transactions
 }
 
-export default function BalanceChart({ className = "" }: BalanceChartProps) {
+export default function BalanceChart({ className = "", totalBalanceLabel, subtitle, historicalSeries }: BalanceChartProps) {
   const [timeRange, setTimeRange] = useState<"1m" | "3m" | "6m">("1m");
 
   useEffect(() => {
     localStorage.setItem("finz-chart-range", timeRange);
   }, [timeRange]);
+
+  const chartData = useMemo(() => {
+    if (historicalSeries && historicalSeries.length) {
+      const days = timeRange === "1m" ? 30 : timeRange === "3m" ? 90 : 180;
+      const sliced = historicalSeries.slice(-days);
+      return sliced;
+    }
+    return balanceData[timeRange];
+  }, [historicalSeries, timeRange]);
 
   return (
     <div className={className}>
@@ -30,11 +42,13 @@ export default function BalanceChart({ className = "" }: BalanceChartProps) {
           </p>
           <div className="mb-4">
             <p className="text-5xl font-bold text-white">
-              ₹3,49,904
+              {totalBalanceLabel ?? "—"}
             </p>
-            <p className="text-sm text-emerald-400 font-medium">
-              ↑ 20% compared to previous month
-            </p>
+            {subtitle && (
+              <p className="text-sm text-emerald-400 font-medium">
+                {subtitle}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex gap-2">
@@ -67,7 +81,7 @@ export default function BalanceChart({ className = "" }: BalanceChartProps) {
         >
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={balanceData[timeRange]}
+              data={chartData}
               margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
             >
               <defs>
@@ -90,16 +104,7 @@ export default function BalanceChart({ className = "" }: BalanceChartProps) {
                   />
                 </linearGradient>
               </defs>
-              <XAxis
-                dataKey="date"
-                axisLine={false}
-                tickLine={false}
-                tick={{
-                  fontSize: 12,
-                  fill: "rgba(255, 255, 255, 0.6)",
-                }}
-                interval={0}
-              />
+              <XAxis dataKey="date" hide />
               <YAxis hide />
               <ChartTooltip
                 cursor={false}

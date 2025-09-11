@@ -5,9 +5,10 @@ import { Transaction } from "@/lib/types";
 interface TransactionCardProps {
   transaction: Transaction;
   showType?: boolean;
+  currencySymbol?: string; // defaults to $
 }
 
-export default function TransactionCard({ transaction, showType = true }: TransactionCardProps) {
+export default function TransactionCard({ transaction, showType = true, currencySymbol = "$" }: TransactionCardProps) {
   const Icon = transaction.icon;
   const isInflow = transaction.type === "inflow";
 
@@ -35,7 +36,7 @@ export default function TransactionCard({ transaction, showType = true }: Transa
         <p className={`text-2xl font-bold ${
           isInflow ? "text-emerald-400" : "text-red-400"
         }`}>
-          {isInflow ? "+" : "-"} ₹{Math.abs(transaction.amount).toLocaleString()}
+          {isInflow ? "+" : "-"} {currencySymbol}{Math.abs(transaction.amount).toLocaleString()}
         </p>
         <span className={`text-xs px-2 py-1 rounded-full border ${
           isInflow

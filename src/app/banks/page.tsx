@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -27,11 +27,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { allTransactions, allBankAccounts } from "@/lib/data";
+import { AuthAPI } from "@/lib/authClient";
 import { BankAccount } from "@/lib/types";
 import { motion } from "framer-motion";
 
-// Enhanced bank data with additional details
-const enhancedBankData = allBankAccounts.map((account: BankAccount, index: number) => {
+// Enhanced bank data with additional details (mock fallback)
+const mockEnhancedBankData = allBankAccounts.map((account: BankAccount, index: number) => {
   const accountTransactions = allTransactions
     .filter(() => Math.random() > 0.5) // Random assignment for demo
     .slice(0, 3 + Math.floor(Math.random() * 3));
@@ -81,13 +82,36 @@ const DetailRow = ({ label, value, copyable = false }: {
 };
 
 export default function BanksPage() {
-  const [selectedBank, setSelectedBank] = useState<typeof enhancedBankData[0] | null>(null);
-  const [balancesVisible, setBalancesVisible] = useState<Record<string, boolean>>({});
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [currencySymbol, setCurrencySymbol] = useState<'$' | '₹'>('$');
+  const [selectedBank, setSelectedBank] = useState<any | null>(null);
+  const [balancesVisible, setBalancesVisible] = useState<Record<number, boolean>>({});
 
-  const toggleBalanceVisibility = (accountNumber: string) => {
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [dash, acc] = await Promise.all([
+        AuthAPI.userDashboard(),
+        AuthAPI.userAccounts(),
+      ]);
+      if (cancelled) return;
+      if (dash.status === 'success') {
+        const cur = dash.data?.user_info?.preferences?.default_currency === 'USD' ? '$' : '₹';
+        setCurrencySymbol(cur);
+      }
+      if (acc.status === 'success') {
+        setAccounts(acc.accounts || []);
+      } else {
+        setAccounts([]);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const toggleBalanceVisibility = (id: number) => {
     setBalancesVisible(prev => ({
       ...prev,
-      [accountNumber]: !prev[accountNumber]
+      [id]: !prev[id]
     }));
   };
 
@@ -122,7 +146,7 @@ export default function BanksPage() {
                 <Building2 className="h-5 w-5 text-blue-300" />
                 <span className="text-sm text-white/60">Total Accounts</span>
               </div>
-              <p className="text-2xl font-bold text-white">{enhancedBankData.length}</p>
+              <p className="text-2xl font-bold text-white">{accounts.length}</p>
             </CardContent>
           </Card>
 
@@ -133,9 +157,7 @@ export default function BanksPage() {
                 <span className="text-sm text-white/60">Total Balance</span>
               </div>
               <p className="text-2xl font-bold text-green-400">
-                ₹{enhancedBankData.reduce((total, bank) =>
-                  total + parseFloat(bank.balance.replace(/₹|,/g, "")), 0
-                ).toLocaleString()}
+                {currencySymbol}{accounts.reduce((total, a) => total + (Number(a.balance) || 0), 0).toLocaleString()}
               </p>
             </CardContent>
           </Card>
@@ -147,7 +169,7 @@ export default function BanksPage() {
                 <span className="text-sm text-white/60">Active Cards</span>
               </div>
               <p className="text-2xl font-bold text-white">
-                {enhancedBankData.filter(bank => bank.isActive).length}
+                {accounts.filter(a => a.is_active).length}
               </p>
             </CardContent>
           </Card>
@@ -160,13 +182,12 @@ export default function BanksPage() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {enhancedBankData.map((bank, index) => {
-            const Icon = bank.icon;
-            const isBalanceVisible = balancesVisible[bank.accountNumber];
+          {(accounts.length ? accounts : []).map((acc, index) => {
+            const isBalanceVisible = balancesVisible[acc.id];
 
             return (
               <motion.div
-                key={bank.accountNumber}
+                key={acc.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -175,19 +196,19 @@ export default function BanksPage() {
               >
                 <Card
                   className="glass border-slate-500/30 hover:border-slate-400/50 transition-all duration-300 h-full group-hover:shadow-xl group-hover:shadow-blue-500/10"
-                  onClick={() => setSelectedBank(bank)}
+                  onClick={() => setSelectedBank(acc)}
                 >
                   <CardHeader className="pb-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:bg-white/20 transition-all duration-300">
-                          <Icon />
+                          <Building2 />
                         </div>
                         <div>
                           <CardTitle className="text-base font-semibold text-white/90">
-                            {bank.name}
+                            {acc.account_name}
                           </CardTitle>
-                          <p className="text-xs text-white/60">{bank.cardType}</p>
+                          <p className="text-xs text-white/60">{acc.institution_name || acc.account_type}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -196,7 +217,7 @@ export default function BanksPage() {
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
-                            toggleBalanceVisibility(bank.accountNumber);
+                            toggleBalanceVisibility(acc.id);
                           }}
                           className="h-8 w-8 p-0 hover:bg-white/20 transition-all duration-200"
                         >
@@ -206,7 +227,7 @@ export default function BanksPage() {
                             <Eye className="h-4 w-4" />
                           )}
                         </Button>
-                        {bank.isActive && (
+                        {acc.is_active && (
                           <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                         )}
                       </div>
@@ -218,28 +239,24 @@ export default function BanksPage() {
                     <div className="text-center">
                       <p className="text-xs text-white/60 mb-2">Current Balance</p>
                       <p className="text-2xl font-bold text-white">
-                        {isBalanceVisible ? bank.balance : "••••••••"}
+                        {isBalanceVisible ? `${currencySymbol}${Number(acc.balance).toLocaleString()}` : "••••••••"}
                       </p>
                     </div>
 
                     {/* Account Details */}
                     <div className="space-y-3 pt-4 border-t border-white/10">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-white/60">Account</span>
-                        <span className="text-sm font-mono text-white/80">
-                          ••••••••{bank.accountNumber.slice(-4)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-white/60">Card</span>
-                        <span className="text-sm font-mono text-white/80">
-                          {bank.cardNumber}
-                        </span>
-                      </div>
+                      {acc.account_number_masked && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-white/60">Account</span>
+                          <span className="text-sm font-mono text-white/80">
+                            {acc.account_number_masked}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-white/60">Status</span>
                         <div className="flex items-center gap-2">
-                          {bank.isActive ? (
+                          {acc.is_active ? (
                             <>
                               <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
                               <span className="text-xs text-green-400 font-medium">Active</span>
@@ -261,7 +278,7 @@ export default function BanksPage() {
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleQuickAction("Transfer", bank.name);
+                          handleQuickAction("Transfer", acc.account_name);
                         }}
                         className="flex-1 h-8 text-xs bg-white/5 hover:bg-white/10 border border-white/10"
                       >
@@ -272,7 +289,7 @@ export default function BanksPage() {
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleQuickAction("Statement", bank.name);
+                          handleQuickAction("Statement", acc.account_name);
                         }}
                         className="flex-1 h-8 text-xs bg-white/5 hover:bg-white/10 border border-white/10"
                       >
@@ -295,11 +312,11 @@ export default function BanksPage() {
               <DialogHeader className="pb-6 border-b border-white/10">
                 <DialogTitle className="flex flex-col sm:flex-row items-start sm:items-center gap-4 text-xl sm:text-2xl text-white">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center flex-shrink-0">
-                    <selectedBank.icon />
+                    <Building2 />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xl sm:text-2xl font-bold truncate">{selectedBank.name}</p>
-                    <p className="text-sm sm:text-base text-white/60 font-normal">{selectedBank.cardType}</p>
+                    <p className="text-xl sm:text-2xl font-bold truncate">{selectedBank.account_name}</p>
+                    <p className="text-sm sm:text-base text-white/60 font-normal">{selectedBank.institution_name || selectedBank.account_type}</p>
                   </div>
                 </DialogTitle>
               </DialogHeader>
@@ -312,32 +329,13 @@ export default function BanksPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                       <DetailRow
                         label="Account Number"
-                        value={selectedBank.accountNumber}
+                        value={selectedBank.account_number_masked || '—'}
                         copyable
                       />
-                      <DetailRow
-                        label="IFSC Code"
-                        value={selectedBank.ifscCode}
-                        copyable
-                      />
-                      <DetailRow
-                        label="SWIFT BIC"
-                        value={selectedBank.swiftBic}
-                        copyable
-                      />
-                      <DetailRow
-                        label="Account Holder"
-                        value={selectedBank.holderName}
-                      />
-                      <DetailRow
-                        label="Card Number"
-                        value={selectedBank.cardNumber}
-                        copyable
-                      />
-                      <DetailRow
-                        label="Expiry Date"
-                        value={selectedBank.expiryDate}
-                      />
+                      <DetailRow label="Institution" value={selectedBank.institution_name || '—'} />
+                      <DetailRow label="Type" value={selectedBank.account_type} />
+                      <DetailRow label="Linked At" value={selectedBank.linked_at || '—'} />
+                      <DetailRow label="Last Sync" value={selectedBank.last_sync || '—'} />
                     </div>
                   </div>
                 </div>
@@ -352,27 +350,14 @@ export default function BanksPage() {
                         <div className="text-center">
                           <p className="text-sm text-white/60 mb-2">Current Balance</p>
                           <p className="text-2xl sm:text-3xl font-bold text-green-400 break-all">
-                            {selectedBank.balance}
+                            {currencySymbol}{Number(selectedBank.balance).toLocaleString()}
                           </p>
                         </div>
 
                         <div className="space-y-3 pt-4 border-t border-white/10">
                           <div className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
-                            <span className="text-xs sm:text-sm text-white/60">Account Type</span>
-                            <span className="text-xs sm:text-sm font-medium text-white truncate ml-2">{selectedBank.cardType}</span>
-                          </div>
-
-                          <div className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
                             <span className="text-xs sm:text-sm text-white/60">Status</span>
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                              <span className="text-xs sm:text-sm font-medium text-green-400">Active</span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
-                            <span className="text-xs sm:text-sm text-white/60">Expires</span>
-                            <span className="text-xs sm:text-sm font-medium text-white">{selectedBank.expiryDate}</span>
+                            <span className="text-xs sm:text-sm font-medium text-white truncate ml-2">{selectedBank.is_active ? 'Active' : 'Inactive'}</span>
                           </div>
                         </div>
                       </CardContent>
