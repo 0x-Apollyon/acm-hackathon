@@ -103,7 +103,7 @@ export default function GoalStatus({ goal }: GoalStatusProps) {
     }
 
     const savingsRatio = last6MonthsAvg / requiredMonthlySavings;
-    let likelihood = Math.min(100, Math.max(0, savingsRatio * 100));
+    const likelihood = Math.min(100, Math.max(0, savingsRatio * 100));
 
     if (likelihood >= 80) {
       return {

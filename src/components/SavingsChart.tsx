@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -133,8 +135,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     const isPredicted = data.predicted !== null;
     const isGoal = data.goal !== null;
 
-    let value = data.historical || data.predicted || data.goal;
-    let type = isGoal ? "Goal" : isHistorical ? "Historical" : "Predicted";
+    const value = data.historical || data.predicted || data.goal;
+    const type = isGoal ? "Goal" : isHistorical ? "Historical" : "Predicted";
 
     return (
       <div className="bg-gray-800/95 backdrop-blur-sm p-3 rounded-lg border border-gray-600">

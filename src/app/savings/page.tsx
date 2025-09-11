@@ -93,8 +93,8 @@ export default function SavingsPage() {
               <CardContent className="text-center">
                 <p className="text-white/70 mb-6 text-lg">
                   Start your journey toward financial freedom by setting your
-                  first savings goal. Whether it's an emergency fund, vacation,
-                  or a new home, we'll help you get there.
+                  first savings goal. Whether it&apos;s an emergency fund,
+                  vacation, or a new home, we&apos;ll help you get there.
                 </p>
                 <Button
                   size="lg"
