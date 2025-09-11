@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Target, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { SavingsGoal } from "@/lib/types";
-import EnhancedSavingsForecastChart from "@/components/EnhancedSavingsForecastChart";
-import ActiveGoalStatus from "@/components/ActiveGoalStatus";
+import SavingsChart from "@/components/SavingsChart";
+import GoalStatus from "@/components/GoalStatus";
 import CreateGoalModal from "@/components/CreateGoalModal";
 
 export default function SavingsPage() {
@@ -31,7 +31,9 @@ export default function SavingsPage() {
   ]);
 
   // Active goal selection state
-  const [activeGoalId, setActiveGoalId] = useState<string>("");
+  const [activeGoalId, setActiveGoalId] = useState<string>(
+    goals.length > 0 ? goals[0].id : ""
+  );
 
   // Modal state - only open if no goals exist
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -53,10 +55,8 @@ export default function SavingsPage() {
 
     setGoals([...goals, newGoal]);
 
-    // Set as active goal if it's the first one
-    if (goals.length === 0) {
-      setActiveGoalId(newGoal.id);
-    }
+    // Set as active goal
+    setActiveGoalId(newGoal.id);
   };
 
   // Function to open create modal
@@ -112,19 +112,32 @@ export default function SavingsPage() {
         ) : (
           // Main Dashboard View - Show when goals exist
           <div className="space-y-8">
-            {/* Enhanced Savings Forecast Chart */}
-            <EnhancedSavingsForecastChart
+            {/* Savings Chart */}
+            <SavingsChart
               goals={goals}
               activeGoalId={activeGoalId}
               onActiveGoalChange={setActiveGoalId}
             />
 
-            {/* Active Goal Status Card */}
+            {/* Goal Status Card */}
             {activeGoalId && (
-              <ActiveGoalStatus
-                goal={goals.find((goal) => goal.id === activeGoalId)!}
-              />
+              <div className="pb-12">
+                <GoalStatus
+                  goal={goals.find((goal) => goal.id === activeGoalId)!}
+                />
+              </div>
             )}
+
+            {/* Add Goal Button */}
+            <div className="flex justify-center">
+              <Button
+                onClick={handleOpenCreateModal}
+                className="bg-purple-500 hover:bg-purple-600 text-white border-purple-400 px-6 py-2 rounded-full transition-all hover:shadow-lg hover:shadow-purple-500/25"
+              >
+                <Target className="h-4 w-4 mr-2" />
+                Add Another Goal
+              </Button>
+            </div>
           </div>
         )}
 
