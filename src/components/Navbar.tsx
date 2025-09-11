@@ -75,7 +75,10 @@ export default function Navbar() {
       <div className="container mx-auto flex h-16 items-center px-4">
         {/* Left Section (Logo) */}
         <div className="flex-1 flex justify-start">
-          <Link href="/" className="text-2xl font-bold text-white hover:text-blue-300 transition-colors">
+          <Link
+            href="/"
+            className="text-2xl font-bold text-white hover:text-blue-300 transition-colors"
+          >
             FinZ
           </Link>
         </div>
@@ -106,6 +109,12 @@ export default function Navbar() {
           >
             Banks
           </Link>
+          <Link
+            href="/savings"
+            className="text-white/90 transition-all hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg backdrop-blur-sm"
+          >
+            Savings
+          </Link>
 
           {/* Learn Hover Card */}
           <HoverCard openDelay={100} closeDelay={100}>
@@ -128,10 +137,6 @@ export default function Navbar() {
               </div>
             </HoverCardContent>
           </HoverCard>
-
-          <Link href="#" className="text-white/50 cursor-not-allowed px-3 py-2 rounded-lg">
-            Savings
-          </Link>
         </nav>
 
         {/* Right Section (Search, Theme, Profile) */}
@@ -177,7 +182,11 @@ export default function Navbar() {
                 />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 glass-strong border-slate-500/40" align="end" forceMount>
+            <DropdownMenuContent
+              className="w-56 glass-strong border-slate-500/40"
+              align="end"
+              forceMount
+            >
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none text-white">
