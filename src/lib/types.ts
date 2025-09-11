@@ -40,3 +40,11 @@ export interface BalanceDataPoint {
   date: string;
   balance: number;
 }
+
+export interface SavingsGoal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  targetDate: string;
+  currentAmount: number;
+}
