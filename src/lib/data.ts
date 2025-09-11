@@ -233,6 +233,214 @@ export const savingsData = {
   ],
 };
 
+// --- COMPREHENSIVE MONTHLY TRANSACTIONS FOR SAVINGS CALCULATION ---
+export const monthlyTransactionsData = [
+  // September 2024
+  {
+    month: "2024-09",
+    inflows: [
+      { amount: 75000, description: "Salary", date: "2024-09-01" },
+      { amount: 5000, description: "Freelance Project", date: "2024-09-15" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2024-09-01" },
+      { amount: 12000, description: "Groceries & Food", date: "2024-09-02" },
+      { amount: 8000, description: "Utilities", date: "2024-09-03" },
+      { amount: 6000, description: "Transportation", date: "2024-09-05" },
+      { amount: 4000, description: "Entertainment", date: "2024-09-10" },
+      { amount: 3000, description: "Shopping", date: "2024-09-12" },
+      { amount: 2000, description: "Miscellaneous", date: "2024-09-20" },
+    ],
+  },
+  // October 2024
+  {
+    month: "2024-10",
+    inflows: [
+      { amount: 75000, description: "Salary", date: "2024-10-01" },
+      { amount: 3000, description: "Investment Returns", date: "2024-10-20" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2024-10-01" },
+      { amount: 15000, description: "Groceries & Food", date: "2024-10-02" },
+      { amount: 8000, description: "Utilities", date: "2024-10-03" },
+      { amount: 7000, description: "Transportation", date: "2024-10-05" },
+      { amount: 5000, description: "Entertainment", date: "2024-10-10" },
+      { amount: 4000, description: "Shopping", date: "2024-10-12" },
+      { amount: 2000, description: "Miscellaneous", date: "2024-10-20" },
+    ],
+  },
+  // November 2024
+  {
+    month: "2024-11",
+    inflows: [
+      { amount: 75000, description: "Salary", date: "2024-11-01" },
+      { amount: 8000, description: "Bonus", date: "2024-11-15" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2024-11-01" },
+      { amount: 13000, description: "Groceries & Food", date: "2024-11-02" },
+      { amount: 9000, description: "Utilities", date: "2024-11-03" },
+      { amount: 6000, description: "Transportation", date: "2024-11-05" },
+      { amount: 7000, description: "Entertainment", date: "2024-11-10" },
+      { amount: 3000, description: "Shopping", date: "2024-11-12" },
+      { amount: 2500, description: "Miscellaneous", date: "2024-11-20" },
+    ],
+  },
+  // December 2024
+  {
+    month: "2024-12",
+    inflows: [
+      { amount: 75000, description: "Salary", date: "2024-12-01" },
+      { amount: 15000, description: "Year-end Bonus", date: "2024-12-20" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2024-12-01" },
+      { amount: 18000, description: "Groceries & Food", date: "2024-12-02" },
+      { amount: 8000, description: "Utilities", date: "2024-12-03" },
+      { amount: 8000, description: "Transportation", date: "2024-12-05" },
+      { amount: 12000, description: "Entertainment", date: "2024-12-10" },
+      { amount: 8000, description: "Shopping", date: "2024-12-12" },
+      { amount: 3000, description: "Miscellaneous", date: "2024-12-20" },
+    ],
+  },
+  // January 2025
+  {
+    month: "2025-01",
+    inflows: [
+      { amount: 78000, description: "Salary", date: "2025-01-01" },
+      { amount: 4000, description: "Freelance", date: "2025-01-15" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2025-01-01" },
+      { amount: 14000, description: "Groceries & Food", date: "2025-01-02" },
+      { amount: 10000, description: "Utilities", date: "2025-01-03" },
+      { amount: 6000, description: "Transportation", date: "2025-01-05" },
+      { amount: 5000, description: "Entertainment", date: "2025-01-10" },
+      { amount: 4000, description: "Shopping", date: "2025-01-12" },
+      { amount: 2000, description: "Miscellaneous", date: "2025-01-20" },
+    ],
+  },
+  // February 2025
+  {
+    month: "2025-02",
+    inflows: [
+      { amount: 78000, description: "Salary", date: "2025-02-01" },
+      { amount: 6000, description: "Investment Returns", date: "2025-02-20" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2025-02-01" },
+      { amount: 12000, description: "Groceries & Food", date: "2025-02-02" },
+      { amount: 8000, description: "Utilities", date: "2025-02-03" },
+      { amount: 7000, description: "Transportation", date: "2025-02-05" },
+      { amount: 4000, description: "Entertainment", date: "2025-02-10" },
+      { amount: 6000, description: "Shopping", date: "2025-02-12" },
+      { amount: 2500, description: "Miscellaneous", date: "2025-02-20" },
+    ],
+  },
+  // March 2025
+  {
+    month: "2025-03",
+    inflows: [
+      { amount: 78000, description: "Salary", date: "2025-03-01" },
+      { amount: 7000, description: "Tax Refund", date: "2025-03-25" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2025-03-01" },
+      { amount: 13500, description: "Groceries & Food", date: "2025-03-02" },
+      { amount: 8500, description: "Utilities", date: "2025-03-03" },
+      { amount: 6500, description: "Transportation", date: "2025-03-05" },
+      { amount: 5500, description: "Entertainment", date: "2025-03-10" },
+      { amount: 4000, description: "Shopping", date: "2025-03-12" },
+      { amount: 2000, description: "Miscellaneous", date: "2025-03-20" },
+    ],
+  },
+  // April 2025
+  {
+    month: "2025-04",
+    inflows: [
+      { amount: 80000, description: "Salary", date: "2025-04-01" },
+      { amount: 5000, description: "Freelance", date: "2025-04-15" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2025-04-01" },
+      { amount: 14000, description: "Groceries & Food", date: "2025-04-02" },
+      { amount: 9000, description: "Utilities", date: "2025-04-03" },
+      { amount: 7000, description: "Transportation", date: "2025-04-05" },
+      { amount: 6000, description: "Entertainment", date: "2025-04-10" },
+      { amount: 5000, description: "Shopping", date: "2025-04-12" },
+      { amount: 2500, description: "Miscellaneous", date: "2025-04-20" },
+    ],
+  },
+  // May 2025
+  {
+    month: "2025-05",
+    inflows: [
+      { amount: 80000, description: "Salary", date: "2025-05-01" },
+      { amount: 3000, description: "Investment Returns", date: "2025-05-20" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2025-05-01" },
+      { amount: 15000, description: "Groceries & Food", date: "2025-05-02" },
+      { amount: 10000, description: "Utilities", date: "2025-05-03" },
+      { amount: 8000, description: "Transportation", date: "2025-05-05" },
+      { amount: 4000, description: "Entertainment", date: "2025-05-10" },
+      { amount: 3000, description: "Shopping", date: "2025-05-12" },
+      { amount: 2000, description: "Miscellaneous", date: "2025-05-20" },
+    ],
+  },
+  // June 2025
+  {
+    month: "2025-06",
+    inflows: [
+      { amount: 80000, description: "Salary", date: "2025-06-01" },
+      { amount: 8000, description: "Freelance Project", date: "2025-06-15" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2025-06-01" },
+      { amount: 16000, description: "Groceries & Food", date: "2025-06-02" },
+      { amount: 9000, description: "Utilities", date: "2025-06-03" },
+      { amount: 7500, description: "Transportation", date: "2025-06-05" },
+      { amount: 6000, description: "Entertainment", date: "2025-06-10" },
+      { amount: 4500, description: "Shopping", date: "2025-06-12" },
+      { amount: 2500, description: "Miscellaneous", date: "2025-06-20" },
+    ],
+  },
+  // July 2025
+  {
+    month: "2025-07",
+    inflows: [
+      { amount: 82000, description: "Salary", date: "2025-07-01" },
+      { amount: 6000, description: "Side Business", date: "2025-07-15" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2025-07-01" },
+      { amount: 14000, description: "Groceries & Food", date: "2025-07-02" },
+      { amount: 11000, description: "Utilities", date: "2025-07-03" },
+      { amount: 8000, description: "Transportation", date: "2025-07-05" },
+      { amount: 7000, description: "Entertainment", date: "2025-07-10" },
+      { amount: 5000, description: "Shopping", date: "2025-07-12" },
+      { amount: 3000, description: "Miscellaneous", date: "2025-07-20" },
+    ],
+  },
+  // August 2025
+  {
+    month: "2025-08",
+    inflows: [
+      { amount: 82000, description: "Salary", date: "2025-08-01" },
+      { amount: 4000, description: "Investment Returns", date: "2025-08-20" },
+    ],
+    outflows: [
+      { amount: 25000, description: "Rent", date: "2025-08-01" },
+      { amount: 15000, description: "Groceries & Food", date: "2025-08-02" },
+      { amount: 9500, description: "Utilities", date: "2025-08-03" },
+      { amount: 7000, description: "Transportation", date: "2025-08-05" },
+      { amount: 5500, description: "Entertainment", date: "2025-08-10" },
+      { amount: 4000, description: "Shopping", date: "2025-08-12" },
+      { amount: 2500, description: "Miscellaneous", date: "2025-08-20" },
+    ],
+  },
+];
+
 // --- SAVINGS GOALS DATA ---
 export const savingsGoals = [
   {
