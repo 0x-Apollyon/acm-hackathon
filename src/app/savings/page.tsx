@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Target, TrendingUp } from "lucide-react";
+import SavingsForecast from "@/components/SavingsForecast";
 
 export default function SavingsPage() {
   return (
@@ -13,7 +14,7 @@ export default function SavingsPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Savings Goals
           </h1>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">
+          <p className="text-xl text-purple-300 max-w-2xl mx-auto">
             Your personalized path to financial freedom.
           </p>
         </div>
@@ -48,9 +49,9 @@ export default function SavingsPage() {
           </Card>
         </div>
 
-        {/* Future content placeholder */}
-        <div className="text-center text-white/60 py-12">
-          <p className="text-lg">More savings features coming soon...</p>
+        {/* Savings Forecast Chart */}
+        <div className="mb-8">
+          <SavingsForecast />
         </div>
       </div>
     </div>

@@ -200,3 +200,35 @@ export const categories = [
   "Shopping",
   "Family",
 ];
+
+// --- SAVINGS DATA ---
+export const savingsData = {
+  historical: [
+    { month: "Oct 2024", savings: 12000, type: "historical" },
+    { month: "Nov 2024", savings: 15000, type: "historical" },
+    { month: "Dec 2024", savings: 18000, type: "historical" },
+    { month: "Jan 2025", savings: 14000, type: "historical" },
+    { month: "Feb 2025", savings: 16000, type: "historical" },
+    { month: "Mar 2025", savings: 20000, type: "historical" },
+    { month: "Apr 2025", savings: 22000, type: "historical" },
+    { month: "May 2025", savings: 19000, type: "historical" },
+    { month: "Jun 2025", savings: 25000, type: "historical" },
+    { month: "Jul 2025", savings: 28000, type: "historical" },
+    { month: "Aug 2025", savings: 26000, type: "historical" },
+    { month: "Sep 2025", savings: 30000, type: "historical" },
+  ],
+  forecast: [
+    { month: "Oct 2025", savings: 32000, type: "forecast" },
+    { month: "Nov 2025", savings: 34000, type: "forecast" },
+    { month: "Dec 2025", savings: 36000, type: "forecast" },
+    { month: "Jan 2026", savings: 33000, type: "forecast" },
+    { month: "Feb 2026", savings: 35000, type: "forecast" },
+    { month: "Mar 2026", savings: 38000, type: "forecast" },
+    { month: "Apr 2026", savings: 40000, type: "forecast" },
+    { month: "May 2026", savings: 37000, type: "forecast" },
+    { month: "Jun 2026", savings: 42000, type: "forecast" },
+    { month: "Jul 2026", savings: 45000, type: "forecast" },
+    { month: "Aug 2026", savings: 43000, type: "forecast" },
+    { month: "Sep 2026", savings: 48000, type: "forecast" },
+  ],
+};
