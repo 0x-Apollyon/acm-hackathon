@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinZ | Stonks: Macroeconomic Outlook</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Light Theme Palette */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f3f5;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --logo-primary: #495057;
+            --border-color: #e9ecef;
+            --shadow-color: rgba(0, 0, 0, 0.07);
+            --chart-grid: rgba(0, 0, 0, 0.05);
+            --chart-line: #3b82f6;
+            --chart-gradient-start: rgba(59, 130, 246, 0.4);
+            --chart-gradient-stop: rgba(59, 130, 246, 0);
+            --map-bg: #f1f3f5;
+            --map-land: #d1d5db; 
+            --map-border: #f8f9fa;
+            --map-selectable: rgba(22, 163, 74, 0.3); 
+            --map-hover: #16a34a;      
+            --map-selected: #15803d;    
+            --cta-bg-start: #495057;
+            --cta-bg-end: #343a40;
+            --cta-text: #ffffff;
+            --link-color: #3b82f6;
+            --hover-color: #000000;
+        }
+
+        html[data-theme="dark"] {
+            /* Dark Theme Palette */
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-tertiary: #2a2a2e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #888888;
+            --logo-primary: #ced4da;
+            --border-color: #333333;
+            --shadow-color: rgba(0, 0, 0, 0.25);
+            --chart-grid: rgba(255, 255, 255, 0.1);
+            --chart-line: #60a5fa;
+            --chart-gradient-start: rgba(96, 165, 250, 0.3);
+            --chart-gradient-stop: rgba(96, 165, 250, 0);
+            --map-bg: #1f2937;
+            --map-land: #374151;
+            --map-border: #1f2937;
+            --map-selectable: rgba(74, 222, 128, 0.25); 
+            --map-hover: #4ade80;      
+            --map-selected: #22c55e;    
+            --cta-bg-start: #5a626b;
+            --cta-bg-end: #495057;
+            --cta-text: #ffffff;
+            --link-color: #60a5fa;
+            --hover-color: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary); color: var(--text-primary); min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+            display: flex; flex-direction: column;
+        }
+        
+        .page-container { width: 100%; max-width: 1600px; margin: 0 auto; padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+        
+        /* === NEW NAVBAR STYLES === */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 2rem; }
+        .logo { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); }
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-links a { color: var(--text-primary); font-weight: 600; text-decoration: none; transition: color 0.3s ease; }
+        .nav-links a:hover { color: var(--hover-color); }
+        #theme-toggle { background: none; border: none; cursor: pointer; color: var(--text-secondary); }
+        #theme-toggle:hover { color: var(--text-primary); }
+        #theme-toggle .icon { width: 24px; height: 24px; }
+        #moon-icon { display: none; }
+
+        .main-content { display: flex; gap: 1.5rem; flex: 1; min-height: 600px; }
+        #map { flex: 1; background: var(--map-bg); border: 1px solid var(--border-color); border-radius: 0.75rem; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center; }
+        
+        .country { fill: var(--map-land); stroke: var(--map-border); stroke-width: 0.5; transition: fill 0.2s ease-out; vector-effect: non-scaling-stroke; }
+        .country.selectable { fill: var(--map-selectable); }
+        .country.selectable:hover { fill: var(--map-hover); cursor: pointer; }
+        .country.selected { fill: var(--map-selected); }
+
+        .country-info { width: 25rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 1.5rem; max-height: 100%; overflow-y: auto; box-shadow: 0 4px 15px var(--shadow-color); transition: opacity 0.3s ease; }
+        #info-data-state { position: relative; }
+        .country-info h2 { margin-bottom: 0.5rem; color: var(--text-primary); font-size: 1.75rem; font-weight: 600; padding-right: 2.5rem; }
+        .info-placeholder { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--text-secondary); }
+        .info-placeholder svg { width: 50px; height: 50px; margin-bottom: 1rem; }
+        
+        .hidden { display: none; }
+
+        #close-panel-btn { position: absolute; top: 0; right: 0; background: none; border: none; padding: 0.5rem; cursor: pointer; color: var(--text-secondary); transition: color 0.2s ease; }
+        #close-panel-btn:hover { color: var(--text-primary); }
+        #close-panel-btn svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; }
+
+        .charts-container { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2rem; }
+        .chart-wrapper { background: var(--bg-tertiary); padding: 1rem; border-radius: 0.5rem; height: 180px; }
+        .chart-title { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.5rem; text-align: center; }
+
+        @media (max-width: 1024px) {
+            .main-content { flex-direction: column; height: auto; }
+            .country-info { width: 100%; max-height: 500px; }
+            #map { min-height: 50vh; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="navbar">
+            <div class="logo">FinZ | Stonks</div>
+            <h1 class="main-title">Macroeconomic Outlook</h1>
+            <div class="nav-links">
+                <a href="./">Home</a>
+                <a href="./learn">Learn</a>
+                <a href="./invest">Invest</a>
+                <button id="theme-toggle" title="Toggle theme">
+                    <svg id="sun-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moon-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+        <main class="main-content">
+            <div id="map"></div>
+            <div class="country-info">
+                 <div class="info-placeholder" id="info-initial-state">
+                    <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
+                    <h3>Select a country to view data.</h3>
+                </div>
+                 <div class="info-placeholder hidden" id="info-loading-state">
+                    <h3>Loading Data...</h3>
+                </div>
+                <div id="info-data-state" class="hidden">
+                    <button id="close-panel-btn" title="Close Panel">
+                        <svg fill="none" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                    <h2 id="country-name"></h2>
+                    <div class="charts-container">
+                        <div class="chart-wrapper"><div class="chart-title">GDP (Billion USD)</div><canvas id="gdpChart"></canvas></div>
+                        <div class="chart-wrapper"><div class="chart-title">GDP per Capita (USD)</div><canvas id="gdpPerCapitaChart"></canvas></div>
+                        <div class="chart-wrapper"><div class="chart-title">Inflation Rate (%)</div><canvas id="inflationChart"></canvas></div>
+                        <div class="chart-wrapper"><div class="chart-title">Unemployment Rate (%)</div><canvas id="unemploymentChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- THEME SWITCHER & UTILITIES ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        function updateThemeUI(theme) { 
+            sunIcon.style.display = theme === 'dark' ? 'none' : 'block'; 
+            moonIcon.style.display = theme === 'dark' ? 'block' : 'none'; 
+            document.documentElement.setAttribute('data-theme', theme); 
+            if (charts.gdp) { 
+                const country = document.getElementById('country-name').textContent; 
+                if (country) loadCountryData(country); 
+            } 
+        }
+        themeToggleBtn.addEventListener('click', () => { 
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light'; 
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light'; 
+            localStorage.setItem('theme', newTheme); 
+            updateThemeUI(newTheme); 
+        });
+
+        // --- CHART & INFO PANEL LOGIC ---
+        const charts = { gdp: null, gdpPerCapita: null, inflation: null, unemployment: null };
+        const initialState = document.getElementById('info-initial-state'); 
+        const loadingState = document.getElementById('info-loading-state'); 
+        const dataState = document.getElementById('info-data-state');
+        function setInfoPanelState(state) { 
+            initialState.classList.toggle('hidden', state !== 'initial'); 
+            loadingState.classList.toggle('hidden', state !== 'loading'); 
+            dataState.classList.toggle('hidden', state !== 'data'); 
+        }
+        
+        function createChart(canvasId, data, chartType) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const style = getComputedStyle(document.documentElement);
+            const chartLineColor = style.getPropertyValue('--chart-line').trim();
+
+            let datasetOptions = { data: data.values, borderColor: chartLineColor };
+
+            if (chartType === 'line') {
+                const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+                gradient.addColorStop(0, style.getPropertyValue('--chart-gradient-start').trim());
+                gradient.addColorStop(1, style.getPropertyValue('--chart-gradient-stop').trim());
+                datasetOptions = { ...datasetOptions, backgroundColor: gradient, fill: true, tension: 0.4, borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, pointBackgroundColor: chartLineColor };
+            } else { // Bar chart
+                datasetOptions = { ...datasetOptions, backgroundColor: chartLineColor, borderWidth: 0 };
+            }
+
+            return new Chart(ctx, {
+                type: chartType,
+                data: { labels: data.labels, datasets: [datasetOptions] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.7)', titleFont: { size: 14 }, bodyFont: { size: 12 }, displayColors: false } },
+                    scales: {
+                        y: { beginAtZero: false, grid: { color: style.getPropertyValue('--chart-grid').trim() }, ticks: { color: style.getPropertyValue('--text-secondary').trim(), font: { size: 10 } } },
+                        x: { grid: { display: false }, ticks: { color: style.getPropertyValue('--text-secondary').trim(), font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+        
+        function updateCharts(data) {
+            Object.values(charts).forEach(chart => chart?.destroy());
+            charts.gdp = createChart('gdpChart', data.gdp, 'line');
+            charts.gdpPerCapita = createChart('gdpPerCapitaChart', data.per_capita_gdp, 'line');
+            charts.inflation = createChart('inflationChart', data.inflation, 'bar');
+            charts.unemployment = createChart('unemploymentChart', data.unemployment, 'bar');
+        }
+
+        const selectableCountries = ['USA', 'China', 'India', 'South Korea', 'Japan', 'Germany', 'Brazil', 'Argentina', 'France', 'Russia', 'Spain', 'Pakistan', 'Thailand', 'Indonesia', 'Saudi Arabia', 'Egypt', 'South Africa', 'Canada', 'Mexico', 'Finland', 'Sweden', 'Norway', 'Poland', 'Italy', 'Iran', 'Australia', 'United Kingdom'];
+
+        // --- DATA FETCHING ---
+        async function loadCountryData(countryName) {
+            setInfoPanelState('loading');
+            try {
+                const response = await fetch(`/country_data?country=${encodeURIComponent(countryName)}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                document.getElementById('country-name').textContent = countryName;
+                updateCharts(data);
+                setInfoPanelState('data');
+            } catch (error) {
+                console.error('Error loading country data:', error);
+                setInfoPanelState('initial'); 
+                alert(`Error loading data for ${countryName}. Please check the console and ensure the backend is running.`);
+            }
+        }
+        
+        // --- MAP LOGIC ---
+        async function initMap() {
+            const container = document.getElementById('map');
+            container.innerHTML = '';
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const svg = d3.select('#map').append('svg').attr('width', '100%').attr('height', '100%').attr('viewBox', `0 0 ${width} ${height}`);
+            const g = svg.append('g');
+            const projection = d3.geoMercator().fitSize([width, height], {type: "Sphere"});
+            const path = d3.geoPath().projection(projection);
+
+            try {
+                const geoData = await d3.json('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson');
+                projection.fitSize([width, height], geoData);
+                g.selectAll('path').data(geoData.features).enter().append('path').attr('d', path).attr('class', d => `country ${selectableCountries.includes(d.properties.name) ? 'selectable' : ''}`)
+                    .on('click', function(event, d) {
+                        if (selectableCountries.includes(d.properties.name)) {
+                            svg.selectAll('.country.selected').classed('selected', false);
+                            d3.select(this).classed('selected', true);
+                            loadCountryData(d.properties.name);
+                        }
+                    });
+                const zoom = d3.zoom().scaleExtent([1, 8]).on('zoom', (event) => g.attr('transform', event.transform));
+                svg.call(zoom);
+            } catch (error) {
+                console.error('Error loading map data:', error);
+                container.textContent = 'Failed to load map data.';
+            }
+        }
+        
+        // --- INITIALIZATION ---
+        window.addEventListener('resize', initMap);
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            updateThemeUI(initialTheme);
+            initMap();
+            
+            document.getElementById('close-panel-btn').addEventListener('click', () => {
+                setInfoPanelState('initial');
+                d3.select('#map .country.selected').classed('selected', false);
+            });
+        });
+    </script>
+</body>
+</html>
