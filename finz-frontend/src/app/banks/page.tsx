@@ -1,22 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  LineChart,
-  Line,
-  ResponsiveContainer,
-  XAxis,
-  YAxis, // Fixed: Added YAxis to the import
-  Tooltip,
-} from "recharts";
-import { Copy, RefreshCw } from "lucide-react";
+import { LineChart, Line, ResponsiveContainer, XAxis, Tooltip } from "recharts";
+import { Copy, RefreshCw, PlusCircle, X } from "lucide-react";
 import { toast } from "sonner";
-import { allTransactions, allBankAccounts } from "@/lib/data"; // Fixed: Correctly named the import
-import { BankAccount, Transaction } from "@/lib/types"; // Import the types
+import { allTransactions, allBankAccounts } from "@/lib/data";
+import { BankAccount, Transaction } from "@/lib/types";
+import { motion, AnimatePresence } from "framer-motion";
 
-// --- CUSTOM BRAND ICON COMPONENTS (re-used from dashboard) ---
+// --- CUSTOM BRAND ICON COMPONENTS ---
 const SbiIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="12" cy="12" r="10" fill="#007BFF"></circle>
@@ -54,35 +49,40 @@ const AxisIcon = () => (
   </svg>
 );
 
+// --- FABRICATED DATA WITH DETAILS ---
 const bankDataWithDetails = allBankAccounts.map((account: BankAccount) => {
-  // Fixed: Added BankAccount type
-  // Fabricate some recent transactions and a balance history for each account
   const recentTransactions = allTransactions
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 3);
+    .slice(Math.floor(Math.random() * 3), Math.floor(Math.random() * 3) + 3);
 
   const balanceHistory = [
-    { name: "Jul", balance: Math.random() * 50000 },
-    { name: "Aug", balance: Math.random() * 50000 + 20000 },
+    {
+      name: "Jul",
+      balance:
+        parseFloat(account.balance.replace("₹", "").replace(/,/g, "")) *
+        (0.8 + Math.random() * 0.1),
+    },
+    {
+      name: "Aug",
+      balance:
+        parseFloat(account.balance.replace("₹", "").replace(/,/g, "")) *
+        (0.9 + Math.random() * 0.1),
+    },
     {
       name: "Sep",
       balance: parseFloat(account.balance.replace("₹", "").replace(/,/g, "")),
     },
   ];
 
-  return {
-    ...account,
-    recentTransactions,
-    balanceHistory,
-  };
+  return { ...account, recentTransactions, balanceHistory };
 });
 
 export default function BanksPage() {
+  const [selectedBank, setSelectedBank] = useState<BankAccount | null>(null);
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast("Copied to clipboard!", {
-      description: `Copied: ${text}`,
-    });
+    toast("Copied to clipboard!", { description: `Copied: ${text}` });
   };
 
   const handleActionClick = (action: string) => {
@@ -97,42 +97,36 @@ export default function BanksPage() {
         <h1 className="text-4xl font-bold text-foreground">
           Linked Bank Accounts
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-lg text-blue-500 dark:text-blue-300">
           A detailed overview of your connected accounts.
         </p>
       </div>
 
-      <div className="space-y-8">
-        {bankDataWithDetails.map((bank) => {
-          // Fixed: Type is inferred correctly now
-          const Icon = bank.icon;
-          return (
-            <Card
-              key={bank.name}
-              className="bg-card border-border dark:bg-[#1B253A] dark:border-[#2A3B5A] overflow-hidden"
-            >
+      <AnimatePresence>
+        {selectedBank ? (
+          <motion.div layoutId={`bank-card-${selectedBank.accountNumber}`}>
+            <Card className="bg-card border-border dark:bg-[#1B253A] dark:border-[#2A3B5A] overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between p-6 bg-muted/30 dark:bg-[#101827]/50 border-b border-border dark:border-[#2A3B5A]">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-lg flex items-center justify-center border bg-background dark:bg-[#1B253A] border-border dark:border-[#2A3B5A]">
-                    <Icon className="h-6 w-6" />
+                    <selectedBank.icon className="h-6 w-6" />
                   </div>
                   <div>
                     <CardTitle className="text-xl font-bold text-foreground">
-                      {bank.name}
+                      {selectedBank.name}
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Account Number: {bank.accountNumber}
+                      Account Number: {selectedBank.accountNumber}
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs text-muted-foreground">
-                    CURRENT BALANCE
-                  </p>
-                  <p className="text-2xl font-bold text-foreground">
-                    {bank.balance}
-                  </p>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSelectedBank(null)}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
               </CardHeader>
               <CardContent className="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Left: Account Details */}
@@ -145,11 +139,11 @@ export default function BanksPage() {
                       <span className="text-muted-foreground">IFSC Code</span>
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-foreground">
-                          {bank.ifscCode}
+                          {selectedBank.ifscCode}
                         </span>
                         <Copy
                           className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground"
-                          onClick={() => handleCopy(bank.ifscCode)}
+                          onClick={() => handleCopy(selectedBank.ifscCode)}
                         />
                       </div>
                     </div>
@@ -157,11 +151,11 @@ export default function BanksPage() {
                       <span className="text-muted-foreground">SWIFT BIC</span>
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-foreground">
-                          {bank.swiftBic}
+                          {selectedBank.swiftBic}
                         </span>
                         <Copy
                           className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground"
-                          onClick={() => handleCopy(bank.swiftBic)}
+                          onClick={() => handleCopy(selectedBank.swiftBic)}
                         />
                       </div>
                     </div>
@@ -171,11 +165,11 @@ export default function BanksPage() {
                       </span>
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-foreground">
-                          {bank.holderName}
+                          {selectedBank.holderName}
                         </span>
                         <Copy
                           className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground"
-                          onClick={() => handleCopy(bank.holderName)}
+                          onClick={() => handleCopy(selectedBank.holderName)}
                         />
                       </div>
                     </div>
@@ -199,7 +193,7 @@ export default function BanksPage() {
                 </div>
 
                 {/* Right: Balance History & Recent Transactions */}
-                <div className="md:col-span-2 grid grid-cols-2 gap-8">
+                <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-8">
                   <div>
                     <h3 className="font-semibold text-foreground mb-4">
                       Balance History
@@ -207,7 +201,12 @@ export default function BanksPage() {
                     <div className="h-32">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart
-                          data={bank.balanceHistory}
+                          data={
+                            bankDataWithDetails.find(
+                              (b) =>
+                                b.accountNumber === selectedBank.accountNumber
+                            )?.balanceHistory
+                          }
                           margin={{ top: 5, right: 20, left: -20, bottom: 5 }}
                         >
                           <XAxis
@@ -216,10 +215,6 @@ export default function BanksPage() {
                             fontSize={10}
                             tickLine={false}
                             axisLine={false}
-                          />
-                          <YAxis
-                            hide={true}
-                            domain={["dataMin - 10000", "dataMax + 10000"]}
                           />
                           <Tooltip
                             contentStyle={{
@@ -243,37 +238,92 @@ export default function BanksPage() {
                       Recent Transactions
                     </h3>
                     <div className="space-y-3">
-                      {bank.recentTransactions.map(
-                        (
-                          tx: Transaction // Fixed: Added Transaction type
-                        ) => (
+                      {bankDataWithDetails
+                        .find(
+                          (b) => b.accountNumber === selectedBank.accountNumber
+                        )
+                        ?.recentTransactions.map((tx: Transaction) => (
                           <div
                             key={tx.id}
                             className="flex items-center justify-between text-sm"
                           >
-                            <p className="text-foreground">{tx.description}</p>
+                            <p className="text-foreground truncate pr-4">
+                              {tx.description}
+                            </p>
                             <p
-                              className={
+                              className={`font-mono ${
                                 tx.type === "inflow"
                                   ? "text-green-500"
                                   : "text-red-500"
-                              }
+                              }`}
                             >
                               {tx.amount > 0
                                 ? `+₹${tx.amount.toLocaleString()}`
                                 : `-₹${Math.abs(tx.amount).toLocaleString()}`}
                             </p>
                           </div>
-                        )
-                      )}
+                        ))}
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          );
-        })}
-      </div>
+          </motion.div>
+        ) : (
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {bankDataWithDetails.map((bank) => {
+              const Icon = bank.icon;
+              return (
+                <motion.div
+                  key={bank.accountNumber}
+                  layoutId={`bank-card-${bank.accountNumber}`}
+                >
+                  <Card className="bg-card border-border dark:bg-[#1B253A] dark:border-[#2A3B5A] overflow-hidden flex flex-col h-full">
+                    <CardHeader className="flex flex-row items-center gap-4">
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center border bg-background dark:bg-[#101827] border-border dark:border-[#2A3B5A]">
+                        <Icon className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg font-bold text-foreground">
+                          {bank.name}
+                        </CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex-1 flex flex-col justify-between">
+                      <div className="mb-4">
+                        <p className="text-xs text-muted-foreground">
+                          CURRENT BALANCE
+                        </p>
+                        <p className="text-3xl font-bold text-foreground">
+                          {bank.balance}
+                        </p>
+                      </div>
+                      <Button
+                        className="w-full"
+                        onClick={() => setSelectedBank(bank)}
+                      >
+                        View Details
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+            {/* Add New Card */}
+            <motion.div layoutId="add-new-card">
+              <Card
+                className="bg-card border-border dark:bg-[#1B253A] dark:border-[#2A3B5A] h-full flex items-center justify-center border-dashed hover:border-primary hover:text-primary transition-colors cursor-pointer"
+                onClick={() => handleActionClick("Add New Account")}
+              >
+                <div className="text-center text-muted-foreground">
+                  <PlusCircle className="h-10 w-10 mx-auto mb-2" />
+                  <p className="font-semibold">Add New Account</p>
+                </div>
+              </Card>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
