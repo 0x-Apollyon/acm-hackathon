@@ -105,26 +105,16 @@ export default function Header() {
           {/* Learn Hover Card */}
           <HoverCard openDelay={100} closeDelay={100}>
             <HoverCardTrigger asChild>
-              <span className="cursor-pointer text-foreground transition-colors hover:text-primary">
+              <span className="cursor-not-allowed text-muted-foreground">
                 Learn
               </span>
             </HoverCardTrigger>
-            <HoverCardContent className="w-48 bg-card border-border text-card-foreground p-2">
-              <Link
-                href="#"
-                className="flex items-center p-2 rounded-md hover:bg-accent"
-              >
-                <TrendingUp className="mr-2 h-4 w-4" />
-                <span>Simulator</span>
-              </Link>
-              <div className="flex items-center p-2 rounded-md text-muted-foreground cursor-not-allowed">
-                <BookOpen className="mr-2 h-4 w-4" />
-                <span>Lessons</span>
-              </div>
-            </HoverCardContent>
           </HoverCard>
 
-          <Link href="#" className="text-muted-foreground cursor-not-allowed">
+          <Link
+            href="/banks"
+            className="text-foreground transition-colors hover:text-primary"
+          >
             Banks
           </Link>
           <Link href="#" className="text-muted-foreground cursor-not-allowed">
