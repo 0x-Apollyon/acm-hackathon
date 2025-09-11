@@ -10,6 +10,7 @@ import {
   Settings,
   BookOpen,
   TrendingUp,
+  Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -99,6 +100,12 @@ export default function Navbar() {
           >
             Transactions
           </Link>
+          <Link
+            href="/banks"
+            className="text-white/90 transition-all hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg backdrop-blur-sm"
+          >
+            Banks
+          </Link>
 
           {/* Learn Hover Card */}
           <HoverCard openDelay={100} closeDelay={100}>
@@ -122,9 +129,6 @@ export default function Navbar() {
             </HoverCardContent>
           </HoverCard>
 
-          <Link href="#" className="text-white/50 cursor-not-allowed px-3 py-2 rounded-lg">
-            Banks
-          </Link>
           <Link href="#" className="text-white/50 cursor-not-allowed px-3 py-2 rounded-lg">
             Savings
           </Link>
@@ -214,6 +218,10 @@ export default function Navbar() {
             </CommandItem>
             <CommandItem>
               <span>Transactions</span>
+            </CommandItem>
+            <CommandItem>
+              <Building2 className="mr-2 h-4 w-4" />
+              <span>Banks</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>
