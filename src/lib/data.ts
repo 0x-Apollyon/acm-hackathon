@@ -232,3 +232,47 @@ export const savingsData = {
     { month: "Sep 2026", savings: 48000, type: "forecast" },
   ],
 };
+
+// --- SAVINGS GOALS DATA ---
+export const savingsGoals = [
+  {
+    id: 1,
+    name: "Vacation Fund",
+    targetAmount: 50000,
+    currentAmount: 35000,
+    deadline: "Dec 2025",
+    status: "on-track",
+    insight:
+      "You're ahead of schedule! Consider investing the extra funds in a high-yield savings account.",
+  },
+  {
+    id: 2,
+    name: "Emergency Fund",
+    targetAmount: 150000,
+    currentAmount: 85000,
+    deadline: "Jun 2026",
+    status: "on-track",
+    insight:
+      "Great progress! Maintain your current savings rate to reach your 6-month expense goal.",
+  },
+  {
+    id: 3,
+    name: "New Car",
+    targetAmount: 800000,
+    currentAmount: 180000,
+    deadline: "Mar 2026",
+    status: "at-risk",
+    insight:
+      "Consider increasing monthly contributions by ₹15,000 or extending deadline by 6 months.",
+  },
+  {
+    id: 4,
+    name: "Home Down Payment",
+    targetAmount: 1500000,
+    currentAmount: 320000,
+    deadline: "Dec 2026",
+    status: "on-track",
+    insight:
+      "On track for your home purchase. Consider exploring pre-approved loan options now.",
+  },
+];

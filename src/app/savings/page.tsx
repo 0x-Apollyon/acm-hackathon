@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Target, TrendingUp } from "lucide-react";
 import SavingsForecast from "@/components/SavingsForecast";
+import SavingsGoals from "@/components/SavingsGoals";
 
 export default function SavingsPage() {
   return (
@@ -52,6 +53,11 @@ export default function SavingsPage() {
         {/* Savings Forecast Chart */}
         <div className="mb-8">
           <SavingsForecast />
+        </div>
+
+        {/* Savings Goals Grid */}
+        <div className="mb-8">
+          <SavingsGoals />
         </div>
       </div>
     </div>
