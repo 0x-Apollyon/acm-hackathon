@@ -5,34 +5,33 @@ import { Button } from "@/components/ui/button";
 import { Target, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { SavingsGoal } from "@/lib/types";
-import SavingsForecast from "@/components/SavingsForecast";
-import SavingsGoals from "@/components/SavingsGoals";
+import SavingsForecastChart from "@/components/SavingsForecastChart";
+import ActiveGoalStatus from "@/components/ActiveGoalStatus";
 
 export default function SavingsPage() {
   // Initial savings goals data
   const [goals, setGoals] = useState<SavingsGoal[]>([
-    //     // Comment out the goals to test empty state
-    //     {
-    //       id: "macbook-pro",
-    //       name: "MacBook Pro",
-    //       targetAmount: 200000,
-    //       targetDate: "2025-12-01",
-    //       currentAmount: 75000,
-    //     },
-    //     {
-    //       id: "emergency-fund",
-    //       name: "Emergency Fund",
-    //       targetAmount: 300000,
-    //       targetDate: "2026-06-01",
-    //       currentAmount: 120000,
-    //     },
-    //     {
-    //       id: "vacation-fund",
-    //       name: "Dream Vacation",
-    //       targetAmount: 150000,
-    //       targetDate: "2025-10-15",
-    //       currentAmount: 85000,
-    //     },
+    {
+      id: "macbook-pro",
+      name: "MacBook Pro",
+      targetAmount: 200000,
+      targetDate: "2025-12-01",
+      currentAmount: 75000,
+    },
+    {
+      id: "emergency-fund",
+      name: "Emergency Fund",
+      targetAmount: 300000,
+      targetDate: "2026-06-01",
+      currentAmount: 120000,
+    },
+    {
+      id: "vacation-fund",
+      name: "Dream Vacation",
+      targetAmount: 150000,
+      targetDate: "2025-10-15",
+      currentAmount: 85000,
+    },
   ]);
 
   // Active goal selection state
@@ -91,18 +90,19 @@ export default function SavingsPage() {
         ) : (
           // Main Dashboard View - Show when goals exist
           <div className="space-y-8">
-            {/* Placeholder for main dashboard */}
-            <div className="text-center text-white/60 py-12 border-2 border-dashed border-blue-400/30 rounded-lg">
-              <h3 className="text-xl font-semibold mb-2">
-                Main Dashboard View
-              </h3>
-              <p className="text-sm">
-                Dashboard components will be implemented here when goals exist.
-              </p>
-              <p className="text-xs mt-2 text-white/40">
-                Current goals: {goals.length} | Active goal: {activeGoalId}
-              </p>
-            </div>
+            {/* Savings Forecast Chart */}
+            <SavingsForecastChart
+              goals={goals}
+              activeGoalId={activeGoalId}
+              onActiveGoalChange={setActiveGoalId}
+            />
+            
+            {/* Active Goal Status Card */}
+            {activeGoalId && (
+              <ActiveGoalStatus 
+                goal={goals.find(goal => goal.id === activeGoalId)!}
+              />
+            )}
           </div>
         )}
       </div>
