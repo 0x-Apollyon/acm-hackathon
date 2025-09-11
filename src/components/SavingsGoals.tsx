@@ -114,7 +114,7 @@ export default function SavingsGoals({ className = "" }: SavingsGoalsProps) {
                     </div>
                     <div>
                       <p className="text-xs font-medium text-blue-300 mb-1">
-                        AI Insight
+                        Insight
                       </p>
                       <p className="text-sm text-white/80 leading-relaxed">
                         {goal.insight}

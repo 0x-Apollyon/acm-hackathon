@@ -69,7 +69,7 @@ export default function SavingsForecast({
                   Savings Forecast
                 </CardTitle>
                 <p className="text-white/60 text-sm mt-1">
-                  AI-powered savings prediction using Holt-Winters method
+                  Savings prediction using Holt-Winters method
                 </p>
               </div>
             </div>
@@ -90,13 +90,13 @@ export default function SavingsForecast({
           <div className="mb-6">
             <div className="flex items-center gap-6 mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-0.5 bg-emerald-500"></div>
+                <div className="w-5 h-0.5 bg-emerald-500"></div>
                 <span className="text-sm text-white/70">
                   Historical Savings
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-0.5 border-t-2 border-dashed border-emerald-400"></div>
+                <div className="w-5 h-0.5 border-t-2 border-dashed border-emerald-300"></div>
                 <span className="text-sm text-white/70">Forecast</span>
               </div>
             </div>
@@ -193,7 +193,7 @@ export default function SavingsForecast({
                   <Line
                     type="monotone"
                     dataKey="savings"
-                    stroke="#10b981"
+                    stroke="#5ee9b5"
                     strokeWidth={3}
                     strokeDasharray="8 6"
                     dot={false}
