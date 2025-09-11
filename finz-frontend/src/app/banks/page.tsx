@@ -118,7 +118,7 @@ export default function BanksPage() {
         <h1 className="text-4xl font-bold text-foreground">
           Linked Bank Accounts
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-lg text-blue-500 dark:text-blue-300">
           A detailed overview of your connected accounts.
         </p>
       </div>
