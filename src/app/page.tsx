@@ -55,7 +55,7 @@ const features = [
     icon: Target,
     title: "Smart Savings Goals",
     description:
-      "Set financial goals and track progress with AI-powered forecasting that predicts when you'll reach your targets.",
+      "Set financial goals and track progress with statistical forecasting that predicts when you'll reach your targets.",
     href: "/savings",
     color: "bg-yellow-500/20 border-yellow-400/30",
     iconColor: "text-yellow-300",
@@ -292,8 +292,6 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

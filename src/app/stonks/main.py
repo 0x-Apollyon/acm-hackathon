@@ -21,7 +21,7 @@ app = Flask(__name__)
 
 @app.route("/top-movers", methods=['GET'])
 def top_movers():
-    API_KEY = ""
+    API_KEY = "PKD23o6iRK1epNCc2Ox4xmpbemXSLlGc"
 
     gainers_url = f"https://financialmodelingprep.com/stable/biggest-gainers?apikey={API_KEY}"
     gainers = requests.get(gainers_url).json()[:15]
@@ -51,7 +51,7 @@ def news_fetch():
     from_date = request.args.get('from')
     to_date = request.args.get('to')
 
-    res = requests.get(f"https://newsapi.org/v2/everything?q={keyword}&from={from_date}&to={to_date}&sortBy=popularity&apiKey=")
+    res = requests.get(f"https://newsapi.org/v2/everything?q={keyword}&from={from_date}&to={to_date}&sortBy=popularity&apiKey=6562b4e030fb433b81c639c515ec7f64")
     result = res.json()
     returnable = []
     for article in result["articles"]:
@@ -324,4 +324,4 @@ def analysis_data():
     return {'error': 'Invalid exchange'}
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=1000, debug=True) 
+    app.run(port=5001, debug=True) 

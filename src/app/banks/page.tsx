@@ -335,7 +335,9 @@ export default function BanksPage() {
                     </div>
                   </div>
                   <div className="text-left sm:text-right w-full sm:w-auto">
-                    <p className="text-xs sm:text-sm text-white/60">Current Balance</p>
+                    <p className="text-xs sm:text-sm text-white/60">
+                      Current Balance
+                    </p>
                     <p className="text-xl sm:text-2xl font-bold text-green-400">
                       {selectedBank.balance}
                     </p>

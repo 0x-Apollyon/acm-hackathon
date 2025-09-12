@@ -1,434 +1,971 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FinZ | Stonks</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --page-bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --border-color: #e9ecef;
-            --connector-color: #d0d7de;
-            --locked-bg: #f8f9fa;
-            --locked-border: #e0e0e0;
-            --locked-text: #adb5bd;
-            --current-color: #28a745;
-            --completed-color: #f7c948;
-            --completed-text: #343a40;
-            --hover-color: #000000;
+      :root {
+        --page-bg: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --border-color: #e9ecef;
+        --connector-color: #d0d7de;
+        --locked-bg: #f8f9fa;
+        --locked-border: #e0e0e0;
+        --locked-text: #adb5bd;
+        --current-color: #28a745;
+        --completed-color: #f7c948;
+        --completed-text: #343a40;
+        --hover-color: #000000;
+      }
+      html[data-theme="dark"] {
+        --page-bg: #121212;
+        --card-bg: #1e1e1e;
+        --text-primary: #e0e0e0;
+        --text-secondary: #888888;
+        --border-color: #333333;
+        --connector-color: #444444;
+        --locked-bg: #1e1e1e;
+        --locked-border: #444444;
+        --locked-text: #777777;
+        --hover-color: #ffffff;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--page-bg);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      .container-main {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+      }
+      .logo {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .nav-links a {
+        color: var(--text-primary);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      .nav-links a:hover {
+        color: var(--hover-color);
+      }
+      #theme-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+      }
+      #theme-toggle:hover {
+        color: var(--text-primary);
+      }
+      #theme-toggle .icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .lesson-path-container {
+        max-width: 800px;
+        margin: 4rem auto;
+        position: relative;
+      }
+      .lesson-tier {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 4rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+      .tier-separator {
+        display: flex;
+        align-items: center;
+        margin: 2rem 0;
+        position: relative;
+        z-index: 6;
+      }
+      .tier-separator hr {
+        flex-grow: 1;
+        border-top: 2px solid var(--border-color);
+      }
+      .tier-separator span {
+        padding: 0 1rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 0.9rem;
+        background-color: var(--page-bg);
+      }
+      .lesson-item {
+        position: relative;
+        z-index: 10;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-width: 4px;
+        border-style: solid;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+      .lesson-item p {
+        position: absolute;
+        bottom: -25px;
+        width: 150px;
+        text-align: center;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .lesson-item.locked {
+        background-color: var(--locked-bg);
+        border-color: var(--locked-border);
+        color: var(--locked-text);
+        cursor: not-allowed;
+      }
+      .lesson-item.current-lesson {
+        background-color: var(--current-color);
+        border-color: var(--current-color);
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.4);
+        animation: pulse 2s infinite;
+      }
+      .lesson-item.completed {
+        background-color: var(--completed-color);
+        border-color: var(--completed-color);
+        color: var(--completed-text);
+      }
+      .lesson-item .icon {
+        width: 32px;
+        height: 32px;
+      }
+      .lesson-item.locked .icon {
+        stroke: var(--locked-text);
+      }
+      .lesson-item.current-lesson .icon {
+        stroke: white;
+      }
+      .lesson-item.completed .icon {
+        stroke: var(--completed-text);
+      }
+      .progress-pill {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(30%, -30%) scale(0);
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 700;
+        min-width: 32px;
+        height: 32px;
+        padding: 4px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--card-bg);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+      .progress-pill.active {
+        opacity: 1;
+        transform: translate(30%, -30%) scale(1);
+      }
+      .progress-pill.pill-locked {
+        background-color: var(--locked-text);
+      }
+      .progress-pill.pill-current {
+        background-color: var(--current-color);
+      }
+      .progress-pill.pill-completed {
+        background-color: var(--completed-color);
+        color: var(--completed-text);
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4);
         }
-        html[data-theme="dark"] {
-            --page-bg: #121212;
-            --card-bg: #1e1e1e;
-            --text-primary: #e0e0e0;
-            --text-secondary: #888888;
-            --border-color: #333333;
-            --connector-color: #444444;
-            --locked-bg: #1e1e1e;
-            --locked-border: #444444;
-            --locked-text: #777777;
-            --hover-color: #ffffff;
+        70% {
+          box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--page-bg);
-            color: var(--text-primary);
-            transition: background-color 0.3s ease, color 0.3s ease;
+        100% {
+          box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
         }
-        .container-main { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
-        .logo { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); }
-        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
-        .nav-links a { color: var(--text-primary); font-weight: 600; text-decoration: none; transition: color 0.3s ease; }
-        .nav-links a:hover { color: var(--hover-color); }
-        #theme-toggle { background: none; border: none; cursor: pointer; color: var(--text-secondary); }
-        #theme-toggle:hover { color: var(--text-primary); }
-        #theme-toggle .icon { width: 24px; height: 24px; }
+      }
 
-        .lesson-path-container { max-width: 800px; margin: 4rem auto; position: relative; }
-        .lesson-tier { display: flex; justify-content: center; align-items: center; gap: 4rem; margin-bottom: 2rem; flex-wrap: wrap; }
-        .tier-separator { display: flex; align-items: center; margin: 2rem 0; position: relative; z-index: 6; }
-        .tier-separator hr { flex-grow: 1; border-top: 2px solid var(--border-color); }
-        .tier-separator span { padding: 0 1rem; color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; background-color: var(--page-bg); }
-        .lesson-item { position: relative; z-index: 10; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; border-width: 4px; border-style: solid; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .lesson-item p { position: absolute; bottom: -25px; width: 150px; text-align: center; font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
-        .lesson-item.locked { background-color: var(--locked-bg); border-color: var(--locked-border); color: var(--locked-text); cursor: not-allowed; }
-        .lesson-item.current-lesson { background-color: var(--current-color); border-color: var(--current-color); color: white; transform: scale(1.1); box-shadow: 0 0 20px rgba(40, 167, 69, 0.4); animation: pulse 2s infinite; }
-        .lesson-item.completed { background-color: var(--completed-color); border-color: var(--completed-color); color: var(--completed-text); }
-        .lesson-item .icon { width: 32px; height: 32px; }
-        .lesson-item.locked .icon { stroke: var(--locked-text); }
-        .lesson-item.current-lesson .icon { stroke: white; }
-        .lesson-item.completed .icon { stroke: var(--completed-text); }
-        .progress-pill { position: absolute; top: 0; right: 0; transform: translate(30%, -30%) scale(0); color: white; font-size: 0.7rem; font-weight: 700; min-width: 32px; height: 32px; padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card-bg); box-shadow: 0 2px 5px rgba(0,0,0,0.15); opacity: 0; transition: all 0.3s ease; }
-        .progress-pill.active { opacity: 1; transform: translate(30%, -30%) scale(1); }
-        .progress-pill.pill-locked { background-color: var(--locked-text); }
-        .progress-pill.pill-current { background-color: var(--current-color); }
-        .progress-pill.pill-completed { background-color: var(--completed-color); color: var(--completed-text); }
+      .bottom-section {
+        max-width: 1200px;
+        margin: 4rem auto 2rem;
+      }
+      .badges-activity {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+      .badges-container {
+        flex: 2;
+      }
+      .activity-container {
+        flex: 1;
+      }
+      .badges-container,
+      .activity-container {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+      .badges-container h2,
+      .activity-container h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+      .badges-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 1.5rem;
+        justify-items: center;
+      }
+      .badge {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 0.65rem;
+        font-weight: 600;
+        background: var(--page-bg);
+        border: 3px solid #adb5bd;
+        color: var(--text-secondary);
+        transition: all 0.3s ease;
+        padding: 0.3rem;
+        filter: grayscale(100%);
+      }
+      .badge.earned {
+        background: linear-gradient(135deg, #f7c948 0%, #e6b800 100%);
+        color: #343a40;
+        border-color: #d4a017;
+        filter: none;
+        box-shadow: 0 8px 25px rgba(247, 201, 72, 0.4);
+        transform: scale(1.05);
+        z-index: 2;
+      }
+      .badge.earned::before,
+      .badge.earned::after {
+        content: "";
+        position: absolute;
+        background: #c0392b;
+        height: 35px;
+        width: 30px;
+        top: 55px;
+        z-index: -1;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .badge.earned::before {
+        left: 5px;
+        transform: rotate(-35deg);
+        border-bottom-right-radius: 8px;
+      }
+      .badge.earned::after {
+        right: 5px;
+        transform: rotate(35deg);
+        border-bottom-left-radius: 8px;
+      }
+      .badge:not(.earned) span {
+        opacity: 0.5;
+      }
 
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); } }
+      #month-name {
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+      .day-of-week-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+      .day-of-week-grid span {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+      .activity-days-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+      }
+      .activity-day {
+        aspect-ratio: 1 / 1;
+        width: 24px;
+        height: 24px;
+        margin: auto;
+        background: var(--locked-border);
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        position: relative;
+        cursor: pointer;
+      }
+      .activity-day.empty {
+        background: transparent;
+        cursor: default;
+      }
+      .activity-day:not(.empty):hover {
+        transform: scale(1.2);
+        z-index: 10;
+      }
+      .activity-day:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 120%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #212529;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 20;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      .activity-day.level-1 {
+        background: #9be9a8;
+      }
+      .activity-day.level-2 {
+        background: #40c463;
+      }
+      .activity-day.level-3 {
+        background: #30a14e;
+      }
+      .activity-day.level-4 {
+        background: #216e39;
+      }
 
-        .bottom-section { max-width: 1200px; margin: 4rem auto 2rem; }
-        .badges-activity { display: flex; gap: 2rem; margin-bottom: 2rem; }
-        .badges-container { flex: 2; } .activity-container { flex: 1; }
-        .badges-container, .activity-container { background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .badges-container h2, .activity-container h2 { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem; text-align: center; }
-        .badges-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 1.5rem; justify-items: center; }
-        .badge { position: relative; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.65rem; font-weight: 600; background: var(--page-bg); border: 3px solid #adb5bd; color: var(--text-secondary); transition: all 0.3s ease; padding: 0.3rem; filter: grayscale(100%); }
-        .badge.earned { background: linear-gradient(135deg, #f7c948 0%, #e6b800 100%); color: #343a40; border-color: #d4a017; filter: none; box-shadow: 0 8px 25px rgba(247, 201, 72, 0.4); transform: scale(1.05); z-index: 2; }
-        .badge.earned::before, .badge.earned::after { content: ''; position: absolute; background: #c0392b; height: 35px; width: 30px; top: 55px; z-index: -1; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .badge.earned::before { left: 5px; transform: rotate(-35deg); border-bottom-right-radius: 8px; } .badge.earned::after { right: 5px; transform: rotate(35deg); border-bottom-left-radius: 8px; }
-        .badge:not(.earned) span { opacity: 0.5; }
+      .total-progress {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+      .total-progress h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+      .total-progress-bar {
+        width: 100%;
+        height: 28px;
+        background: var(--border-color);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .total-progress-bar:hover {
+        transform: scale(1.02, 1.1);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1),
+          0 4px 15px rgba(40, 167, 69, 0.2);
+      }
+      .total-progress-bar div {
+        height: 100%;
+        background: linear-gradient(to right, #28a745, #20c997);
+        width: 0;
+        transition: width 0.8s ease;
+        border-radius: 14px;
+      }
 
-        #month-name { font-size: 1rem; font-weight: 600; text-align: center; margin-bottom: 1rem; color: var(--text-primary); }
-        .day-of-week-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 0.5rem; }
-        .day-of-week-grid span { font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); }
-        .activity-days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-        .activity-day { aspect-ratio: 1 / 1; width: 24px; height: 24px; margin: auto; background: var(--locked-border); border-radius: 4px; transition: all 0.3s ease; position: relative; cursor: pointer; }
-        .activity-day.empty { background: transparent; cursor: default; }
-        .activity-day:not(.empty):hover { transform: scale(1.2); z-index: 10; }
-        .activity-day:hover::after { content: attr(data-tooltip); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: #212529; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .activity-day.level-1 { background: #9be9a8; } .activity-day.level-2 { background: #40c463; } .activity-day.level-3 { background: #30a14e; } .activity-day.level-4 { background: #216e39; }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .modal-content {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        max-width: 400px;
+      }
+      .modal-content .confirm {
+        background: var(--current-color);
+        color: white;
+      }
+      .modal-content .confirm:hover {
+        background: #218838;
+      }
+      .modal-content .cancel {
+        background: #dc3545;
+        color: white;
+      }
 
-        .total-progress { background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .total-progress h2 { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem; text-align: center; }
-        .total-progress-bar { width: 100%; height: 28px; background: var(--border-color); border-radius: 14px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .total-progress-bar:hover { transform: scale(1.02, 1.1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 4px 15px rgba(40, 167, 69, 0.2); }
-        .total-progress-bar div { height: 100%; background: linear-gradient(to right, #28a745, #20c997); width: 0; transition: width 0.8s ease; border-radius: 14px; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: var(--card-bg); padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,0.3); max-width: 400px; }
-        .modal-content .confirm { background: var(--current-color); color: white; } .modal-content .confirm:hover { background: #218838; }
-        .modal-content .cancel { background: #dc3545; color: white; }
-        
-        #tooltip { position: absolute; opacity: 0; background-color: #333; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; pointer-events: none; transition: opacity 0.2s; z-index: 9999; }
-        @media (max-width: 992px) { .badges-activity { flex-direction: column; } }
+      #tooltip {
+        position: absolute;
+        opacity: 0;
+        background-color: #333;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        pointer-events: none;
+        transition: opacity 0.2s;
+        z-index: 9999;
+      }
+      @media (max-width: 992px) {
+        .badges-activity {
+          flex-direction: column;
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="tooltip"></div>
     <div class="container-main">
-        <div class="navbar">
-            <div class="logo">FinZ | Stonks</div>
-            
-            <div class="nav-links">
-                <a href="./">Home</a>
-                <a href="./learn">Learn</a>
-                <a href="./invest">Invest</a>
-                <button id="theme-toggle" title="Toggle theme">
-                    <svg id="sun-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <svg id="moon-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                </button>
-            </div>
-        </div>
+      <div class="navbar">
+        <div class="logo">FinZ | Stonks</div>
 
-        <div class="lesson-path-container">
-            <svg id="lesson-path-svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5;"></svg>
-            <div class="lesson-tier" id="tier-1">
-                <div class="lesson-item" id="basics"><div class="progress-pill"></div><p></p></div>
-                <div class="lesson-item" id="indicators"><div class="progress-pill"></div><p></p></div>
-            </div>
-            <div class="tier-separator"><hr/><span>Level 2: Advanced Techniques</span><hr/></div>
-            <div class="lesson-tier" id="tier-2">
-                <div class="lesson-item" id="math-indicators"><div class="progress-pill"></div><p></p></div>
-                <div class="lesson-item" id="portfolio"><div class="progress-pill"></div><p></p></div>
-            </div>
-            <div class="tier-separator"><hr/><span>Level 3: Portfolio Theory</span><hr/></div>
-            <div class="lesson-tier" id="tier-3">
-                <div class="lesson-item" id="pmpt"><div class="progress-pill"></div><p></p></div>
-                <div class="lesson-item" id="mpt"><div class="progress-pill"></div><p></p></div>
-            </div>
-            <div class="tier-separator"><hr/><span>Level 4: Specialized Markets</span><hr/></div>
-            <div class="lesson-tier" id="tier-4">
-                <div class="lesson-item" id="crypto"><div class="progress-pill"></div><p></p></div>
-                <div class="lesson-item" id="foreign"><div class="progress-pill"></div><p></p></div>
-            </div>
+        <div class="nav-links">
+          <a href="./stonks.html">Home</a>
+          <a href="./stonks_learn.html">Learn</a>
+          <a href="./stonks_invest.html">Invest</a>
+          <button id="theme-toggle" title="Toggle theme">
+            <svg
+              id="sun-icon"
+              class="icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+              ></path>
+            </svg>
+            <svg
+              id="moon-icon"
+              class="icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              ></path>
+            </svg>
+          </button>
         </div>
+      </div>
 
-        <div class="bottom-section">
-            <div class="badges-activity">
-                <div class="badges-container">
-                    <h2>Achievement Badges</h2>
-                    <div class="badges-grid" id="badges-grid"></div>
-                </div>
-                <div class="activity-container">
-                    <h2>Learning Activity</h2>
-                    <div class="activity-month-view">
-                        <h3 id="month-name"></h3>
-                        <div class="day-of-week-grid"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
-                        <div class="activity-days-grid" id="activity-grid"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="total-progress">
-                <h2>Course Progress</h2>
-                <div class="total-progress-bar"><div id="progress-bar"></div></div>
-            </div>
+      <div class="lesson-path-container">
+        <svg
+          id="lesson-path-svg"
+          style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+          "
+        ></svg>
+        <div class="lesson-tier" id="tier-1">
+          <div class="lesson-item" id="basics">
+            <div class="progress-pill"></div>
+            <p></p>
+          </div>
+          <div class="lesson-item" id="indicators">
+            <div class="progress-pill"></div>
+            <p></p>
+          </div>
         </div>
+        <div class="tier-separator">
+          <hr />
+          <span>Level 2: Advanced Techniques</span>
+          <hr />
+        </div>
+        <div class="lesson-tier" id="tier-2">
+          <div class="lesson-item" id="math-indicators">
+            <div class="progress-pill"></div>
+            <p></p>
+          </div>
+          <div class="lesson-item" id="portfolio">
+            <div class="progress-pill"></div>
+            <p></p>
+          </div>
+        </div>
+        <div class="tier-separator">
+          <hr />
+          <span>Level 3: Portfolio Theory</span>
+          <hr />
+        </div>
+        <div class="lesson-tier" id="tier-3">
+          <div class="lesson-item" id="pmpt">
+            <div class="progress-pill"></div>
+            <p></p>
+          </div>
+          <div class="lesson-item" id="mpt">
+            <div class="progress-pill"></div>
+            <p></p>
+          </div>
+        </div>
+        <div class="tier-separator">
+          <hr />
+          <span>Level 4: Specialized Markets</span>
+          <hr />
+        </div>
+        <div class="lesson-tier" id="tier-4">
+          <div class="lesson-item" id="crypto">
+            <div class="progress-pill"></div>
+            <p></p>
+          </div>
+          <div class="lesson-item" id="foreign">
+            <div class="progress-pill"></div>
+            <p></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-section">
+        <div class="badges-activity">
+          <div class="badges-container">
+            <h2>Achievement Badges</h2>
+            <div class="badges-grid" id="badges-grid"></div>
+          </div>
+          <div class="activity-container">
+            <h2>Learning Activity</h2>
+            <div class="activity-month-view">
+              <h3 id="month-name"></h3>
+              <div class="day-of-week-grid">
+                <span>S</span><span>M</span><span>T</span><span>W</span
+                ><span>T</span><span>F</span><span>S</span>
+              </div>
+              <div class="activity-days-grid" id="activity-grid"></div>
+            </div>
+          </div>
+        </div>
+        <div class="total-progress">
+          <h2>Course Progress</h2>
+          <div class="total-progress-bar"><div id="progress-bar"></div></div>
+        </div>
+      </div>
     </div>
 
     <div class="modal" id="confirmation-modal">
-        <div class="modal-content"><p>You need to complete the previous lessons first. Would you like to review this lesson anyway?</p><button class="confirm">Yes, Review</button><button class="cancel">Cancel</button></div>
+      <div class="modal-content">
+        <p>
+          You need to complete the previous lessons first. Would you like to
+          review this lesson anyway?
+        </p>
+        <button class="confirm">Yes, Review</button
+        ><button class="cancel">Cancel</button>
+      </div>
     </div>
 
     <script>
-        // --- Static Configuration ---
-        const lessonConfig = {
-            basics: { name: 'Basics', dependencies: [], chapterKey: 'chapter1' },
-            indicators: { name: 'Indicators', dependencies: ['basics'], chapterKey: 'chapter2' },
-            'math-indicators': { name: 'Indicator Math', dependencies: ['indicators'], chapterKey: 'chapter3' },
-            portfolio: { name: 'Portfolio Mgmt', dependencies: ['indicators'], chapterKey: 'chapter4' },
-            pmpt: { name: 'PMPT', dependencies: ['math-indicators', 'portfolio'], chapterKey: 'chapter5' },
-            mpt: { name: 'MPT', dependencies: ['math-indicators', 'portfolio'], chapterKey: 'chapter6' },
-            crypto: { name: 'Crypto', dependencies: ['mpt'], chapterKey: 'chapter7' },
-            foreign: { name: 'Foreign Markets', dependencies: ['pmpt'], chapterKey: 'chapter8' }
-        };
-        const icons = {
-            locked: `<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>`,
-            current: ``,
-            completed: `<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`
-        };
+      // --- Static Configuration ---
+      const lessonConfig = {
+        basics: { name: "Basics", dependencies: [], chapterKey: "chapter1" },
+        indicators: {
+          name: "Indicators",
+          dependencies: ["basics"],
+          chapterKey: "chapter2",
+        },
+        "math-indicators": {
+          name: "Indicator Math",
+          dependencies: ["indicators"],
+          chapterKey: "chapter3",
+        },
+        portfolio: {
+          name: "Portfolio Mgmt",
+          dependencies: ["indicators"],
+          chapterKey: "chapter4",
+        },
+        pmpt: {
+          name: "PMPT",
+          dependencies: ["math-indicators", "portfolio"],
+          chapterKey: "chapter5",
+        },
+        mpt: {
+          name: "MPT",
+          dependencies: ["math-indicators", "portfolio"],
+          chapterKey: "chapter6",
+        },
+        crypto: {
+          name: "Crypto",
+          dependencies: ["mpt"],
+          chapterKey: "chapter7",
+        },
+        foreign: {
+          name: "Foreign Markets",
+          dependencies: ["pmpt"],
+          chapterKey: "chapter8",
+        },
+      };
+      const icons = {
+        locked: `<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>`,
+        current: ``,
+        completed: `<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`,
+      };
 
-        // --- Dynamic Data Stores ---
-        let lessons = {};
-        let activityCounts = {};
-        let totalCoursePoints = 0;
+      // --- Dynamic Data Stores ---
+      let lessons = {};
+      let activityCounts = {};
+      let totalCoursePoints = 0;
 
-        // --- Core Application Logic ---
-        async function initializePage() {
-            try {
-                fetch('/learn-user-create', { method: 'POST' });
+      // --- Core Application Logic ---
+      async function initializePage() {
+        try {
+          fetch("/learn-user-create", { method: "POST" });
 
-                const [progressResponse, activityResponse] = await Promise.all([
-                    fetch('/get-lesson-progress'),
-                    fetch('/display-contributions')
-                ]);
+          const [progressResponse, activityResponse] = await Promise.all([
+            fetch("/get-lesson-progress"),
+            fetch("/display-contributions"),
+          ]);
 
-                if (!progressResponse.ok) throw new Error(`API Error: ${progressResponse.status} ${progressResponse.statusText}`);
-                if (!activityResponse.ok) throw new Error(`API Error: ${activityResponse.status} ${activityResponse.statusText}`);
+          if (!progressResponse.ok)
+            throw new Error(
+              `API Error: ${progressResponse.status} ${progressResponse.statusText}`
+            );
+          if (!activityResponse.ok)
+            throw new Error(
+              `API Error: ${activityResponse.status} ${activityResponse.statusText}`
+            );
 
-                const progressData = await progressResponse.json();
-                const activityData = await activityResponse.json();
+          const progressData = await progressResponse.json();
+          const activityData = await activityResponse.json();
 
-                Object.keys(lessonConfig).forEach(id => {
-                    const config = lessonConfig[id];
-                    const points = progressData[config.chapterKey] || 0;
-                    lessons[id] = {
-                        name: config.name,
-                        dependencies: config.dependencies,
-                        points: points, // Store raw points (0, 1, 2, or 3)
-                        progress: (points / 3) * 100 // Convert points (out of 3) to percentage
-                    };
-                });
-                
-                totalCoursePoints = progressData.percentage_complete || 0;
-                activityCounts = activityData;
+          Object.keys(lessonConfig).forEach((id) => {
+            const config = lessonConfig[id];
+            const points = progressData[config.chapterKey] || 0;
+            lessons[id] = {
+              name: config.name,
+              dependencies: config.dependencies,
+              points: points, // Store raw points (0, 1, 2, or 3)
+              progress: (points / 3) * 100, // Convert points (out of 3) to percentage
+            };
+          });
 
-                populateBadges();
-                updateAllLessonsUI();
-                updateTotalProgress();
-                updateActivityGrid();
+          totalCoursePoints = progressData.percentage_complete || 0;
+          activityCounts = activityData;
 
-            } catch (error) {
-                console.error("Error initializing page:", error);
-            }
+          populateBadges();
+          updateAllLessonsUI();
+          updateTotalProgress();
+          updateActivityGrid();
+        } catch (error) {
+          console.error("Error initializing page:", error);
         }
-        
-        // MODIFIED: This function now handles the specific redirection logic.
-        function handleLessonClick(lessonId) {
-            const lesson = lessons[lessonId];
-            if (!lesson) return;
+      }
 
-            const canAccess = checkDependencies(lessonId);
+      // MODIFIED: This function now handles the specific redirection logic.
+      function handleLessonClick(lessonId) {
+        const lesson = lessons[lessonId];
+        if (!lesson) return;
 
-            if (canAccess) { // Node is the current lesson or is completed
-                const moduleNumber = lessonConfig[lessonId].chapterKey.replace('chapter', '');
-                let subLessonNumber;
+        const canAccess = checkDependencies(lessonId);
 
-                if (lesson.points >= 3) { // 100% complete
-                    // Redirect to the first sub-lesson for review.
-                    subLessonNumber = 1; 
-                } else {
-                    // In progress (0%, 33%, 66%) corresponds to points 0, 1, 2.
-                    // This maps directly to sub-lessons 1, 2, 3.
-                    subLessonNumber = lesson.points + 1;
-                }
-                
-                window.location.href = `/module${moduleNumber}lesson${subLessonNumber}`;
+        if (canAccess) {
+          // Node is the current lesson or is completed
+          const moduleNumber = lessonConfig[lessonId].chapterKey.replace(
+            "chapter",
+            ""
+          );
+          let subLessonNumber;
 
-            } else { // Node is locked
-                // Show modal, but redirect to the generic lesson page for review, as originally designed.
-                showConfirmationModal(() => {
-                    window.location.href = `/learn/${lessonId}`;
-                });
-            }
+          if (lesson.points >= 3) {
+            // 100% complete
+            // Redirect to the first sub-lesson for review.
+            subLessonNumber = 1;
+          } else {
+            // In progress (0%, 33%, 66%) corresponds to points 0, 1, 2.
+            // This maps directly to sub-lessons 1, 2, 3.
+            subLessonNumber = lesson.points + 1;
+          }
+
+          window.location.href = `/module${moduleNumber}lesson${subLessonNumber}`;
+        } else {
+          // Node is locked
+          // Show modal, but redirect to the generic lesson page for review, as originally designed.
+          showConfirmationModal(() => {
+            window.location.href = `/learn/${lessonId}`;
+          });
         }
-        
-        function checkDependencies(lessonId) {
-            if (!lessons[lessonId]) return false;
-            return lessons[lessonId].dependencies.every(dep => lessons[dep]?.progress >= 100);
-        }
+      }
 
-        // --- UI Update Functions ---
-        function updateAllLessonsUI() {
-            let currentLessonFound = false;
-            Object.keys(lessonConfig).forEach(id => {
-                const lesson = lessons[id];
-                const node = document.getElementById(id);
-                if (!node || !lesson) return;
-                
-                node.querySelector('p').textContent = lesson.name;
-                const existingIcon = node.querySelector('.icon');
-                if(existingIcon) existingIcon.remove();
-                node.classList.remove('locked', 'current-lesson', 'completed');
+      function checkDependencies(lessonId) {
+        if (!lessons[lessonId]) return false;
+        return lessons[lessonId].dependencies.every(
+          (dep) => lessons[dep]?.progress >= 100
+        );
+      }
 
-                const pill = node.querySelector('.progress-pill');
-                pill.textContent = `${Math.round(lesson.progress)}%`; // Round for cleaner display
-                pill.classList.remove('pill-locked', 'pill-current', 'pill-completed');
-                pill.classList.add('active');
+      // --- UI Update Functions ---
+      function updateAllLessonsUI() {
+        let currentLessonFound = false;
+        Object.keys(lessonConfig).forEach((id) => {
+          const lesson = lessons[id];
+          const node = document.getElementById(id);
+          if (!node || !lesson) return;
 
-                if (lesson.progress >= 100) {
-                    node.classList.add('completed');
-                    node.insertAdjacentHTML('afterbegin', icons.completed);
-                    pill.classList.add('pill-completed');
-                } else if (checkDependencies(id) && !currentLessonFound) {
-                    node.classList.add('current-lesson');
-                    node.insertAdjacentHTML('afterbegin', icons.current);
-                    pill.classList.add('pill-current');
-                    currentLessonFound = true;
-                } else {
-                    node.classList.add('locked');
-                    node.insertAdjacentHTML('afterbegin', icons.locked);
-                    pill.classList.add('pill-locked');
-                }
-            });
-            drawLessonPaths();
-        }
+          node.querySelector("p").textContent = lesson.name;
+          const existingIcon = node.querySelector(".icon");
+          if (existingIcon) existingIcon.remove();
+          node.classList.remove("locked", "current-lesson", "completed");
 
-        function updateTotalProgress() {
-            // Total progress is out of 24 points
-            const totalProgressPercent = (totalCoursePoints / 24) * 100;
-            const clampedProgress = Math.min(100, Math.max(0, totalProgressPercent));
-            document.getElementById('progress-bar').style.width = `${clampedProgress}%`;
-        }
-        
-        function updateActivityGrid() {
-            const grid = document.getElementById('activity-grid');
-            grid.innerHTML = '';
-            const today = new Date();
-            document.getElementById('month-name').textContent = today.toLocaleString('default', { month: 'long', year: 'numeric' });
-            
-            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-            
-            for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
-                grid.insertAdjacentHTML('beforeend', '<div class="activity-day empty"></div>');
-            }
-            
-            for (let i = 1; i <= daysInMonth; i++) {
-                const date = new Date(today.getFullYear(), today.getMonth(), i + 1);
-                const dateString = date.toISOString().split('T')[0];
-                const count = activityCounts[dateString] || 0;
-                let level = [0,1,2,3,4][Math.min(count, 4)];
-                const tooltip = count > 0 ? `${count} activities on ${date.toLocaleDateString()}` : 'No activity';
-                grid.insertAdjacentHTML('beforeend', `<div class="activity-day level-${level}" data-tooltip="${tooltip}"></div>`);
-            }
-        }
-        
-        // REVERTED: Badges are now simple visual indicators again.
-        function populateBadges() {
-            const grid = document.getElementById('badges-grid');
-            grid.innerHTML = '';
-            Object.keys(lessons).forEach(id => {
-                const lesson = lessons[id];
-                const badge = document.createElement('div');
-                badge.className = 'badge';
-                badge.id = `badge-${id}`;
-                badge.innerHTML = `<span>${lesson.name}</span>`;
-                if(lesson.progress >= 100) {
-                    badge.classList.add('earned');
-                }
-                grid.appendChild(badge);
-            });
-        }
-        
-        function drawLessonPaths() {
-            const svg = document.getElementById('lesson-path-svg');
-            svg.innerHTML = ''; 
-            const containerRect = document.querySelector('.lesson-path-container').getBoundingClientRect();
-            Object.keys(lessons).forEach(lessonId => {
-                 lessons[lessonId].dependencies.forEach(depId => {
-                    const startNode = document.getElementById(depId);
-                    const endNode = document.getElementById(lessonId);
-                    if (!startNode || !endNode) return;
-                    
-                    const startRect = startNode.getBoundingClientRect();
-                    const endRect = endNode.getBoundingClientRect();
-                    const startX = startRect.left + startRect.width / 2 - containerRect.left;
-                    const startY = startRect.top + startRect.height / 2 - containerRect.top;
-                    const endX = endRect.left + endRect.width / 2 - containerRect.left;
-                    const endY = endRect.top + endRect.height / 2 - containerRect.top;
+          const pill = node.querySelector(".progress-pill");
+          pill.textContent = `${Math.round(lesson.progress)}%`; // Round for cleaner display
+          pill.classList.remove(
+            "pill-locked",
+            "pill-current",
+            "pill-completed"
+          );
+          pill.classList.add("active");
 
-                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.setAttribute('d', `M ${startX} ${startY} L ${endX} ${endY}`);
-                    path.setAttribute('fill', 'none');
-                    path.setAttribute('stroke', lessons[depId].progress >= 100 ? 'var(--completed-color)' : 'var(--connector-color)');
-                    path.setAttribute('stroke-width', '3');
-                    svg.appendChild(path);
-                 });
-            });
-        }
-        
-        function showConfirmationModal(callback) {
-            const modal = document.getElementById('confirmation-modal');
-            modal.style.display = 'flex';
-            modal.querySelector('.confirm').onclick = () => { modal.style.display = 'none'; callback(); };
-            modal.querySelector('.cancel').onclick = () => { modal.style.display = 'none'; };
-        }
-
-        // --- Theme Switcher Logic ---
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-        function updateThemeUI(theme) {
-            sunIcon.style.display = theme === 'dark' ? 'none' : 'block';
-            moonIcon.style.display = theme === 'dark' ? 'block' : 'none';
-            document.documentElement.setAttribute('data-theme', theme);
-            drawLessonPaths();
-        }
-        themeToggleBtn.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            localStorage.setItem('theme', newTheme);
-            updateThemeUI(newTheme);
+          if (lesson.progress >= 100) {
+            node.classList.add("completed");
+            node.insertAdjacentHTML("afterbegin", icons.completed);
+            pill.classList.add("pill-completed");
+          } else if (checkDependencies(id) && !currentLessonFound) {
+            node.classList.add("current-lesson");
+            node.insertAdjacentHTML("afterbegin", icons.current);
+            pill.classList.add("pill-current");
+            currentLessonFound = true;
+          } else {
+            node.classList.add("locked");
+            node.insertAdjacentHTML("afterbegin", icons.locked);
+            pill.classList.add("pill-locked");
+          }
         });
-        const savedTheme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-        updateThemeUI(initialTheme);
-        
-        // --- Tooltip Logic ---
-        const tooltip = document.getElementById('tooltip');
-        const progressBar = document.querySelector('.total-progress-bar');
-        progressBar.addEventListener('mousemove', (e) => {
-            const totalProgressPercent = (totalCoursePoints / 24) * 100;
-            const clampedProgress = Math.min(100, Math.max(0, totalProgressPercent));
-            tooltip.textContent = `${clampedProgress.toFixed(1)}% Complete`;
-            tooltip.style.opacity = '1';
-            tooltip.style.left = `${e.pageX + 10}px`;
-            tooltip.style.top = `${e.pageY - 30}px`;
-        });
-        progressBar.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+        drawLessonPaths();
+      }
 
-        // --- Event Listeners ---
-        document.querySelectorAll('.lesson-item').forEach(node => node.addEventListener('click', () => handleLessonClick(node.id)));
-        window.addEventListener('resize', drawLessonPaths);
-        
-        // --- Page Initialization ---
-        document.addEventListener('DOMContentLoaded', initializePage);
+      function updateTotalProgress() {
+        // Total progress is out of 24 points
+        const totalProgressPercent = (totalCoursePoints / 24) * 100;
+        const clampedProgress = Math.min(
+          100,
+          Math.max(0, totalProgressPercent)
+        );
+        document.getElementById(
+          "progress-bar"
+        ).style.width = `${clampedProgress}%`;
+      }
+
+      function updateActivityGrid() {
+        const grid = document.getElementById("activity-grid");
+        grid.innerHTML = "";
+        const today = new Date();
+        document.getElementById("month-name").textContent =
+          today.toLocaleString("default", { month: "long", year: "numeric" });
+
+        const firstDayOfMonth = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          1
+        );
+        const daysInMonth = new Date(
+          today.getFullYear(),
+          today.getMonth() + 1,
+          0
+        ).getDate();
+
+        for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
+          grid.insertAdjacentHTML(
+            "beforeend",
+            '<div class="activity-day empty"></div>'
+          );
+        }
+
+        for (let i = 1; i <= daysInMonth; i++) {
+          const date = new Date(today.getFullYear(), today.getMonth(), i + 1);
+          const dateString = date.toISOString().split("T")[0];
+          const count = activityCounts[dateString] || 0;
+          let level = [0, 1, 2, 3, 4][Math.min(count, 4)];
+          const tooltip =
+            count > 0
+              ? `${count} activities on ${date.toLocaleDateString()}`
+              : "No activity";
+          grid.insertAdjacentHTML(
+            "beforeend",
+            `<div class="activity-day level-${level}" data-tooltip="${tooltip}"></div>`
+          );
+        }
+      }
+
+      // REVERTED: Badges are now simple visual indicators again.
+      function populateBadges() {
+        const grid = document.getElementById("badges-grid");
+        grid.innerHTML = "";
+        Object.keys(lessons).forEach((id) => {
+          const lesson = lessons[id];
+          const badge = document.createElement("div");
+          badge.className = "badge";
+          badge.id = `badge-${id}`;
+          badge.innerHTML = `<span>${lesson.name}</span>`;
+          if (lesson.progress >= 100) {
+            badge.classList.add("earned");
+          }
+          grid.appendChild(badge);
+        });
+      }
+
+      function drawLessonPaths() {
+        const svg = document.getElementById("lesson-path-svg");
+        svg.innerHTML = "";
+        const containerRect = document
+          .querySelector(".lesson-path-container")
+          .getBoundingClientRect();
+        Object.keys(lessons).forEach((lessonId) => {
+          lessons[lessonId].dependencies.forEach((depId) => {
+            const startNode = document.getElementById(depId);
+            const endNode = document.getElementById(lessonId);
+            if (!startNode || !endNode) return;
+
+            const startRect = startNode.getBoundingClientRect();
+            const endRect = endNode.getBoundingClientRect();
+            const startX =
+              startRect.left + startRect.width / 2 - containerRect.left;
+            const startY =
+              startRect.top + startRect.height / 2 - containerRect.top;
+            const endX = endRect.left + endRect.width / 2 - containerRect.left;
+            const endY = endRect.top + endRect.height / 2 - containerRect.top;
+
+            const path = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "path"
+            );
+            path.setAttribute("d", `M ${startX} ${startY} L ${endX} ${endY}`);
+            path.setAttribute("fill", "none");
+            path.setAttribute(
+              "stroke",
+              lessons[depId].progress >= 100
+                ? "var(--completed-color)"
+                : "var(--connector-color)"
+            );
+            path.setAttribute("stroke-width", "3");
+            svg.appendChild(path);
+          });
+        });
+      }
+
+      function showConfirmationModal(callback) {
+        const modal = document.getElementById("confirmation-modal");
+        modal.style.display = "flex";
+        modal.querySelector(".confirm").onclick = () => {
+          modal.style.display = "none";
+          callback();
+        };
+        modal.querySelector(".cancel").onclick = () => {
+          modal.style.display = "none";
+        };
+      }
+
+      // --- Theme Switcher Logic ---
+      const themeToggleBtn = document.getElementById("theme-toggle");
+      const sunIcon = document.getElementById("sun-icon");
+      const moonIcon = document.getElementById("moon-icon");
+      function updateThemeUI(theme) {
+        sunIcon.style.display = theme === "dark" ? "none" : "block";
+        moonIcon.style.display = theme === "dark" ? "block" : "none";
+        document.documentElement.setAttribute("data-theme", theme);
+        drawLessonPaths();
+      }
+      themeToggleBtn.addEventListener("click", () => {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme") || "light";
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+        localStorage.setItem("theme", newTheme);
+        updateThemeUI(newTheme);
+      });
+      const savedTheme = localStorage.getItem("theme");
+      const systemPrefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      const initialTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+      updateThemeUI(initialTheme);
+
+      // --- Tooltip Logic ---
+      const tooltip = document.getElementById("tooltip");
+      const progressBar = document.querySelector(".total-progress-bar");
+      progressBar.addEventListener("mousemove", (e) => {
+        const totalProgressPercent = (totalCoursePoints / 24) * 100;
+        const clampedProgress = Math.min(
+          100,
+          Math.max(0, totalProgressPercent)
+        );
+        tooltip.textContent = `${clampedProgress.toFixed(1)}% Complete`;
+        tooltip.style.opacity = "1";
+        tooltip.style.left = `${e.pageX + 10}px`;
+        tooltip.style.top = `${e.pageY - 30}px`;
+      });
+      progressBar.addEventListener("mouseleave", () => {
+        tooltip.style.opacity = "0";
+      });
+
+      // --- Event Listeners ---
+      document
+        .querySelectorAll(".lesson-item")
+        .forEach((node) =>
+          node.addEventListener("click", () => handleLessonClick(node.id))
+        );
+      window.addEventListener("resize", drawLessonPaths);
+
+      // --- Page Initialization ---
+      document.addEventListener("DOMContentLoaded", initializePage);
     </script>
-</body>
+  </body>
 </html>

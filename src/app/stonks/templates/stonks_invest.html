@@ -1,191 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FinZ | Stonks</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
     <style>
-        /* Light Mode Palette */
-        :root {
-            --page-bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --border-color: #e9ecef;
-            --hover-color: #000000;
-            --icon-blue-bg: #e7f5ff; --icon-blue-fg: #1c92ff;
-            --icon-green-bg: #e6fff1; --icon-green-fg: #00b85e;
-            --icon-orange-bg: #fff4e5; --icon-orange-fg: #ffa117;
-            --icon-teal-bg: #e0f8f4; --icon-teal-fg: #16a085;
-        }
-        /* Dark Mode Palette */
-        html[data-theme="dark"] {
-            --page-bg: #121212;
-            --card-bg: #1e1e1e;
-            --text-primary: #e0e0e0;
-            --text-secondary: #888888;
-            --border-color: #333333;
-            --hover-color: #ffffff;
-            --icon-blue-bg: #1c2e45; --icon-blue-fg: #5faeff;
-            --icon-green-bg: #1c3d2e; --icon-green-fg: #4ade80;
-            --icon-orange-bg: #42301a; --icon-orange-fg: #f59e0b;
-            --icon-teal-bg: #1a3d3d; --icon-teal-fg: #2dd4bf;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--page-bg);
-            color: var(--text-primary);
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .container-main { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
-        .logo { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); }
-        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
-        .nav-links a { color: var(--text-primary); font-weight: 600; text-decoration: none; transition: color 0.3s ease; }
-        .nav-links a:hover { color: var(--hover-color); }
-        #theme-toggle { background: none; border: none; cursor: pointer; color: var(--text-secondary); }
-        #theme-toggle:hover { color: var(--text-primary); }
-        #theme-toggle .icon { width: 24px; height: 24px; }
+      /* Light Mode Palette */
+      :root {
+        --page-bg: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --border-color: #e9ecef;
+        --hover-color: #000000;
+        --icon-blue-bg: #e7f5ff;
+        --icon-blue-fg: #1c92ff;
+        --icon-green-bg: #e6fff1;
+        --icon-green-fg: #00b85e;
+        --icon-orange-bg: #fff4e5;
+        --icon-orange-fg: #ffa117;
+        --icon-teal-bg: #e0f8f4;
+        --icon-teal-fg: #16a085;
+      }
+      /* Dark Mode Palette */
+      html[data-theme="dark"] {
+        --page-bg: #121212;
+        --card-bg: #1e1e1e;
+        --text-primary: #e0e0e0;
+        --text-secondary: #888888;
+        --border-color: #333333;
+        --hover-color: #ffffff;
+        --icon-blue-bg: #1c2e45;
+        --icon-blue-fg: #5faeff;
+        --icon-green-bg: #1c3d2e;
+        --icon-green-fg: #4ade80;
+        --icon-orange-bg: #42301a;
+        --icon-orange-fg: #f59e0b;
+        --icon-teal-bg: #1a3d3d;
+        --icon-teal-fg: #2dd4bf;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--page-bg);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      .container-main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+      }
+      .logo {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .nav-links a {
+        color: var(--text-primary);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      .nav-links a:hover {
+        color: var(--hover-color);
+      }
+      #theme-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+      }
+      #theme-toggle:hover {
+        color: var(--text-primary);
+      }
+      #theme-toggle .icon {
+        width: 24px;
+        height: 24px;
+      }
 
-        /* Dashboard Card Styles */
+      /* Dashboard Card Styles */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 1.5rem;
+      }
+      /* On medium screens and up, use a 2-column grid for a balanced layout */
+      @media (min-width: 768px) {
         .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 1.5rem;
+          grid-template-columns: repeat(2, 1fr);
         }
-        /* On medium screens and up, use a 2-column grid for a balanced layout */
-        @media (min-width: 768px) { .dashboard-grid { grid-template-columns: repeat(2, 1fr); } }
+      }
 
-        .dashboard-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.07);
-        }
-        html[data-theme="dark"] .dashboard-card:hover {
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            border-color: #444;
-        }
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px; /* Squircle shape */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .card-icon svg {
-            width: 28px;
-            height: 28px;
-        }
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .card-description {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-        /* Duotone Icon Colors */
-        .icon-blue { background-color: var(--icon-blue-bg); color: var(--icon-blue-fg); }
-        .icon-green { background-color: var(--icon-green-bg); color: var(--icon-green-fg); }
-        .icon-orange { background-color: var(--icon-orange-bg); color: var(--icon-orange-fg); }
-        .icon-teal { background-color: var(--icon-teal-bg); color: var(--icon-teal-fg); }
+      .dashboard-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.07);
+      }
+      html[data-theme="dark"] .dashboard-card:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border-color: #444;
+      }
+      .card-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px; /* Squircle shape */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+      .card-description {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+      /* Duotone Icon Colors */
+      .icon-blue {
+        background-color: var(--icon-blue-bg);
+        color: var(--icon-blue-fg);
+      }
+      .icon-green {
+        background-color: var(--icon-green-bg);
+        color: var(--icon-green-fg);
+      }
+      .icon-orange {
+        background-color: var(--icon-orange-bg);
+        color: var(--icon-orange-fg);
+      }
+      .icon-teal {
+        background-color: var(--icon-teal-bg);
+        color: var(--icon-teal-fg);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container-main">
-        <div class="navbar">
-            <div class="logo">FinZ | Stonks</div>
-            <div class="nav-links">
-                <a href="./">Home</a>
-                <a href="./learn">Learn</a>
-                <a href="./invest">Invest</a>
-                <button id="theme-toggle" title="Toggle theme">
-                    <svg id="sun-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <svg id="moon-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                </button>
-            </div>
+      <div class="navbar">
+        <div class="logo">FinZ | Stonks</div>
+        <div class="nav-links">
+          <a href="./stonks.html">Home</a>
+          <a href="./stonks_learn.html">Learn</a>
+          <a href="./stonks_invest.html">Invest</a>
+          <button id="theme-toggle" title="Toggle theme">
+            <svg
+              id="sun-icon"
+              class="icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+              ></path>
+            </svg>
+            <svg
+              id="moon-icon"
+              class="icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              ></path>
+            </svg>
+          </button>
         </div>
+      </div>
 
-        <main class="mt-12">
-            <div class="dashboard-grid">
-                <!-- Card 1: Macroeconomic Outlook -->
-                <div class="dashboard-card" onclick="window.location.href='./macroeconomic'">
-                    <div class="card-icon icon-blue">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                    </div>
-                    <h3 class="card-title">Macroeconomic Outlook</h3>
-                    <p class="card-description">Understand the bigger picture. Track key economic indicators like inflation, interest rates, and GDP to inform your strategy.</p>
-                </div>
-
-                <!-- Card 2: Analyze -->
-                <div class="dashboard-card" onclick="window.location.href='./analyze'">
-                    <div class="card-icon icon-green">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    </div>
-                    <h3 class="card-title">Analyze</h3>
-                    <p class="card-description">Real insight lies deep in the numbers. Analyze the balance sheets, ratios and gain critical insight before investing your money.</p>
-                </div>
-                
-                <!-- Card 3: Top Movers -->
-                <div class="dashboard-card" onclick="window.location.href='./movers'">
-                    <div class="card-icon icon-orange">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10L12 6L16 10"/><path d="M16 14L12 18L8 14"/></svg>
-                    </div>
-                    <h3 class="card-title">Top Movers</h3>
-                    <p class="card-description">Discover the day's biggest gaining and losing stocks to get an overview of market trends.</p>
-                </div>
-                
-                <!-- Card 4: Financial News -->
-                <div class="dashboard-card" onclick="window.location.href='./news'">
-                    <div class="card-icon icon-teal">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    </div>
-                    <h3 class="card-title">Financial News</h3>
-                    <p class="card-description">Get the latest headlines and breaking stories from top financial news sources to stay ahead of the curve.</p>
-                </div>
+      <main class="mt-12">
+        <div class="dashboard-grid">
+          <!-- Card 1: Macroeconomic Outlook -->
+          <div
+            class="dashboard-card"
+            onclick="window.location.href='./macroeconomic.html'"
+          >
+            <div class="card-icon icon-blue">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20" />
+                <path
+                  d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                />
+              </svg>
             </div>
-        </main>
+            <h3 class="card-title">Macroeconomic Outlook</h3>
+            <p class="card-description">
+              Understand the bigger picture. Track key economic indicators like
+              inflation, interest rates, and GDP to inform your strategy.
+            </p>
+          </div>
+
+          <!-- Card 2: Analyze -->
+          <div
+            class="dashboard-card"
+            onclick="window.location.href='./analysis.html'"
+          >
+            <div class="card-icon icon-green">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+            </div>
+            <h3 class="card-title">Analyze</h3>
+            <p class="card-description">
+              Real insight lies deep in the numbers. Analyze the balance sheets,
+              ratios and gain critical insight before investing your money.
+            </p>
+          </div>
+
+          <!-- Card 3: Top Movers -->
+          <div
+            class="dashboard-card"
+            onclick="window.location.href='./movers.html'"
+          >
+            <div class="card-icon icon-orange">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M8 10L12 6L16 10" />
+                <path d="M16 14L12 18L8 14" />
+              </svg>
+            </div>
+            <h3 class="card-title">Top Movers</h3>
+            <p class="card-description">
+              Discover the day's biggest gaining and losing stocks to get an
+              overview of market trends.
+            </p>
+          </div>
+
+          <!-- Card 4: Financial News -->
+          <div
+            class="dashboard-card"
+            onclick="window.location.href='./news.html'"
+          >
+            <div class="card-icon icon-teal">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              </svg>
+            </div>
+            <h3 class="card-title">Financial News</h3>
+            <p class="card-description">
+              Get the latest headlines and breaking stories from top financial
+              news sources to stay ahead of the curve.
+            </p>
+          </div>
+        </div>
+      </main>
     </div>
 
     <script>
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-        
-        function updateThemeUI(theme) {
-            sunIcon.style.display = theme === 'dark' ? 'none' : 'block';
-            moonIcon.style.display = theme === 'dark' ? 'block' : 'none';
-            document.documentElement.setAttribute('data-theme', theme);
-        }
-        
-        themeToggleBtn.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            localStorage.setItem('theme', newTheme);
-            updateThemeUI(newTheme);
-        });
+      const themeToggleBtn = document.getElementById("theme-toggle");
+      const sunIcon = document.getElementById("sun-icon");
+      const moonIcon = document.getElementById("moon-icon");
 
-        const savedTheme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            updateThemeUI(initialTheme);
-        });
+      function updateThemeUI(theme) {
+        sunIcon.style.display = theme === "dark" ? "none" : "block";
+        moonIcon.style.display = theme === "dark" ? "block" : "none";
+        document.documentElement.setAttribute("data-theme", theme);
+      }
+
+      themeToggleBtn.addEventListener("click", () => {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme") || "light";
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+        localStorage.setItem("theme", newTheme);
+        updateThemeUI(newTheme);
+      });
+
+      const savedTheme = localStorage.getItem("theme");
+      const systemPrefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      const initialTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        updateThemeUI(initialTheme);
+      });
     </script>
-</body>
+  </body>
 </html>

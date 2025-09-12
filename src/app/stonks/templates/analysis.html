@@ -1,382 +1,915 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FinZ | Stock Analysis</title>
     <style>
-        :root {
-            --page-bg: #f8f9fa; --card-bg: #ffffff; --text-primary: #212529; --text-secondary: #6c757d; --border-color: #dee2e6;
-            --accent-color: #0d6efd; --accent-color-hover: #0b5ed7;
-            --icon-blue-bg: #e7f5ff; --icon-blue-fg: #0d6efd; --icon-green-bg: #e6fff1; --icon-green-fg: #198754; --icon-orange-bg: #fff4e5; --icon-orange-fg: #fd7e14;
-            --table-hover-bg: #f1f3f5;
-        }
-        html[data-theme="dark"] {
-            --page-bg: #0d1117; --card-bg: #161b22; --text-primary: #e0e0e0; --text-secondary: #8b949e; --border-color: #30363d;
-            --accent-color: #2f81f7; --accent-color-hover: #388bfd;
-            --icon-blue-bg: #1c2e45; --icon-blue-fg: #2f81f7; --icon-green-bg: #1c3d2e; --icon-green-fg: #4ade80; --icon-orange-bg: #42301a; --icon-orange-fg: #f59e0b;
-            --table-hover-bg: #21262d;
-        }
-        *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--page-bg); color: var(--text-primary); transition: background-color 0.3s, color 0.3s; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); }
-        .logo { font-size: 1.5rem; font-weight: 600; }
-        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
-        .nav-links a { color: var(--text-secondary); font-weight: 500; text-decoration: none; transition: color 0.2s; }
-        .nav-links a:hover { color: var(--text-primary); }
-        #theme-toggle { background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 0.5rem; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-        #theme-toggle:hover { color: var(--text-primary); background-color: var(--table-hover-bg); }
-        #theme-toggle .icon { width: 20px; height: 20px; }
-        
-        /* --- Redesigned Professional Search Form --- */
-        .search-section { margin: 2.5rem 0; }
-        .search-form { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: flex-end; }
-        @media (min-width: 768px) { .search-form { grid-template-columns: 5fr 4fr 2fr; } }
-        .form-group { display: flex; flex-direction: column; position: relative; }
-        .form-label { margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); }
-        .form-input { background-color: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; padding: 0 1rem; width: 100%; font-size: 1rem; height: 48px; transition: border-color 0.2s, box-shadow 0.2s; }
-        .form-input:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
-        .form-button { background-color: var(--accent-color); color: white; border: none; font-weight: 600; border-radius: 8px; height: 48px; cursor: pointer; transition: background-color 0.2s; font-size: 1rem; }
-        .form-button:hover { background-color: var(--accent-color-hover); }
-        .form-button:disabled { background-color: var(--text-secondary); cursor: not-allowed; opacity: 0.8; }
-        
-        /* --- Custom Dropdown --- */
-        .custom-dropdown-btn { display: flex; align-items: center; justify-content: space-between; text-align: left; background-color: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; padding: 0 1rem; width: 100%; font-size: 1rem; height: 48px; cursor: pointer; }
-        .custom-dropdown-btn:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
-        .dropdown-chevron { width: 16px; height: 16px; stroke: var(--text-secondary); transition: transform 0.2s; }
-        .custom-dropdown.active .dropdown-chevron { transform: rotate(180deg); }
-        .custom-dropdown-options { list-style: none; padding: 0.5rem 0; margin: 0.5rem 0 0; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; position: absolute; top: 100%; left: 0; right: 0; z-index: 10; max-height: 250px; overflow-y: auto; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: opacity 0.2s, transform 0.2s, visibility 0.2s; }
-        .custom-dropdown.active .custom-dropdown-options { opacity: 1; visibility: visible; transform: translateY(0); }
-        .custom-dropdown-option { padding: 0.75rem 1rem; cursor: pointer; }
-        .custom-dropdown-option:hover { background-color: var(--table-hover-bg); }
-        /* --- End Custom Dropdown --- */
+      :root {
+        --page-bg: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --border-color: #dee2e6;
+        --accent-color: #0d6efd;
+        --accent-color-hover: #0b5ed7;
+        --icon-blue-bg: #e7f5ff;
+        --icon-blue-fg: #0d6efd;
+        --icon-green-bg: #e6fff1;
+        --icon-green-fg: #198754;
+        --icon-orange-bg: #fff4e5;
+        --icon-orange-fg: #fd7e14;
+        --table-hover-bg: #f1f3f5;
+      }
+      html[data-theme="dark"] {
+        --page-bg: #0d1117;
+        --card-bg: #161b22;
+        --text-primary: #e0e0e0;
+        --text-secondary: #8b949e;
+        --border-color: #30363d;
+        --accent-color: #2f81f7;
+        --accent-color-hover: #388bfd;
+        --icon-blue-bg: #1c2e45;
+        --icon-blue-fg: #2f81f7;
+        --icon-green-bg: #1c3d2e;
+        --icon-green-fg: #4ade80;
+        --icon-orange-bg: #42301a;
+        --icon-orange-fg: #f59e0b;
+        --table-hover-bg: #21262d;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: var(--page-bg);
+        color: var(--text-primary);
+        transition: background-color 0.3s, color 0.3s;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+      }
 
-        .initial-state { text-align: center; padding: 4rem 1rem; margin-top: 2rem; border: 2px dashed var(--border-color); border-radius: 12px; }
-        
-        .analysis-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin-top: 2rem; }
-        .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
-        
-        .key-facts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
-        .key-fact-item .label { font-size: 0.9rem; color: var(--text-secondary); }
-        .key-fact-item .value { font-size: 1.25rem; font-weight: 600; }
-        
-        .chart-controls { display: flex; justify-content: flex-end; gap: 0.5rem; }
-        .legend-btn { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.8rem; transition: all 0.2s; }
-        .legend-btn.active.pe { border-color: var(--icon-blue-fg); color: var(--icon-blue-fg); background-color: var(--icon-blue-bg); }
-        .legend-btn.active.ps { border-color: var(--icon-green-fg); color: var(--icon-green-fg); background-color: var(--icon-green-bg); }
-        .legend-btn.active.ev_ebitda { border-color: var(--icon-orange-fg); color: var(--icon-orange-fg); background-color: var(--icon-orange-bg); }
-        
-        .chart-table-container { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-top: 1.5rem; }
-        @media (min-width: 1024px) { .chart-table-container { grid-template-columns: 1.2fr 2fr; } }
-        
-        .chart-container { position: relative; }
-        .chart-container svg { width: 100%; height: 100%; min-height: 300px; overflow: visible; }
-        .grid-line { stroke: var(--border-color); stroke-width: 1; }
-        .axis-text { fill: var(--text-secondary); font-size: 12px; }
-        .data-line { stroke-width: 2.5; fill: none; transition: opacity 0.3s; }
-        .pe-line { stroke: var(--icon-blue-fg); } .ps-line { stroke: var(--icon-green-fg); } .ev_ebitda-line { stroke: var(--icon-orange-fg); }
-        .data-point { r: 4.5; fill: var(--card-bg); stroke-width: 2.5; cursor: pointer; transition: r 0.2s; }
-        .pe-point { stroke: var(--icon-blue-fg); } .ps-point { stroke: var(--icon-green-fg); } .ev_ebitda-point { stroke: var(--icon-orange-fg); }
-        .data-point:hover { r: 6; }
-        #chart-tooltip { position: absolute; background: var(--text-primary); color: var(--card-bg); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; pointer-events: none; opacity: 0; transition: opacity 0.2s; transform: translate(-50%, -130%); white-space: nowrap; z-index: 10; }
-        
-        .ratios-table { width: 100%; border-collapse: collapse; }
-        .ratios-table th, .ratios-table td { padding: 0.75rem; text-align: right; border-bottom: 1px solid var(--border-color); }
-        .ratios-table th:first-child, .ratios-table td:first-child { text-align: left; font-weight: 500; }
-        .ratios-table thead th { font-weight: 500; color: var(--text-secondary); font-size: 0.85rem; background-color: var(--card-bg); position: sticky; top: 0; }
-        
-        .metrics-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-        @media (min-width: 768px) { .metrics-grid { grid-template-columns: 1fr 1fr; } }
-        
-        .hidden { display: none !important; }
-        .error-msg { color: #dc3545; margin-top: 0.75rem; }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .logo {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .nav-links a {
+        color: var(--text-secondary);
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--text-primary);
+      }
+      #theme-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        padding: 0.5rem;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #theme-toggle:hover {
+        color: var(--text-primary);
+        background-color: var(--table-hover-bg);
+      }
+      #theme-toggle .icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      /* --- Redesigned Professional Search Form --- */
+      .search-section {
+        margin: 2.5rem 0;
+      }
+      .search-form {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        align-items: flex-end;
+      }
+      @media (min-width: 768px) {
+        .search-form {
+          grid-template-columns: 5fr 4fr 2fr;
+        }
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .form-label {
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+      .form-input {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 8px;
+        padding: 0 1rem;
+        width: 100%;
+        font-size: 1rem;
+        height: 48px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .form-input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px
+          color-mix(in srgb, var(--accent-color) 20%, transparent);
+      }
+      .form-button {
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        font-weight: 600;
+        border-radius: 8px;
+        height: 48px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        font-size: 1rem;
+      }
+      .form-button:hover {
+        background-color: var(--accent-color-hover);
+      }
+      .form-button:disabled {
+        background-color: var(--text-secondary);
+        cursor: not-allowed;
+        opacity: 0.8;
+      }
+
+      /* --- Custom Dropdown --- */
+      .custom-dropdown-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 8px;
+        padding: 0 1rem;
+        width: 100%;
+        font-size: 1rem;
+        height: 48px;
+        cursor: pointer;
+      }
+      .custom-dropdown-btn:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px
+          color-mix(in srgb, var(--accent-color) 20%, transparent);
+      }
+      .dropdown-chevron {
+        width: 16px;
+        height: 16px;
+        stroke: var(--text-secondary);
+        transition: transform 0.2s;
+      }
+      .custom-dropdown.active .dropdown-chevron {
+        transform: rotate(180deg);
+      }
+      .custom-dropdown-options {
+        list-style: none;
+        padding: 0.5rem 0;
+        margin: 0.5rem 0 0;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        max-height: 250px;
+        overflow-y: auto;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+      }
+      .custom-dropdown.active .custom-dropdown-options {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      .custom-dropdown-option {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+      }
+      .custom-dropdown-option:hover {
+        background-color: var(--table-hover-bg);
+      }
+      /* --- End Custom Dropdown --- */
+
+      .initial-state {
+        text-align: center;
+        padding: 4rem 1rem;
+        margin-top: 2rem;
+        border: 2px dashed var(--border-color);
+        border-radius: 12px;
+      }
+
+      .analysis-section {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-top: 2rem;
+      }
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .key-facts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+      .key-fact-item .label {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+      .key-fact-item .value {
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      .chart-controls {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+      }
+      .legend-btn {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.8rem;
+        transition: all 0.2s;
+      }
+      .legend-btn.active.pe {
+        border-color: var(--icon-blue-fg);
+        color: var(--icon-blue-fg);
+        background-color: var(--icon-blue-bg);
+      }
+      .legend-btn.active.ps {
+        border-color: var(--icon-green-fg);
+        color: var(--icon-green-fg);
+        background-color: var(--icon-green-bg);
+      }
+      .legend-btn.active.ev_ebitda {
+        border-color: var(--icon-orange-fg);
+        color: var(--icon-orange-fg);
+        background-color: var(--icon-orange-bg);
+      }
+
+      .chart-table-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-top: 1.5rem;
+      }
+      @media (min-width: 1024px) {
+        .chart-table-container {
+          grid-template-columns: 1.2fr 2fr;
+        }
+      }
+
+      .chart-container {
+        position: relative;
+      }
+      .chart-container svg {
+        width: 100%;
+        height: 100%;
+        min-height: 300px;
+        overflow: visible;
+      }
+      .grid-line {
+        stroke: var(--border-color);
+        stroke-width: 1;
+      }
+      .axis-text {
+        fill: var(--text-secondary);
+        font-size: 12px;
+      }
+      .data-line {
+        stroke-width: 2.5;
+        fill: none;
+        transition: opacity 0.3s;
+      }
+      .pe-line {
+        stroke: var(--icon-blue-fg);
+      }
+      .ps-line {
+        stroke: var(--icon-green-fg);
+      }
+      .ev_ebitda-line {
+        stroke: var(--icon-orange-fg);
+      }
+      .data-point {
+        r: 4.5;
+        fill: var(--card-bg);
+        stroke-width: 2.5;
+        cursor: pointer;
+        transition: r 0.2s;
+      }
+      .pe-point {
+        stroke: var(--icon-blue-fg);
+      }
+      .ps-point {
+        stroke: var(--icon-green-fg);
+      }
+      .ev_ebitda-point {
+        stroke: var(--icon-orange-fg);
+      }
+      .data-point:hover {
+        r: 6;
+      }
+      #chart-tooltip {
+        position: absolute;
+        background: var(--text-primary);
+        color: var(--card-bg);
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        transform: translate(-50%, -130%);
+        white-space: nowrap;
+        z-index: 10;
+      }
+
+      .ratios-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .ratios-table th,
+      .ratios-table td {
+        padding: 0.75rem;
+        text-align: right;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .ratios-table th:first-child,
+      .ratios-table td:first-child {
+        text-align: left;
+        font-weight: 500;
+      }
+      .ratios-table thead th {
+        font-weight: 500;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        background-color: var(--card-bg);
+        position: sticky;
+        top: 0;
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      @media (min-width: 768px) {
+        .metrics-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .hidden {
+        display: none !important;
+      }
+      .error-msg {
+        color: #dc3545;
+        margin-top: 0.75rem;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header class="header">
-            <div class="logo">FinZ</div>
-            <nav class="nav-links">
-                <a href="#">Home</a><a href="#">Learn</a><a href="#">Invest</a>
-                <button id="theme-toggle" title="Toggle theme">
-                    <svg id="sun-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <svg id="moon-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+      <header class="header">
+        <div class="logo">FinZ</div>
+        <nav class="nav-links">
+          <a href="./stonks.html">Home</a><a href="./stonks_learn.html">Learn</a
+          ><a href="./stonks_invest.html">Invest</a>
+          <button id="theme-toggle" title="Toggle theme">
+            <svg
+              id="sun-icon"
+              class="icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+              ></path>
+            </svg>
+            <svg
+              id="moon-icon"
+              class="icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              ></path>
+            </svg>
+          </button>
+        </nav>
+      </header>
+
+      <main>
+        <section class="search-section">
+          <form id="search-form" class="search-form">
+            <div class="form-group">
+              <label for="ticker-input" class="form-label">Ticker Symbol</label>
+              <input
+                type="text"
+                id="ticker-input"
+                placeholder="e.g., RELIANCE"
+                class="form-input"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Exchange</label>
+              <div class="custom-dropdown" id="exchange-dropdown">
+                <input type="hidden" id="exchange-value" name="exchange" />
+                <button type="button" class="custom-dropdown-btn">
+                  <span id="exchange-selected-text"></span>
+                  <svg
+                    class="dropdown-chevron"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4 6L8 10L12 6"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
                 </button>
-            </nav>
-        </header>
-
-        <main>
-            <section class="search-section">
-                <form id="search-form" class="search-form">
-                    <div class="form-group">
-                        <label for="ticker-input" class="form-label">Ticker Symbol</label>
-                        <input type="text" id="ticker-input" placeholder="e.g., RELIANCE" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Exchange</label>
-                        <div class="custom-dropdown" id="exchange-dropdown">
-                            <input type="hidden" id="exchange-value" name="exchange">
-                            <button type="button" class="custom-dropdown-btn">
-                                <span id="exchange-selected-text"></span>
-                                <svg class="dropdown-chevron" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 10L12 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            </button>
-                            <ul class="custom-dropdown-options"></ul>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">&nbsp;</label>
-                        <button type="submit" id="search-button" class="form-button">Analyze</button>
-                    </div>
-                </form>
-                <p id="error-message" class="error-msg hidden"></p>
-            </section>
-
-            <div id="initial-state-container" class="initial-state">
-                <h2 class="text-xl font-semibold">Live Financial Analysis</h2>
-                <p>Enter a stock ticker and select an exchange to fetch live data and generate insights.</p>
+                <ul class="custom-dropdown-options"></ul>
+              </div>
             </div>
-            
-            <div id="analysis-results" class="hidden">
-                <header class="my-8">
-                    <h2 id="company-name" class="text-3xl font-bold"></h2>
-                    <p id="company-ticker-exchange" class="text-lg mt-1" style="color: var(--text-secondary);"></p>
-                </header>
-                <section class="analysis-section">
-                    <h3 class="section-title">Overview</h3>
-                    <div class="key-facts-grid" id="overview-container"></div>
-                </section>
-                <section class="analysis-section">
-                    <div class="flex justify-between items-center flex-wrap gap-4">
-                        <h3 class="section-title" style="border-bottom: none; margin-bottom: 0;">Annual Financial Ratios</h3>
-                        <div class="chart-controls" id="legend-toggles"></div>
-                    </div>
-                    <div class="chart-table-container">
-                        <div><table class="ratios-table"><thead id="ratios-table-head"></thead><tbody id="ratios-table-body"></tbody></table></div>
-                        <div class="chart-container"><svg id="ratios-chart-svg" viewBox="0 0 500 300"></svg><div id="chart-tooltip"></div></div>
-                    </div>
-                </section>
-                <section class="analysis-section">
-                    <h3 class="section-title">Current Metrics</h3>
-                    <div id="metrics-container" class="metrics-grid"></div>
-                </section>
+            <div class="form-group">
+              <label class="form-label">&nbsp;</label>
+              <button type="submit" id="search-button" class="form-button">
+                Analyze
+              </button>
             </div>
-        </main>
+          </form>
+          <p id="error-message" class="error-msg hidden"></p>
+        </section>
+
+        <div id="initial-state-container" class="initial-state">
+          <h2 class="text-xl font-semibold">Live Financial Analysis</h2>
+          <p>
+            Enter a stock ticker and select an exchange to fetch live data and
+            generate insights.
+          </p>
+        </div>
+
+        <div id="analysis-results" class="hidden">
+          <header class="my-8">
+            <h2 id="company-name" class="text-3xl font-bold"></h2>
+            <p
+              id="company-ticker-exchange"
+              class="text-lg mt-1"
+              style="color: var(--text-secondary)"
+            ></p>
+          </header>
+          <section class="analysis-section">
+            <h3 class="section-title">Overview</h3>
+            <div class="key-facts-grid" id="overview-container"></div>
+          </section>
+          <section class="analysis-section">
+            <div class="flex justify-between items-center flex-wrap gap-4">
+              <h3
+                class="section-title"
+                style="border-bottom: none; margin-bottom: 0"
+              >
+                Annual Financial Ratios
+              </h3>
+              <div class="chart-controls" id="legend-toggles"></div>
+            </div>
+            <div class="chart-table-container">
+              <div>
+                <table class="ratios-table">
+                  <thead id="ratios-table-head"></thead>
+                  <tbody id="ratios-table-body"></tbody>
+                </table>
+              </div>
+              <div class="chart-container">
+                <svg id="ratios-chart-svg" viewBox="0 0 500 300"></svg>
+                <div id="chart-tooltip"></div>
+              </div>
+            </div>
+          </section>
+          <section class="analysis-section">
+            <h3 class="section-title">Current Metrics</h3>
+            <div id="metrics-container" class="metrics-grid"></div>
+          </section>
+        </div>
+      </main>
     </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const exchanges = [
-        { name: "USA (NYSE/Nasdaq)", code: "" }, { name: "India - NSE", code: ".NS" }, { name: "UK - LSE", code: ".L" }, { name: "Germany - XETRA", code: ".DE" },
-        { name: "Japan - TSE", code: ".T" }, { name: "China - SSE", code: ".SS" }, { name: "Canada - TSX", code: ".TO" }, { name: "Australia - ASX", code: ".AX" },
-        { name: "France - Paris", code: ".PA" }, { name: "Hong Kong - HKEX", code: ".HK" }, { name: "S. Korea - KRX", code: ".KS" }, { name: "Brazil - Bovespa", code: ".SA" }
-    ];
-    
-    // --- DOM Element References ---
-    const searchForm = document.getElementById('search-form');
-    const searchButton = document.getElementById('search-button');
-    const errorMessage = document.getElementById('error-message');
-    const initialStateContainer = document.getElementById('initial-state-container');
-    const analysisResultsContainer = document.getElementById('analysis-results');
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const exchanges = [
+          { name: "USA (NYSE/Nasdaq)", code: "" },
+          { name: "India - NSE", code: ".NS" },
+          { name: "UK - LSE", code: ".L" },
+          { name: "Germany - XETRA", code: ".DE" },
+          { name: "Japan - TSE", code: ".T" },
+          { name: "China - SSE", code: ".SS" },
+          { name: "Canada - TSX", code: ".TO" },
+          { name: "Australia - ASX", code: ".AX" },
+          { name: "France - Paris", code: ".PA" },
+          { name: "Hong Kong - HKEX", code: ".HK" },
+          { name: "S. Korea - KRX", code: ".KS" },
+          { name: "Brazil - Bovespa", code: ".SA" },
+        ];
 
-    // --- Helper Function ---
-    const formatNum = (num, type = 'default') => {
-        if (num === null || typeof num === 'undefined') return 'N/A';
-        if (Math.abs(num) >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
-        if (Math.abs(num) >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
-        if (Math.abs(num) >= 1e6) return `$${(num / 1e6).toFixed(2)}M`;
-        if (typeof num === 'number') return num.toFixed(2);
-        return num;
-    };
-    
-    // --- Page Initialization ---
-    function initializePage() {
-        // --- Theme Toggle ---
-        const themeToggle = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-        const updateThemeUI = (theme) => {
-            document.documentElement.setAttribute('data-theme', theme);
-            sunIcon.style.display = theme === 'dark' ? 'none' : 'block';
-            moonIcon.style.display = theme === 'dark' ? 'block' : 'none';
+        // --- DOM Element References ---
+        const searchForm = document.getElementById("search-form");
+        const searchButton = document.getElementById("search-button");
+        const errorMessage = document.getElementById("error-message");
+        const initialStateContainer = document.getElementById(
+          "initial-state-container"
+        );
+        const analysisResultsContainer =
+          document.getElementById("analysis-results");
+
+        // --- Helper Function ---
+        const formatNum = (num, type = "default") => {
+          if (num === null || typeof num === "undefined") return "N/A";
+          if (Math.abs(num) >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
+          if (Math.abs(num) >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
+          if (Math.abs(num) >= 1e6) return `$${(num / 1e6).toFixed(2)}M`;
+          if (typeof num === "number") return num.toFixed(2);
+          return num;
         };
-        themeToggle.addEventListener('click', () => {
-            const newTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-            localStorage.setItem('theme', newTheme);
+
+        // --- Page Initialization ---
+        function initializePage() {
+          // --- Theme Toggle ---
+          const themeToggle = document.getElementById("theme-toggle");
+          const sunIcon = document.getElementById("sun-icon");
+          const moonIcon = document.getElementById("moon-icon");
+          const updateThemeUI = (theme) => {
+            document.documentElement.setAttribute("data-theme", theme);
+            sunIcon.style.display = theme === "dark" ? "none" : "block";
+            moonIcon.style.display = theme === "dark" ? "block" : "none";
+          };
+          themeToggle.addEventListener("click", () => {
+            const newTheme =
+              document.documentElement.getAttribute("data-theme") === "light"
+                ? "dark"
+                : "light";
+            localStorage.setItem("theme", newTheme);
             updateThemeUI(newTheme);
-        });
-        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        updateThemeUI(savedTheme);
+          });
+          const savedTheme =
+            localStorage.getItem("theme") ||
+            (window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light");
+          updateThemeUI(savedTheme);
 
-        // --- Custom Dropdown ---
-        const dropdown = document.getElementById('exchange-dropdown');
-        const hiddenInput = document.getElementById('exchange-value');
-        const selectedText = document.getElementById('exchange-selected-text');
-        const optionsList = dropdown.querySelector('.custom-dropdown-options');
+          // --- Custom Dropdown ---
+          const dropdown = document.getElementById("exchange-dropdown");
+          const hiddenInput = document.getElementById("exchange-value");
+          const selectedText = document.getElementById(
+            "exchange-selected-text"
+          );
+          const optionsList = dropdown.querySelector(
+            ".custom-dropdown-options"
+          );
 
-        exchanges.forEach(ex => {
-            const li = document.createElement('li');
-            li.className = 'custom-dropdown-option';
+          exchanges.forEach((ex) => {
+            const li = document.createElement("li");
+            li.className = "custom-dropdown-option";
             li.textContent = ex.name;
             li.dataset.value = ex.code;
             optionsList.appendChild(li);
-        });
-        
-        // Set default value
-        selectedText.textContent = exchanges[0].name;
-        hiddenInput.value = exchanges[0].code;
+          });
 
-        dropdown.querySelector('.custom-dropdown-btn').addEventListener('click', () => {
-            dropdown.classList.toggle('active');
-        });
+          // Set default value
+          selectedText.textContent = exchanges[0].name;
+          hiddenInput.value = exchanges[0].code;
 
-        optionsList.addEventListener('click', (e) => {
-            if (e.target.tagName === 'LI') {
-                selectedText.textContent = e.target.textContent;
-                hiddenInput.value = e.target.dataset.value;
-                dropdown.classList.remove('active');
+          dropdown
+            .querySelector(".custom-dropdown-btn")
+            .addEventListener("click", () => {
+              dropdown.classList.toggle("active");
+            });
+
+          optionsList.addEventListener("click", (e) => {
+            if (e.target.tagName === "LI") {
+              selectedText.textContent = e.target.textContent;
+              hiddenInput.value = e.target.dataset.value;
+              dropdown.classList.remove("active");
             }
-        });
+          });
 
-        window.addEventListener('click', (e) => {
+          window.addEventListener("click", (e) => {
             if (!dropdown.contains(e.target)) {
-                dropdown.classList.remove('active');
+              dropdown.classList.remove("active");
             }
-        });
-    }
-    
-    initializePage();
+          });
+        }
 
-    // --- Form Submission & Data Fetching ---
-    searchForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const ticker = document.getElementById('ticker-input').value.trim().toUpperCase();
-        const exchangeCode = document.getElementById('exchange-value').value;
-        
-        searchButton.disabled = true;
-        searchButton.textContent = '...';
-        errorMessage.classList.add('hidden');
-        analysisResultsContainer.classList.add('hidden');
-        initialStateContainer.classList.remove('hidden');
+        initializePage();
 
-        try {
-            const response = await fetch(`/analysis_data?ticker=${ticker}&exchange=${exchangeCode}`);
+        // --- Form Submission & Data Fetching ---
+        searchForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const ticker = document
+            .getElementById("ticker-input")
+            .value.trim()
+            .toUpperCase();
+          const exchangeCode = document.getElementById("exchange-value").value;
+
+          searchButton.disabled = true;
+          searchButton.textContent = "...";
+          errorMessage.classList.add("hidden");
+          analysisResultsContainer.classList.add("hidden");
+          initialStateContainer.classList.remove("hidden");
+
+          try {
+            const response = await fetch(
+              `/analysis_data?ticker=${ticker}&exchange=${exchangeCode}`
+            );
             const data = await response.json();
-            
-            if (!response.ok) throw new Error(data.error || 'An unknown error occurred.');
-            
+
+            if (!response.ok)
+              throw new Error(data.error || "An unknown error occurred.");
+
             // ** CRITICAL ERROR FIX **: Validate data structure before rendering
             if (!data || !data.company_info) {
-                throw new Error("Received incomplete data from the server.");
+              throw new Error("Received incomplete data from the server.");
             }
 
             renderAnalysisData(data, `${ticker}${exchangeCode}`);
-            initialStateContainer.classList.add('hidden');
-            analysisResultsContainer.classList.remove('hidden');
-
-        } catch (error) {
+            initialStateContainer.classList.add("hidden");
+            analysisResultsContainer.classList.remove("hidden");
+          } catch (error) {
             errorMessage.textContent = `Error: ${error.message}`;
-            errorMessage.classList.remove('hidden');
-        } finally {
+            errorMessage.classList.remove("hidden");
+          } finally {
             searchButton.disabled = false;
-            searchButton.textContent = 'Analyze';
-        }
-    });
+            searchButton.textContent = "Analyze";
+          }
+        });
 
-    // --- The rest of the rendering functions remain the same as they are robust ---
-    function renderAnalysisData(data, fullTicker) {
-        document.getElementById('company-name').textContent = data.company_info.name;
-        document.getElementById('company-ticker-exchange').textContent = fullTicker;
+        // --- The rest of the rendering functions remain the same as they are robust ---
+        function renderAnalysisData(data, fullTicker) {
+          document.getElementById("company-name").textContent =
+            data.company_info.name;
+          document.getElementById("company-ticker-exchange").textContent =
+            fullTicker;
 
-        const overviewContainer = document.getElementById('overview-container');
-        overviewContainer.innerHTML = `
-            <div class="key-fact-item"><p class="label">Market Cap</p><p class="value">${formatNum(data.company_info.market_cap)}</p></div>
-            <div class="key-fact-item"><p class="label">CEO</p><p class="value">${data.company_info.ceo || 'N/A'}</p></div>
-            <div class="key-fact-item"><p class="label">Founded</p><p class="value">${data.company_info.founded ? new Date(data.company_info.founded * 1000).getFullYear() : 'N/A'}</p></div>
+          const overviewContainer =
+            document.getElementById("overview-container");
+          overviewContainer.innerHTML = `
+            <div class="key-fact-item"><p class="label">Market Cap</p><p class="value">${formatNum(
+              data.company_info.market_cap
+            )}</p></div>
+            <div class="key-fact-item"><p class="label">CEO</p><p class="value">${
+              data.company_info.ceo || "N/A"
+            }</p></div>
+            <div class="key-fact-item"><p class="label">Founded</p><p class="value">${
+              data.company_info.founded
+                ? new Date(data.company_info.founded * 1000).getFullYear()
+                : "N/A"
+            }</p></div>
         `;
 
-        const metricsContainer = document.getElementById('metrics-container');
-        const metricsMap = { 'Revenue': data.current_metrics.Revenue, 'Gross Profit': data.current_metrics.Gross_Profit, 'Operating Cash Flow': data.current_metrics.Operating_Cash_Flow, 'Total Cash': data.current_metrics.Total_Cash, 'Total Debt': data.current_metrics.Total_Debt, 'Debt to Equity': data.current_metrics.Total_Debt_to_Equity, 'Cash Per Share': data.current_metrics.Total_Cash_Per_Share, };
-        metricsContainer.innerHTML = Object.entries(metricsMap).map(([label, value]) => `
-            <div class="metric-item"><span>${label}</span><strong>${formatNum(value)}</strong></div>
-        `).join('');
-        
-        renderRatiosContent(data.annual_ratios);
-    }
-    
-    function renderRatiosContent(ratiosData) {
-        const years = Object.keys(ratiosData).sort();
-        const legendContainer = document.getElementById('legend-toggles');
-        const tableBody = document.getElementById('ratios-table-body');
-        const tableHead = document.getElementById('ratios-table-head');
-        const chartSVG = document.getElementById('ratios-chart-svg');
+          const metricsContainer = document.getElementById("metrics-container");
+          const metricsMap = {
+            Revenue: data.current_metrics.Revenue,
+            "Gross Profit": data.current_metrics.Gross_Profit,
+            "Operating Cash Flow": data.current_metrics.Operating_Cash_Flow,
+            "Total Cash": data.current_metrics.Total_Cash,
+            "Total Debt": data.current_metrics.Total_Debt,
+            "Debt to Equity": data.current_metrics.Total_Debt_to_Equity,
+            "Cash Per Share": data.current_metrics.Total_Cash_Per_Share,
+          };
+          metricsContainer.innerHTML = Object.entries(metricsMap)
+            .map(
+              ([label, value]) => `
+            <div class="metric-item"><span>${label}</span><strong>${formatNum(
+                value
+              )}</strong></div>
+        `
+            )
+            .join("");
 
-        if (years.length === 0) {
-             legendContainer.innerHTML = '<p style="color: var(--text-secondary);">No annual ratio data available.</p>';
-             tableHead.innerHTML = '';
-             tableBody.innerHTML = '';
-             chartSVG.innerHTML = '';
-             return;
+          renderRatiosContent(data.annual_ratios);
         }
-        
-        const ratioKeys = Object.keys(ratiosData[years[0]]);
-        const classMap = { PE: 'pe', PS: 'ps', EV_EBITDA: 'ev_ebitda' };
-        
-        legendContainer.innerHTML = ratioKeys.map(key => `<button class="legend-btn active ${classMap[key]}" data-ratio="${key}">${key.replace('_','/')}</button>`).join('');
-        tableHead.innerHTML = `<tr><th>Year</th>${ratioKeys.map(k => `<th class="${k.toLowerCase()}-col">${k.replace('_','/')}</th>`).join('')}</tr>`;
-        tableBody.innerHTML = years.slice().reverse().map(year => `<tr><td>${year}</td>${ratioKeys.map(k => `<td class="${k.toLowerCase()}-col">${formatNum(ratiosData[year][k])}</td>`).join('')}</tr>`).join('');
-        
-        renderRatiosChart(ratiosData, years, ratioKeys);
-    }
 
-    function renderRatiosChart(ratiosData, years, ratioKeys) {
-        const svg = document.getElementById('ratios-chart-svg');
-        svg.innerHTML = '';
-        const pad = { t: 20, r: 20, b: 30, l: 50 }, w = 500 - pad.l - pad.r, h = 300 - pad.t - pad.b;
-        
-        const allValues = [].concat(...years.map(y => ratioKeys.map(k => ratiosData[y][k]))).filter(v => v != null);
-        if (allValues.length === 0) return;
-        
-        let min = Math.min(...allValues), max = Math.max(...allValues);
-        if (min === max) { min -= 10; max += 10; }
-        min = Math.max(0, min - (max - min) * 0.1); max = max + (max - min) * 0.1;
+        function renderRatiosContent(ratiosData) {
+          const years = Object.keys(ratiosData).sort();
+          const legendContainer = document.getElementById("legend-toggles");
+          const tableBody = document.getElementById("ratios-table-body");
+          const tableHead = document.getElementById("ratios-table-head");
+          const chartSVG = document.getElementById("ratios-chart-svg");
 
-        const getX = i => pad.l + (i / (years.length - 1)) * w;
-        const getY = v => (v === null || isNaN(v)) ? -1000 : pad.t + h - (((v - min) / (max - min)) * h);
+          if (years.length === 0) {
+            legendContainer.innerHTML =
+              '<p style="color: var(--text-secondary);">No annual ratio data available.</p>';
+            tableHead.innerHTML = "";
+            tableBody.innerHTML = "";
+            chartSVG.innerHTML = "";
+            return;
+          }
 
-        for (let i = 0; i <= 4; i++) {
-            const y = pad.t + (i / 4) * h, val = min + ((4 - i) / 4) * (max - min);
-            svg.innerHTML += `<line class="grid-line" x1="${pad.l}" y1="${y}" x2="${pad.l+w}" y2="${y}"></line><text class="axis-text" x="${pad.l-8}" y="${y+4}" text-anchor="end">${Math.round(val)}</text>`;
+          const ratioKeys = Object.keys(ratiosData[years[0]]);
+          const classMap = { PE: "pe", PS: "ps", EV_EBITDA: "ev_ebitda" };
+
+          legendContainer.innerHTML = ratioKeys
+            .map(
+              (key) =>
+                `<button class="legend-btn active ${
+                  classMap[key]
+                }" data-ratio="${key}">${key.replace("_", "/")}</button>`
+            )
+            .join("");
+          tableHead.innerHTML = `<tr><th>Year</th>${ratioKeys
+            .map(
+              (k) =>
+                `<th class="${k.toLowerCase()}-col">${k.replace("_", "/")}</th>`
+            )
+            .join("")}</tr>`;
+          tableBody.innerHTML = years
+            .slice()
+            .reverse()
+            .map(
+              (year) =>
+                `<tr><td>${year}</td>${ratioKeys
+                  .map(
+                    (k) =>
+                      `<td class="${k.toLowerCase()}-col">${formatNum(
+                        ratiosData[year][k]
+                      )}</td>`
+                  )
+                  .join("")}</tr>`
+            )
+            .join("");
+
+          renderRatiosChart(ratiosData, years, ratioKeys);
         }
-        years.forEach((y, i) => svg.innerHTML += `<text class="axis-text" x="${getX(i)}" y="${pad.t+h+20}" text-anchor="middle">${y}</text>`);
 
-        ratioKeys.forEach(key => {
+        function renderRatiosChart(ratiosData, years, ratioKeys) {
+          const svg = document.getElementById("ratios-chart-svg");
+          svg.innerHTML = "";
+          const pad = { t: 20, r: 20, b: 30, l: 50 },
+            w = 500 - pad.l - pad.r,
+            h = 300 - pad.t - pad.b;
+
+          const allValues = []
+            .concat(...years.map((y) => ratioKeys.map((k) => ratiosData[y][k])))
+            .filter((v) => v != null);
+          if (allValues.length === 0) return;
+
+          let min = Math.min(...allValues),
+            max = Math.max(...allValues);
+          if (min === max) {
+            min -= 10;
+            max += 10;
+          }
+          min = Math.max(0, min - (max - min) * 0.1);
+          max = max + (max - min) * 0.1;
+
+          const getX = (i) => pad.l + (i / (years.length - 1)) * w;
+          const getY = (v) =>
+            v === null || isNaN(v)
+              ? -1000
+              : pad.t + h - ((v - min) / (max - min)) * h;
+
+          for (let i = 0; i <= 4; i++) {
+            const y = pad.t + (i / 4) * h,
+              val = min + ((4 - i) / 4) * (max - min);
+            svg.innerHTML += `<line class="grid-line" x1="${
+              pad.l
+            }" y1="${y}" x2="${
+              pad.l + w
+            }" y2="${y}"></line><text class="axis-text" x="${pad.l - 8}" y="${
+              y + 4
+            }" text-anchor="end">${Math.round(val)}</text>`;
+          }
+          years.forEach(
+            (y, i) =>
+              (svg.innerHTML += `<text class="axis-text" x="${getX(i)}" y="${
+                pad.t + h + 20
+              }" text-anchor="middle">${y}</text>`)
+          );
+
+          ratioKeys.forEach((key) => {
             const cls = key.toLowerCase();
-            const points = years.map((y, i) => `${getX(i)},${getY(ratiosData[y][key])}`).join(' ');
+            const points = years
+              .map((y, i) => `${getX(i)},${getY(ratiosData[y][key])}`)
+              .join(" ");
             let g = `<g class="${cls}-group">`;
             g += `<polyline class="data-line ${cls}-line" points="${points}" />`;
-            years.forEach((y, i) => g += `<circle class="data-point ${cls}-point" cx="${getX(i)}" cy="${getY(ratiosData[y][key])}" data-value="${key.replace('_','/')}: ${formatNum(ratiosData[y][key])}"></circle>`);
-            g += `</g>`; svg.innerHTML += g;
-        });
-        attachChartInteractivity();
-    }
+            years.forEach(
+              (y, i) =>
+                (g += `<circle class="data-point ${cls}-point" cx="${getX(
+                  i
+                )}" cy="${getY(ratiosData[y][key])}" data-value="${key.replace(
+                  "_",
+                  "/"
+                )}: ${formatNum(ratiosData[y][key])}"></circle>`)
+            );
+            g += `</g>`;
+            svg.innerHTML += g;
+          });
+          attachChartInteractivity();
+        }
 
-    function attachChartInteractivity() {
-        const tooltip = document.getElementById('chart-tooltip'), chart = document.querySelector('.chart-container');
-        document.querySelectorAll('.data-point').forEach(p => {
-            p.addEventListener('mouseenter', e => { if (e.target.closest('g')?.style.opacity !== '0') { tooltip.textContent = e.target.dataset.value; tooltip.style.opacity = '1'; } });
-            p.addEventListener('mousemove', e => { const r = chart.getBoundingClientRect(); tooltip.style.left = `${e.clientX - r.left}px`; tooltip.style.top = `${e.clientY - r.top}px`; });
-            p.addEventListener('mouseleave', () => tooltip.style.opacity = '0');
-        });
-        document.getElementById('legend-toggles').addEventListener('click', e => {
-            const btn = e.target.closest('button'); if (!btn) return;
-            btn.classList.toggle('active'); const key = btn.dataset.ratio.toLowerCase(), active = btn.classList.contains('active');
-            document.querySelector(`.${key}-group`).style.opacity = active ? '1' : '0';
-            document.querySelectorAll(`.${key}-col`).forEach(el => el.style.display = active ? 'table-cell' : 'none');
-        });
-    }
-});
-</script>
-</body>
+        function attachChartInteractivity() {
+          const tooltip = document.getElementById("chart-tooltip"),
+            chart = document.querySelector(".chart-container");
+          document.querySelectorAll(".data-point").forEach((p) => {
+            p.addEventListener("mouseenter", (e) => {
+              if (e.target.closest("g")?.style.opacity !== "0") {
+                tooltip.textContent = e.target.dataset.value;
+                tooltip.style.opacity = "1";
+              }
+            });
+            p.addEventListener("mousemove", (e) => {
+              const r = chart.getBoundingClientRect();
+              tooltip.style.left = `${e.clientX - r.left}px`;
+              tooltip.style.top = `${e.clientY - r.top}px`;
+            });
+            p.addEventListener(
+              "mouseleave",
+              () => (tooltip.style.opacity = "0")
+            );
+          });
+          document
+            .getElementById("legend-toggles")
+            .addEventListener("click", (e) => {
+              const btn = e.target.closest("button");
+              if (!btn) return;
+              btn.classList.toggle("active");
+              const key = btn.dataset.ratio.toLowerCase(),
+                active = btn.classList.contains("active");
+              document.querySelector(`.${key}-group`).style.opacity = active
+                ? "1"
+                : "0";
+              document
+                .querySelectorAll(`.${key}-col`)
+                .forEach(
+                  (el) => (el.style.display = active ? "table-cell" : "none")
+                );
+            });
+        }
+      });
+    </script>
+  </body>
 </html>
