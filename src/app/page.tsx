@@ -14,13 +14,13 @@ const features = [
   },
   {
     icon: Shield,
-    title: "Secure Banking",
-    description: "Bank-level security with end-to-end encryption to keep your financial data safe and secure.",
+    title: "Secured Data",
+    description: "Security with end-to-end encryption to keep your financial data safe and secure.",
   },
   {
     icon: Brain,
-    title: "AI Insights",
-    description: "Leverage artificial intelligence to predict trends and make informed financial choices.",
+    title: "Graphical Insights",
+    description: "Leverage charts to understand trends and make informed financial choices.",
   },
   {
     icon: Target,
@@ -45,19 +45,10 @@ export default function LandingPage() {
             and personalized recommendations that help you build wealth and achieve your goals.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/dashboard">
+            <Link href="/register">
               <Button size="lg" className="bg-blue-500 hover:bg-blue-600 text-white border-blue-400 px-8 py-3 text-lg rounded-full transition-all hover:shadow-lg hover:shadow-blue-500/25">
                 Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Link href="/transactions">
-              <Button
-                variant="outline"
-                size="lg"
-                className="glass border-slate-500/50 text-white/90 hover:bg-white/10 hover:text-white px-8 py-3 text-lg rounded-full transition-all"
-              >
-                View Demo
               </Button>
             </Link>
           </div>

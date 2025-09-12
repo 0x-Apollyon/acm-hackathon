@@ -31,37 +31,18 @@ import {
   TrendingDown,
   ArrowUpDown,
 } from "lucide-react";
-import { allTransactions, categories } from "@/lib/data";
+import { categories } from "@/lib/data";
 import { useSearchParams } from "next/navigation";
 import TransactionCard from "@/components/TransactionCard";
+import { AuthAPI } from "@/lib/authClient";
 
-// --- RE-PROCESSED DATA FOR TWO-BAR CHART (SALARY FILTERED OUT) ---
-const dailyFlows = allTransactions
-  .filter((tx) => tx.description !== "Salary Credit") // Exclude the salary outlier
-  .reduce((acc, tx) => {
-    const date = new Date(tx.date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
-    if (!acc[date]) {
-      acc[date] = { date, inflow: 0, outflow: 0 };
-    }
-    if (tx.type === "inflow") {
-      acc[date].inflow += tx.amount;
-    } else {
-      acc[date].outflow += Math.abs(tx.amount);
-    }
-    return acc;
-  }, {} as Record<string, { date: string; inflow: number; outflow: number }>);
-
-const chartData = Object.values(dailyFlows).sort(
-  (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-);
+// chart data will be computed from backend response
+type ChartPoint = { date: string; inflow: number; outflow: number };
 
 type SortOption = "date-desc" | "date-asc" | "amount-desc" | "amount-asc";
 
 // --- CUSTOM TOOLTIP FOR CHART ---
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label, currencySymbol = '$' }: any) => {
   if (active && payload && payload.length) {
     const inflowData = payload.find((p: any) => p.dataKey === "inflow");
     const outflowData = payload.find((p: any) => p.dataKey === "outflow");
@@ -77,7 +58,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                 Inflow
               </span>
               <span className="font-bold text-green-400">
-                ₹{inflowData.value.toLocaleString()}
+                {currencySymbol}{inflowData.value.toLocaleString()}
               </span>
             </div>
           )}
@@ -87,7 +68,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                 Outflow
               </span>
               <span className="font-bold text-red-400">
-                ₹{outflowData.value.toLocaleString()}
+                {currencySymbol}{outflowData.value.toLocaleString()}
               </span>
             </div>
           )}
@@ -121,6 +102,45 @@ const getRelativeDate = (dateString: string) => {
 
 // The actual component that contains all the logic and uses the client-side hook
 function TransactionsContent() {
+  const [currencySymbol, setCurrencySymbol] = useState<'$' | '₹'>('$');
+  const [backendTx, setBackendTx] = useState<Record<string, any[]> | null>(null);
+  const [chartData, setChartData] = useState<ChartPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      const [dash, tx] = await Promise.all([
+        AuthAPI.userDashboard(),
+        AuthAPI.userTransactions({ limit: 200 }),
+      ]);
+      if (cancelled) return;
+      if (dash.status === 'success') {
+        const cur = dash.data?.user_info?.preferences?.default_currency === 'USD' ? '$' : '₹';
+        setCurrencySymbol(cur);
+      }
+      if (tx.status === 'success') {
+        setBackendTx(tx.transactions || {});
+        const daily: Record<string, ChartPoint> = {};
+        Object.values(tx.transactions || {}).forEach((arr: any) => {
+          (arr as any[]).forEach((t) => {
+            const d = new Date(t.transaction_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            if (!daily[d]) daily[d] = { date: d, inflow: 0, outflow: 0 };
+            if (t.transaction_type === 'income') daily[d].inflow += Number(t.amount) || 0;
+            else if (t.transaction_type === 'expense') daily[d].outflow += Math.abs(Number(t.amount) || 0);
+          });
+        });
+        setChartData(Object.values(daily).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+        setError(null);
+      } else {
+        setError(tx.error || 'Failed to load transactions');
+      }
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, []);
   const searchParams = useSearchParams();
   const initialFilter = searchParams.get("filter");
   const transactionsSectionRef = useRef<HTMLDivElement>(null);
@@ -147,8 +167,25 @@ function TransactionsContent() {
   const [filterCategory, setFilterCategory] = useState("All");
   const [sortOption, setSortOption] = useState<SortOption>("date-desc");
 
+  const flattenedBackend = useMemo(() => {
+    const items: Array<{ id: number; description: string; amount: number; type: 'inflow' | 'outflow'; category: string; date: string }>= [];
+    Object.values(backendTx || {}).forEach((arr: any) => {
+      (arr as any[]).forEach((t) => {
+        items.push({
+          id: t.id,
+          description: t.description,
+          amount: Number(t.amount) || 0,
+          type: t.transaction_type === 'income' ? 'inflow' : 'outflow',
+          category: t.category || 'Other',
+          date: t.transaction_date,
+        });
+      });
+    });
+    return items;
+  }, [backendTx]);
+
   const filteredAndSortedTransactions = useMemo(() => {
-    const filtered = allTransactions.filter((tx) => {
+    const filtered = flattenedBackend.filter((tx) => {
       const typeMatch = filterType === "all" || tx.type === filterType;
       const categoryMatch =
         filterCategory === "All" || tx.category === filterCategory;
@@ -168,7 +205,7 @@ function TransactionsContent() {
           return new Date(b.date).getTime() - new Date(a.date).getTime();
       }
     });
-  }, [filterType, filterCategory, sortOption]);
+  }, [flattenedBackend, filterType, filterCategory, sortOption]);
 
   const { totalInflow, totalOutflow } = useMemo(() => {
     return filteredAndSortedTransactions.reduce(
@@ -218,7 +255,7 @@ function TransactionsContent() {
                     <span>Total Inflow</span>
                   </div>
                   <p className="text-3xl font-bold text-green-400">
-                    ₹{totalInflow.toLocaleString()}
+                    {currencySymbol}{totalInflow.toLocaleString()}
                   </p>
                 </div>
                 <div className="p-4 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg">
@@ -227,7 +264,7 @@ function TransactionsContent() {
                     <span>Total Outflow</span>
                   </div>
                   <p className="text-3xl font-bold text-red-400">
-                    ₹{Math.abs(totalOutflow).toLocaleString()}
+                    {currencySymbol}{Math.abs(totalOutflow).toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -246,12 +283,12 @@ function TransactionsContent() {
                     <YAxis
                       tickLine={false}
                       axisLine={false}
-                      tickFormatter={(value) => `₹${value / 1000}k`}
+                      tickFormatter={(value) => `${currencySymbol}${value / 1000}k`}
                       domain={[0, 16000]}
                       tick={{ className: "text-xs fill-white/60" }}
                     />
                     <Tooltip
-                      content={<CustomTooltip />}
+                      content={<CustomTooltip currencySymbol={currencySymbol} />}
                       cursor={{ fill: "rgba(255, 255, 255, 0.1)", opacity: 0.3 }}
                     />
                     <Bar
@@ -396,7 +433,8 @@ function TransactionsContent() {
                               transition={{ duration: 0.3 }}
                             >
                               <TransactionCard
-                                transaction={tx}
+                                transaction={tx as any}
+                                currencySymbol={currencySymbol}
                               />
                             </motion.div>
                           ))}

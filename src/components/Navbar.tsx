@@ -35,6 +35,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import React, { useEffect } from "react";
+import { AuthAPI } from "@/lib/authClient";
 
 export default function Navbar() {
   const [open, setOpen] = React.useState(false);
@@ -68,7 +69,27 @@ export default function Navbar() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const session = { user: { name: "Nishant", image: "/placeholder.svg" } };
+  const [profileName, setProfileName] = React.useState<string | null>(null);
+  const [profileEmail, setProfileEmail] = React.useState<string | null>(null);
+  useEffect(() => {
+    AuthAPI.profile().then((res) => {
+      if (res.status === "success" && res.user) {
+        setProfileName(res.user.username);
+        setProfileEmail(res.user.email);
+      } else {
+        setProfileName(null);
+        setProfileEmail(null);
+      }
+    }).catch(() => {
+      setProfileName(null);
+      setProfileEmail(null);
+    });
+  }, []);
+
+  const onLogout = async () => {
+    await AuthAPI.logout();
+    window.location.href = "/login";
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full glass border-b border-slate-500/30">
@@ -170,21 +191,17 @@ export default function Navbar() {
                 variant="ghost"
                 className="relative h-8 w-8 rounded-full glass border-slate-500/40 hover:bg-white/10"
               >
-                <img
-                  className="h-8 w-8 rounded-full object-cover"
-                  src={session.user?.image || "/placeholder.svg"}
-                  alt={session.user?.name || ""}
-                />
+                <img className="h-8 w-8 rounded-full object-cover" src={"/placeholder.svg"} alt={profileName || ""} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 glass-strong border-slate-500/40" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none text-white">
-                    {session.user?.name}
+                    {profileName || "Guest"}
                   </p>
                   <p className="text-xs leading-none text-white/70">
-                    nishant@example.com
+                    {profileEmail || ""}
                   </p>
                 </div>
               </DropdownMenuLabel>
@@ -198,7 +215,7 @@ export default function Navbar() {
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-slate-500/40" />
-              <DropdownMenuItem className="text-white/90 hover:bg-white/10">
+              <DropdownMenuItem onClick={onLogout} className="text-white/90 hover:bg-white/10">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>
