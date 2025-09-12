@@ -34,7 +34,7 @@ interface SavingsChartProps {
 const calculateHistoricalSavings = () => {
   let cumulativeSavings = 0;
 
-  return monthlyTransactionsData.map((monthData) => {
+  return monthlyTransactionsData.map((monthData, index) => {
     const totalInflows = monthData.inflows.reduce(
       (sum, inflow) => sum + inflow.amount,
       0
@@ -44,12 +44,18 @@ const calculateHistoricalSavings = () => {
       0
     );
     const monthlySavings = totalInflows - totalOutflows;
-    cumulativeSavings += monthlySavings;
+
+    // Add realistic noise to make the chart more natural
+    const noiseRange = 5000; // ±5000 variation
+    const noise = (Math.random() - 0.5) * 2 * noiseRange;
+    const noisyMonthlySavings = monthlySavings + noise;
+
+    cumulativeSavings += noisyMonthlySavings;
 
     return {
       month: monthData.month,
-      monthlySavings: monthlySavings,
-      cumulativeSavings: cumulativeSavings,
+      monthlySavings: Math.round(noisyMonthlySavings),
+      cumulativeSavings: Math.round(cumulativeSavings),
       type: "historical",
       isHistorical: true,
     };
@@ -99,16 +105,19 @@ const calculateSimplePrediction = (
     futureMonth.setMonth(futureMonth.getMonth() + i);
 
     // Predict monthly savings with trend
-    const predictedMonthlySavings = Math.max(
-      1000,
-      avgMonthlySavings + trend * i
-    );
+    const basePredictedSavings = Math.max(1000, avgMonthlySavings + trend * i);
+
+    // Add noise to predictions to make them more realistic
+    const noiseRange = 3000; // ±3000 variation for predictions
+    const noise = (Math.random() - 0.5) * 2 * noiseRange;
+    const noisyPredictedSavings = basePredictedSavings + noise;
+
     const predictedCumulative =
-      lastPoint.cumulativeSavings + predictedMonthlySavings * i;
+      lastPoint.cumulativeSavings + noisyPredictedSavings * i;
 
     predictions.push({
       month: futureMonth.toISOString().slice(0, 7),
-      monthlySavings: Math.round(predictedMonthlySavings),
+      monthlySavings: Math.round(noisyPredictedSavings),
       cumulativeSavings: Math.round(predictedCumulative),
       type: "forecast",
       isHistorical: false,
