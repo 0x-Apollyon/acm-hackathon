@@ -98,12 +98,12 @@
         .total-progress-bar { width: 100%; height: 28px; background: var(--border-color); border-radius: 14px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .total-progress-bar:hover { transform: scale(1.02, 1.1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 4px 15px rgba(40, 167, 69, 0.2); }
         .total-progress-bar div { height: 100%; background: linear-gradient(to right, #28a745, #20c997); width: 0; transition: width 0.8s ease; border-radius: 14px; }
-        
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: var(--card-bg); padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,0.3); max-width: 400px; }
         .modal-content .confirm { background: var(--current-color); color: white; } .modal-content .confirm:hover { background: #218838; }
         .modal-content .cancel { background: #dc3545; color: white; }
-        
+
         #tooltip { position: absolute; opacity: 0; background-color: #333; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; pointer-events: none; transition: opacity 0.2s; z-index: 9999; }
         @media (max-width: 992px) { .badges-activity { flex-direction: column; } }
     </style>
@@ -113,7 +113,7 @@
     <div class="container-main">
         <div class="navbar">
             <div class="logo">FinZ | Stonks</div>
-            
+
             <div class="nav-links">
                 <a href="./">Home</a>
                 <a href="./learn">Learn</a>
@@ -223,7 +223,7 @@
                         progress: (points / 3) * 100 // Convert points (out of 3) to percentage
                     };
                 });
-                
+
                 totalCoursePoints = progressData.percentage_complete || 0;
                 activityCounts = activityData;
 
@@ -236,7 +236,7 @@
                 console.error("Error initializing page:", error);
             }
         }
-        
+
         // MODIFIED: This function now handles the specific redirection logic.
         function handleLessonClick(lessonId) {
             const lesson = lessons[lessonId];
@@ -250,13 +250,13 @@
 
                 if (lesson.points >= 3) { // 100% complete
                     // Redirect to the first sub-lesson for review.
-                    subLessonNumber = 1; 
+                    subLessonNumber = 1;
                 } else {
                     // In progress (0%, 33%, 66%) corresponds to points 0, 1, 2.
                     // This maps directly to sub-lessons 1, 2, 3.
                     subLessonNumber = lesson.points + 1;
                 }
-                
+
                 window.location.href = `/module${moduleNumber}lesson${subLessonNumber}`;
 
             } else { // Node is locked
@@ -266,7 +266,7 @@
                 });
             }
         }
-        
+
         function checkDependencies(lessonId) {
             if (!lessons[lessonId]) return false;
             return lessons[lessonId].dependencies.every(dep => lessons[dep]?.progress >= 100);
@@ -279,7 +279,7 @@
                 const lesson = lessons[id];
                 const node = document.getElementById(id);
                 if (!node || !lesson) return;
-                
+
                 node.querySelector('p').textContent = lesson.name;
                 const existingIcon = node.querySelector('.icon');
                 if(existingIcon) existingIcon.remove();
@@ -314,20 +314,20 @@
             const clampedProgress = Math.min(100, Math.max(0, totalProgressPercent));
             document.getElementById('progress-bar').style.width = `${clampedProgress}%`;
         }
-        
+
         function updateActivityGrid() {
             const grid = document.getElementById('activity-grid');
             grid.innerHTML = '';
             const today = new Date();
             document.getElementById('month-name').textContent = today.toLocaleString('default', { month: 'long', year: 'numeric' });
-            
+
             const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-            
+
             for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
                 grid.insertAdjacentHTML('beforeend', '<div class="activity-day empty"></div>');
             }
-            
+
             for (let i = 1; i <= daysInMonth; i++) {
                 const date = new Date(today.getFullYear(), today.getMonth(), i + 1);
                 const dateString = date.toISOString().split('T')[0];
@@ -337,7 +337,7 @@
                 grid.insertAdjacentHTML('beforeend', `<div class="activity-day level-${level}" data-tooltip="${tooltip}"></div>`);
             }
         }
-        
+
         // REVERTED: Badges are now simple visual indicators again.
         function populateBadges() {
             const grid = document.getElementById('badges-grid');
@@ -354,17 +354,17 @@
                 grid.appendChild(badge);
             });
         }
-        
+
         function drawLessonPaths() {
             const svg = document.getElementById('lesson-path-svg');
-            svg.innerHTML = ''; 
+            svg.innerHTML = '';
             const containerRect = document.querySelector('.lesson-path-container').getBoundingClientRect();
             Object.keys(lessons).forEach(lessonId => {
                  lessons[lessonId].dependencies.forEach(depId => {
                     const startNode = document.getElementById(depId);
                     const endNode = document.getElementById(lessonId);
                     if (!startNode || !endNode) return;
-                    
+
                     const startRect = startNode.getBoundingClientRect();
                     const endRect = endNode.getBoundingClientRect();
                     const startX = startRect.left + startRect.width / 2 - containerRect.left;
@@ -381,7 +381,7 @@
                  });
             });
         }
-        
+
         function showConfirmationModal(callback) {
             const modal = document.getElementById('confirmation-modal');
             modal.style.display = 'flex';
@@ -409,7 +409,7 @@
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
         updateThemeUI(initialTheme);
-        
+
         // --- Tooltip Logic ---
         const tooltip = document.getElementById('tooltip');
         const progressBar = document.querySelector('.total-progress-bar');
@@ -426,7 +426,7 @@
         // --- Event Listeners ---
         document.querySelectorAll('.lesson-item').forEach(node => node.addEventListener('click', () => handleLessonClick(node.id)));
         window.addEventListener('resize', drawLessonPaths);
-        
+
         // --- Page Initialization ---
         document.addEventListener('DOMContentLoaded', initializePage);
     </script>

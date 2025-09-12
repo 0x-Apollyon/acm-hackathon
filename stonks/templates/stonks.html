@@ -76,7 +76,7 @@
             background: transparent;
             position: relative;
         }
-        
+
         #theme-toggle {
             position: absolute;
             top: 20px;
@@ -126,65 +126,222 @@
         }
 
         .candles-container {
-            height: clamp(250px, 40vh, 300px);
+            height: clamp(280px, 45vh, 350px);
             margin: 0 0 20px;
             position: relative;
-            background: var(--chart-bg);
-            border-radius: 8px;
+            background: linear-gradient(135deg, var(--chart-bg) 0%, rgba(0,0,0,0.02) 100%);
+            border-radius: 16px;
             overflow: hidden;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .candles-container:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 12px 48px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .chart-grid {
             position: absolute;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 50px);
+            background:
+                linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px),
+                linear-gradient(to right, var(--grid-line) 1px, transparent 1px);
+            background-size: 100% 30px, 40px 100%;
+            opacity: 0.6;
+        }
+
+        .chart-header {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--grid-line) 0.5px, transparent 0.5px);
-            background-size: 100% 40px;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0.05) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .candle {
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            opacity: 0.9;
+        }
+
+        .chart-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse-status 2s infinite;
+        }
+
+        .status-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .price-indicator {
             position: absolute;
-            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            top: 60px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Courier New', monospace;
+            z-index: 20;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .current-price {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .price-change {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .price-change.positive {
+            color: #28a745;
+        }
+
+        .price-change.negative {
+            color: #dc3545;
+        }
+
+        @keyframes pulse-status {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }        .candle {
+            position: absolute;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .candle:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            z-index: 10;
         }
 
         .candle-wick {
             width: 2px;
-            background: var(--text-secondary);
+            background: linear-gradient(to bottom,
+                rgba(108, 117, 125, 0.8) 0%,
+                rgba(108, 117, 125, 1) 50%,
+                rgba(108, 117, 125, 0.8) 100%);
             margin: 0 auto;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1), top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 1px;
         }
 
         .candle-body {
-            width: clamp(12px, 2vw, 16px);
-            border-radius: 2px;
+            width: clamp(14px, 2.2vw, 18px);
+            border-radius: 3px;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1), top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .volume-bar {
-            width: clamp(12px, 2vw, 16px);
-            background: rgba(108, 117, 125, 0.3);
+            width: clamp(14px, 2.2vw, 18px);
+            background: linear-gradient(to top,
+                rgba(108, 117, 125, 0.4) 0%,
+                rgba(108, 117, 125, 0.2) 100%);
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px 2px 0 0;
+            border: 1px solid rgba(108, 117, 125, 0.1);
         }
 
         .candle.bullish .candle-body {
-            background: var(--bullish);
+            background: linear-gradient(135deg,
+                var(--bullish) 0%,
+                #20c997  50%,
+                var(--bullish) 100%);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow:
+                0 2px 12px rgba(40, 167, 69, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         .candle.bearish .candle-body {
-            background: var(--bearish);
+            background: linear-gradient(135deg,
+                var(--bearish) 0%,
+                #e74c3c 50%,
+                var(--bearish) 100%);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow:
+                0 2px 12px rgba(220, 53, 69, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .candle.bullish .candle-wick {
+            background: linear-gradient(to bottom,
+                rgba(40, 167, 69, 0.6) 0%,
+                rgba(40, 167, 69, 0.9) 50%,
+                rgba(40, 167, 69, 0.6) 100%);
+        }
+
+        .candle.bearish .candle-wick {
+            background: linear-gradient(to bottom,
+                rgba(220, 53, 69, 0.6) 0%,
+                rgba(220, 53, 69, 0.9) 50%,
+                rgba(220, 53, 69, 0.6) 100%);
+        }
+
+        .candle.bullish .volume-bar {
+            background: linear-gradient(to top,
+                rgba(40, 167, 69, 0.3) 0%,
+                rgba(40, 167, 69, 0.1) 100%);
+            border-color: rgba(40, 167, 69, 0.2);
+        }
+
+        .candle.bearish .volume-bar {
+            background: linear-gradient(to top,
+                rgba(220, 53, 69, 0.3) 0%,
+                rgba(220, 53, 69, 0.1) 100%);
+            border-color: rgba(220, 53, 69, 0.2);
         }
 
         .features-section {
@@ -318,18 +475,19 @@
                 FinZ <span class="divider">|</span> Stonks
             </div>
             <div class="tagline">Smart Investing Starts at Home</div>
-            
+
             <button id="theme-toggle" title="Toggle theme">
                 <svg id="sun-icon" class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <svg id="moon-icon" class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
             </button>
-            
+
             <div class="candles-container" id="candlesContainer">
                 <div class="chart-grid"></div>
+                </div>
                 <!-- Candles will be generated by JavaScript -->
             </div>
         </div>
-        
+
         <div class="features-section">
             <div class="feature-card">
                 <div class="feature-icon">
@@ -343,7 +501,7 @@
                 </div>
                 <button class="cta-button" onclick="window.location.href='./learn'">Start Learning</button>
             </div>
-            
+
             <div class="feature-card">
                 <div class="feature-icon">
                     <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
@@ -419,24 +577,24 @@
                 const candleEl = document.createElement('div');
                 candleEl.className = 'candle';
                 candleEl.style.left = `${index * this.candleWidth}px`;
-                
+
                 const wickTop = document.createElement('div');
                 wickTop.className = 'candle-wick';
-                
+
                 const body = document.createElement('div');
                 body.className = 'candle-body';
-                
+
                 const wickBottom = document.createElement('div');
                 wickBottom.className = 'candle-wick';
-                
+
                 const volumeBar = document.createElement('div');
                 volumeBar.className = 'volume-bar';
-                
+
                 candleEl.appendChild(wickTop);
                 candleEl.appendChild(body);
                 candleEl.appendChild(wickBottom);
                 candleEl.appendChild(volumeBar);
-                
+
                 return {
                     element: candleEl,
                     wickTop,
@@ -458,67 +616,67 @@
                 const price = this.priceHistory[index];
                 const prevPrice = index > 0 ? this.priceHistory[index - 1] : price;
                 const isBullish = price > prevPrice;
-                
+
                 candle.element.className = `candle ${isBullish ? 'bullish' : 'bearish'}`;
-                
+
                 const minPrice = 40;
                 const maxPrice = 140;
                 const priceRange = 100;
                 const containerHeight = this.container.offsetHeight;
-                
+
                 const open = index > 0 ? this.priceHistory[index - 1] : price;
                 const close = price;
                 const high = Math.max(open, close) + Math.random() * 2;
                 const low = Math.min(open, close) - Math.random() * 2;
-                
+
                 const normalize = (val) => ((val - minPrice) / priceRange) * containerHeight * 0.8;
-                
+
                 const normalizedHigh = normalize(high);
                 const normalizedLow = normalize(low);
                 const normalizedOpen = normalize(open);
                 const normalizedClose = normalize(close);
-                
+
                 const bodyHeight = Math.abs(normalizedClose - normalizedOpen) || 1;
                 const bodyTop = containerHeight - Math.max(normalizedOpen, normalizedClose);
-                
+
                 candle.body.style.height = `${bodyHeight}px`;
                 candle.body.style.top = `${bodyTop}px`;
-                
+
                 const wickTopHeight = normalizedHigh - Math.max(normalizedOpen, normalizedClose);
                 candle.wickTop.style.height = `${wickTopHeight}px`;
                 candle.wickTop.style.top = `${bodyTop - wickTopHeight}px`;
-                
+
                 const wickBottomHeight = Math.min(normalizedOpen, normalizedClose) - normalizedLow;
                 candle.wickBottom.style.height = `${wickBottomHeight}px`;
                 candle.wickBottom.style.top = `${bodyTop + bodyHeight}px`;
-                
+
                 const volume = 15 + Math.random() * 35;
                 candle.volumeBar.style.height = `${volume}px`;
-                
+
                 candle.element.style.opacity = 1;
             }
 
             animateCandles() {
                 const newPrice = this.generateNextPrice();
                 this.priceHistory.push(newPrice);
-                
+
                 const newIndex = this.maxCandles;
                 const newCandle = this.createSingleCandle(newIndex);
                 this.updateCandle(newCandle, newIndex);
                 newCandle.element.style.left = `${this.containerWidth}px`;
                 this.container.appendChild(newCandle.element);
                 this.candles.push(newCandle);
-                
+
                 const maxDelay = this.staggerDelay * this.maxCandles;
                 const totalTime = maxDelay + this.transitionTime;
-                
+
                 this.candles.forEach((candle, index) => {
                     const delay = (this.maxCandles - (index + 1)) * this.staggerDelay;
                     setTimeout(() => {
                         candle.element.style.left = `${(index - 1) * this.candleWidth}px`;
                     }, delay);
                 });
-                
+
                 setTimeout(() => {
                     if (this.container.contains(this.candles[0]?.element)) {
                          const oldCandle = this.candles.shift();
@@ -549,7 +707,7 @@
             const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
             updateThemeUI(initialTheme);
-            
+
             // Initialize animations
             new CandleAnimation();
         });

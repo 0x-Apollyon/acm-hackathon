@@ -20,7 +20,7 @@
         *, *::before, *::after { box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--page-bg); color: var(--text-primary); transition: background-color 0.3s, color 0.3s; line-height: 1.6; -webkit-font-smoothing: antialiased; }
         .container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
-        
+
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); }
         .logo { font-size: 1.5rem; font-weight: 600; }
         .nav-links { display: flex; align-items: center; gap: 1.5rem; }
@@ -29,7 +29,7 @@
         #theme-toggle { background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 0.5rem; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
         #theme-toggle:hover { color: var(--text-primary); background-color: var(--table-hover-bg); }
         #theme-toggle .icon { width: 20px; height: 20px; }
-        
+
         /* --- Redesigned Professional Search Form --- */
         .search-section { margin: 2.5rem 0; }
         .search-form { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: flex-end; }
@@ -41,7 +41,7 @@
         .form-button { background-color: var(--accent-color); color: white; border: none; font-weight: 600; border-radius: 8px; height: 48px; cursor: pointer; transition: background-color 0.2s; font-size: 1rem; }
         .form-button:hover { background-color: var(--accent-color-hover); }
         .form-button:disabled { background-color: var(--text-secondary); cursor: not-allowed; opacity: 0.8; }
-        
+
         /* --- Custom Dropdown --- */
         .custom-dropdown-btn { display: flex; align-items: center; justify-content: space-between; text-align: left; background-color: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; padding: 0 1rem; width: 100%; font-size: 1rem; height: 48px; cursor: pointer; }
         .custom-dropdown-btn:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
@@ -54,23 +54,23 @@
         /* --- End Custom Dropdown --- */
 
         .initial-state { text-align: center; padding: 4rem 1rem; margin-top: 2rem; border: 2px dashed var(--border-color); border-radius: 12px; }
-        
+
         .analysis-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin-top: 2rem; }
         .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
-        
+
         .key-facts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
         .key-fact-item .label { font-size: 0.9rem; color: var(--text-secondary); }
         .key-fact-item .value { font-size: 1.25rem; font-weight: 600; }
-        
+
         .chart-controls { display: flex; justify-content: flex-end; gap: 0.5rem; }
         .legend-btn { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.8rem; transition: all 0.2s; }
         .legend-btn.active.pe { border-color: var(--icon-blue-fg); color: var(--icon-blue-fg); background-color: var(--icon-blue-bg); }
         .legend-btn.active.ps { border-color: var(--icon-green-fg); color: var(--icon-green-fg); background-color: var(--icon-green-bg); }
         .legend-btn.active.ev_ebitda { border-color: var(--icon-orange-fg); color: var(--icon-orange-fg); background-color: var(--icon-orange-bg); }
-        
+
         .chart-table-container { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-top: 1.5rem; }
         @media (min-width: 1024px) { .chart-table-container { grid-template-columns: 1.2fr 2fr; } }
-        
+
         .chart-container { position: relative; }
         .chart-container svg { width: 100%; height: 100%; min-height: 300px; overflow: visible; }
         .grid-line { stroke: var(--border-color); stroke-width: 1; }
@@ -81,15 +81,15 @@
         .pe-point { stroke: var(--icon-blue-fg); } .ps-point { stroke: var(--icon-green-fg); } .ev_ebitda-point { stroke: var(--icon-orange-fg); }
         .data-point:hover { r: 6; }
         #chart-tooltip { position: absolute; background: var(--text-primary); color: var(--card-bg); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; pointer-events: none; opacity: 0; transition: opacity 0.2s; transform: translate(-50%, -130%); white-space: nowrap; z-index: 10; }
-        
+
         .ratios-table { width: 100%; border-collapse: collapse; }
         .ratios-table th, .ratios-table td { padding: 0.75rem; text-align: right; border-bottom: 1px solid var(--border-color); }
         .ratios-table th:first-child, .ratios-table td:first-child { text-align: left; font-weight: 500; }
         .ratios-table thead th { font-weight: 500; color: var(--text-secondary); font-size: 0.85rem; background-color: var(--card-bg); position: sticky; top: 0; }
-        
+
         .metrics-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
         @media (min-width: 768px) { .metrics-grid { grid-template-columns: 1fr 1fr; } }
-        
+
         .hidden { display: none !important; }
         .error-msg { color: #dc3545; margin-top: 0.75rem; }
     </style>
@@ -137,7 +137,7 @@
                 <h2 class="text-xl font-semibold">Live Financial Analysis</h2>
                 <p>Enter a stock ticker and select an exchange to fetch live data and generate insights.</p>
             </div>
-            
+
             <div id="analysis-results" class="hidden">
                 <header class="my-8">
                     <h2 id="company-name" class="text-3xl font-bold"></h2>
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Japan - TSE", code: ".T" }, { name: "China - SSE", code: ".SS" }, { name: "Canada - TSX", code: ".TO" }, { name: "Australia - ASX", code: ".AX" },
         { name: "France - Paris", code: ".PA" }, { name: "Hong Kong - HKEX", code: ".HK" }, { name: "S. Korea - KRX", code: ".KS" }, { name: "Brazil - Bovespa", code: ".SA" }
     ];
-    
+
     // --- DOM Element References ---
     const searchForm = document.getElementById('search-form');
     const searchButton = document.getElementById('search-button');
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof num === 'number') return num.toFixed(2);
         return num;
     };
-    
+
     // --- Page Initialization ---
     function initializePage() {
         // --- Theme Toggle ---
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
             li.dataset.value = ex.code;
             optionsList.appendChild(li);
         });
-        
+
         // Set default value
         selectedText.textContent = exchanges[0].name;
         hiddenInput.value = exchanges[0].code;
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
+
     initializePage();
 
     // --- Form Submission & Data Fetching ---
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const ticker = document.getElementById('ticker-input').value.trim().toUpperCase();
         const exchangeCode = document.getElementById('exchange-value').value;
-        
+
         searchButton.disabled = true;
         searchButton.textContent = '...';
         errorMessage.classList.add('hidden');
@@ -263,9 +263,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`/analysis_data?ticker=${ticker}&exchange=${exchangeCode}`);
             const data = await response.json();
-            
+
             if (!response.ok) throw new Error(data.error || 'An unknown error occurred.');
-            
+
             // ** CRITICAL ERROR FIX **: Validate data structure before rendering
             if (!data || !data.company_info) {
                 throw new Error("Received incomplete data from the server.");
@@ -299,12 +299,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const metricsContainer = document.getElementById('metrics-container');
         const metricsMap = { 'Revenue': data.current_metrics.Revenue, 'Gross Profit': data.current_metrics.Gross_Profit, 'Operating Cash Flow': data.current_metrics.Operating_Cash_Flow, 'Total Cash': data.current_metrics.Total_Cash, 'Total Debt': data.current_metrics.Total_Debt, 'Debt to Equity': data.current_metrics.Total_Debt_to_Equity, 'Cash Per Share': data.current_metrics.Total_Cash_Per_Share, };
         metricsContainer.innerHTML = Object.entries(metricsMap).map(([label, value]) => `
-            <div class="metric-item"><span>${label}</span><strong>${formatNum(value)}</strong></div>
+            <div class="metric-item"><span>${label}: </span><strong>${formatNum(value)}</strong></div>
         `).join('');
-        
+
         renderRatiosContent(data.annual_ratios);
     }
-    
+
     function renderRatiosContent(ratiosData) {
         const years = Object.keys(ratiosData).sort();
         const legendContainer = document.getElementById('legend-toggles');
@@ -319,14 +319,14 @@ document.addEventListener('DOMContentLoaded', () => {
              chartSVG.innerHTML = '';
              return;
         }
-        
+
         const ratioKeys = Object.keys(ratiosData[years[0]]);
         const classMap = { PE: 'pe', PS: 'ps', EV_EBITDA: 'ev_ebitda' };
-        
+
         legendContainer.innerHTML = ratioKeys.map(key => `<button class="legend-btn active ${classMap[key]}" data-ratio="${key}">${key.replace('_','/')}</button>`).join('');
         tableHead.innerHTML = `<tr><th>Year</th>${ratioKeys.map(k => `<th class="${k.toLowerCase()}-col">${k.replace('_','/')}</th>`).join('')}</tr>`;
         tableBody.innerHTML = years.slice().reverse().map(year => `<tr><td>${year}</td>${ratioKeys.map(k => `<td class="${k.toLowerCase()}-col">${formatNum(ratiosData[year][k])}</td>`).join('')}</tr>`).join('');
-        
+
         renderRatiosChart(ratiosData, years, ratioKeys);
     }
 
@@ -334,10 +334,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const svg = document.getElementById('ratios-chart-svg');
         svg.innerHTML = '';
         const pad = { t: 20, r: 20, b: 30, l: 50 }, w = 500 - pad.l - pad.r, h = 300 - pad.t - pad.b;
-        
+
         const allValues = [].concat(...years.map(y => ratioKeys.map(k => ratiosData[y][k]))).filter(v => v != null);
         if (allValues.length === 0) return;
-        
+
         let min = Math.min(...allValues), max = Math.max(...allValues);
         if (min === max) { min -= 10; max += 10; }
         min = Math.max(0, min - (max - min) * 0.1); max = max + (max - min) * 0.1;
