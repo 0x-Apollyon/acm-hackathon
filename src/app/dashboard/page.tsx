@@ -69,7 +69,11 @@ export default function Dashboard() {
                   Latest Inflow
                 </CardTitle>
                 <Link href="/transactions?filter=inflow" passHref>
-                  <Button variant="ghost" size="sm" className="text-blue-300 hover:text-white hover:bg-slate-600/30">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-blue-300 hover:text-white hover:bg-slate-600/30"
+                  >
                     View More
                   </Button>
                 </Link>
@@ -91,7 +95,11 @@ export default function Dashboard() {
                   Latest Outflow
                 </CardTitle>
                 <Link href="/transactions?filter=outflow" passHref>
-                  <Button variant="ghost" size="sm" className="text-blue-300 hover:text-white hover:bg-slate-600/30">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-blue-300 hover:text-white hover:bg-slate-600/30"
+                  >
                     View More
                   </Button>
                 </Link>

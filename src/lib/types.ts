@@ -45,6 +45,14 @@ export interface SavingsGoal {
   id: string;
   name: string;
   targetAmount: number;
-  targetDate: string;
   currentAmount: number;
+  targetDate: string;
+  // status: "on-track" | "at-risk";
+  // insight: string;
+}
+
+export interface MonthlyTransaction {
+  month: string;
+  inflows: { amount: number; description: string; date: string }[];
+  outflows: { amount: number; description: string; date: string }[];
 }

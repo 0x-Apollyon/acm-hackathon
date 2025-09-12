@@ -51,7 +51,7 @@ def news_fetch():
     from_date = request.args.get('from')
     to_date = request.args.get('to')
 
-    res = requests.get(f"https://newsapi.org/v2/everything?q={keyword}&from={from_date}&to={to_date}&sortBy=popularity&apiKey= ")
+    res = requests.get(f"https://newsapi.org/v2/everything?q={keyword}&from={from_date}&to={to_date}&sortBy=popularity&apiKey=")
     result = res.json()
     returnable = []
     for article in result["articles"]:

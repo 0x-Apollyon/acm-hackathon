@@ -1,4 +1,12 @@
-import { BankAccount, Transaction } from "@/lib/types";
+import {
+  BankAccount,
+  Transaction,
+  PaymentData,
+  UpcomingPayment,
+  BalanceDataPoint,
+  SavingsGoal,
+  MonthlyTransaction,
+} from "@/lib/types";
 import {
   Utensils,
   Car,
@@ -18,7 +26,7 @@ import {
 } from "@/lib/icons";
 
 // --- DASHBOARD DATA ---
-export const balanceData = {
+export const balanceData: Record<string, BalanceDataPoint[]> = {
   "1m": [
     { date: "Aug 10", balance: 320000 },
     { date: "Aug 20", balance: 300000 },
@@ -42,13 +50,13 @@ export const balanceData = {
   ],
 };
 
-export const paidPayments = [
+export const paidPayments: PaymentData[] = [
   { name: "Netflix", amount: "₹649", icon: NetflixIcon },
   { name: "Spotify", amount: "₹119", icon: SpotifyIcon },
   { name: "Adobe Creative", amount: "₹1,675", icon: AdobeIcon },
 ];
 
-export const upcomingPayments = [
+export const upcomingPayments: UpcomingPayment[] = [
   {
     name: "2586 Rent",
     amount: "₹25,000",
@@ -116,7 +124,7 @@ export const allBankAccounts: BankAccount[] = [
 
 // --- TRANSACTIONS DATA ---
 
-export const allTransactions = [
+export const allTransactions: Transaction[] = [
   {
     id: 1,
     date: "2025-09-10",
@@ -191,7 +199,7 @@ export const allTransactions = [
   },
 ];
 
-export const categories = [
+export const categories: string[] = [
   "All",
   "Food",
   "Travel",
@@ -202,7 +210,10 @@ export const categories = [
 ];
 
 // --- SAVINGS DATA ---
-export const savingsData = {
+export const savingsData: {
+  historical: { month: string; savings: number; type: string }[];
+  forecast: { month: string; savings: number; type: string }[];
+} = {
   historical: [
     { month: "Oct 2024", savings: 12000, type: "historical" },
     { month: "Nov 2024", savings: 15000, type: "historical" },
@@ -234,7 +245,7 @@ export const savingsData = {
 };
 
 // --- COMPREHENSIVE MONTHLY TRANSACTIONS FOR SAVINGS CALCULATION ---
-export const monthlyTransactionsData = [
+export const monthlyTransactionsData: MonthlyTransaction[] = [
   // September 2024
   {
     month: "2024-09",
@@ -363,7 +374,7 @@ export const monthlyTransactionsData = [
     ],
     outflows: [
       { amount: 25000, description: "Rent", date: "2025-04-01" },
-      { amount: 14000, description: "Groceries & Food", date: "2025-04-02" },
+      { amount: 14000, description: "Groceries & Food", date: "2024-04-02" },
       { amount: 9000, description: "Utilities", date: "2025-04-03" },
       { amount: 7000, description: "Transportation", date: "2025-04-05" },
       { amount: 6000, description: "Entertainment", date: "2025-04-10" },
@@ -442,7 +453,7 @@ export const monthlyTransactionsData = [
 ];
 
 // --- SAVINGS GOALS DATA ---
-export const savingsGoals = [
+export const savingsGoals: SavingsGoal[] = [
   {
     id: 1,
     name: "Vacation Fund",
